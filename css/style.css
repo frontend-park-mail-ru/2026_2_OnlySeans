@@ -1,0 +1,239 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg-dark: #080a0f;
+  --bg-card: rgba(16, 18, 26, 0.72);
+  --bg-glass: rgba(10, 12, 18, 0.85);
+  --bg-input: rgba(255, 255, 255, 0.05);
+
+  --euphoria-amber: #e6a15c;
+  --euphoria-amber-glow: rgba(230, 161, 92, 0.3);
+  --euphoria-wine: #80162b;
+  --euphoria-wine-glow: rgba(128, 22, 43, 0.45);
+  --euphoria-magenta: #a32258;
+
+  --border-subtle: rgba(230, 161, 92, 0.16);
+  --border-active: rgba(230, 161, 92, 0.5);
+
+  --text-main: #f5f3ef;
+  --text-muted: #8e899b;
+
+  --radius-sm: 6px;
+  --radius-md: 14px;
+  --radius-lg: 22px;
+  --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+
+  --bg-gradient-radial:
+    radial-gradient(circle at 10% 85%, rgba(180, 120, 30, 0.28) 0%, rgba(8, 10, 15, 0) 55%),
+    radial-gradient(circle at 90% 15%, rgba(20, 55, 95, 0.4) 0%, rgba(8, 10, 15, 0) 60%),
+    radial-gradient(circle at 50% 50%, rgba(230, 161, 92, 0.03) 0%, transparent 75%);
+}
+
+/* Светлая тема — переключается атрибутом data-theme на <html>, см. theme.js */
+[data-theme="light"] {
+  --bg-dark: #f5f1eb;
+  --bg-card: rgba(255, 255, 255, 0.85);
+  --bg-glass: rgba(245, 241, 235, 0.88);
+  --bg-input: rgba(0, 0, 0, 0.05);
+
+  --euphoria-amber: #b86b28;
+  --euphoria-amber-glow: rgba(184, 107, 40, 0.2);
+  --euphoria-wine: #a32a42;
+  --euphoria-wine-glow: rgba(163, 42, 66, 0.25);
+  --euphoria-magenta: #8a1d48;
+
+  --border-subtle: rgba(184, 107, 40, 0.2);
+  --border-active: rgba(184, 107, 40, 0.6);
+
+  --text-main: #181514;
+  --text-muted: #6e6560;
+
+  --bg-gradient-radial:
+    radial-gradient(circle at 10% 85%, rgba(180, 120, 30, 0.18) 0%, rgba(245, 241, 235, 0) 55%),
+    radial-gradient(circle at 90% 15%, rgba(50, 90, 140, 0.18) 0%, rgba(245, 241, 235, 0) 60%);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-dark);
+  background-image: var(--bg-gradient-radial);
+  background-attachment: fixed;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  transition: background-color 0.4s ease, color 0.4s ease;
+}
+
+/* ---------------- Карточка формы (аналог .hero__card / .movie-card__poster) ---------------- */
+
+.auth-card {
+  position: relative;
+  background: var(--bg-card);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-subtle);
+  padding: 56px 48px;
+  border-radius: var(--radius-lg);
+  width: 100%;
+  min-width: 480px;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5);
+  transition: var(--transition), background 0.4s ease, border-color 0.4s ease;
+}
+
+.auth-card h1 {
+  font-family: 'Manrope', system-ui, -apple-system, sans-serif;
+  font-weight: 800;
+  font-size: 30px;
+  letter-spacing: -0.5px;
+  margin-bottom: 32px;
+  text-align: center;
+  color: var(--text-main);
+}
+
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  color: var(--text-muted);
+}
+
+.field input {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: 100px;
+  border: 1px solid var(--border-subtle);
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 14px;
+  font-family: inherit;
+  transition: var(--transition);
+}
+
+.field input::placeholder {
+  color: var(--text-muted);
+}
+
+.field input:focus {
+  outline: none;
+  border-color: var(--euphoria-amber);
+  box-shadow: 0 0 20px var(--euphoria-amber-glow);
+}
+
+.field--invalid input {
+  border-color: var(--euphoria-wine);
+}
+
+.field--invalid input:focus {
+  box-shadow: 0 0 20px var(--euphoria-wine-glow);
+}
+
+.field__hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+  color: #e8a0ae;
+}
+
+/* ---------------- Кнопка отправки (аналог .btn--glow) ---------------- */
+
+button[type="submit"] {
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--euphoria-amber) 0%, #b8783d 100%);
+  color: var(--bg-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  margin-top: 10px;
+  box-shadow: 0 8px 25px var(--euphoria-amber-glow);
+  transition: var(--transition);
+}
+
+button[type="submit"]:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+  box-shadow: 0 12px 30px rgba(230, 161, 92, 0.45);
+}
+
+button[type="submit"]:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ---------------- Ошибки (аналог винного акцента) ---------------- */
+
+.error-box {
+  display: none;
+  background: rgba(128, 22, 43, 0.18);
+  border: 1px solid var(--euphoria-wine);
+  color: #e8a0ae;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: 18px;
+}
+
+.switch-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.switch-link a {
+  color: var(--euphoria-amber);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.switch-link a:hover {
+  text-shadow: 0 0 10px var(--euphoria-amber-glow);
+}
+
+/* ---------------- Переключатель темы ----------------
+   Кнопка не входит в текущую разметку register.html/login.html —
+   это стиль на будущее, когда кнопка #themeToggle появится в шапке
+   (общей для всего сайта, как на скрине). Стиль лежит здесь, чтобы
+   тема визуально совпадала с остальным проектом сразу, без правок CSS
+   в будущем. */
+.theme-toggle {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  border-color: var(--euphoria-amber);
+  box-shadow: 0 0 15px var(--euphoria-amber-glow);
+  transform: scale(1.05);
+}
