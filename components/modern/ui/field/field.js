@@ -1,14 +1,19 @@
-// Хелперы для полей формы.
+import { BaseComponent } from '../base-component.js';
 
-const fieldTemplate = Handlebars.compile(`
+const fieldTemplate = window.Handlebars.compile(`
   <div class="field">
     <label for="{{id}}">{{label}}</label>
     <input type="{{type}}" id="{{id}}" name="{{name}}" {{#if required}}required{{/if}}>
   </div>
 `);
 
-export const createField = ({ id, label, type = 'text', name = id, required = true }) =>
-  renderTemplate(fieldTemplate, { id, label, type, name, required });
+export class Field extends BaseComponent {
+  constructor({ id, label, type = 'text', name = id, required = true }) {
+    super(fieldTemplate, { id, label, type, name, required });
+  }
+}
+
+export const createField = (props) => new Field(props).render();
 
 export const getFieldValue = (fieldEl) => {
   return fieldEl.querySelector('input').value.trim();

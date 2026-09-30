@@ -11,11 +11,16 @@ export class Router {
         window.addEventListener('popstate', () => this.route());
 
         document.addEventListener('click', (event) => {
+            if (!(event.target instanceof Element)) return;
+
             const link = event.target.closest('a[data-link]');
-            if (link) {
-                event.preventDefault();
-                this.navigate(link.getAttribute('href'));
-            }
+            if (!link || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+            const url = new URL(link.href, window.location.href);
+            if (url.origin !== window.location.origin || link.target === '_blank') return;
+
+            event.preventDefault();
+            this.navigate(`${url.pathname}${url.search}${url.hash}`);
         });
     }
 
@@ -24,13 +29,11 @@ export class Router {
      * @param {string} path - Путь для перехода (например, '/login')
      */
     navigate(path){
-        if (window.location.pathname === path) return; // Если путь не изменился, ничего не делаем
-        
-    window.history.pushState({}, '', path);
+        if (window.location.pathname === path) return;
 
-    this.route()
-    
-}
+        window.history.pushState({}, '', path);
+        this.route();
+    }
     /**
      * Метод определения текущего пути и отрисовки соответствующего View
      */
@@ -46,7 +49,7 @@ export class Router {
 
         this.rootElement.innerHTML = '';
 
-        const viewInstance = new ViewClass();
+        const viewInstance = new ViewClass({ navigate: (nextPath) => this.navigate(nextPath) });
 
         const renderedContent = viewInstance.render();
 
