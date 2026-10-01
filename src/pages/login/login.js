@@ -1,10 +1,10 @@
-import { createCard } from '../../components/modern/ui/card/card.js';
-import { validateEmail, showError } from '../services/validation.js';
-import { apiRequest } from '../api/auth.js';
-import { createButton } from '../../components/modern/ui/button/button.js';
-import { createErrorBox } from '../../components/modern/ui/error-box/error-box.js';
-import { createSwitchLink } from '../../components/modern/ui/switch-link/switch-link.js';
-import { createField, setFieldError, getFieldValue } from '../../components/modern/ui/field/field.js';
+import { createCard } from '../../components/ui/card/card.js';
+import { validateEmail, showError } from '../../modules/validation.js';
+import { apiRequest } from '../../api/auth.js';
+import { createButton } from '../../components/ui/button/button.js';
+import { createErrorBox } from '../../components/ui/error-box/error-box.js';
+import { createSwitchLink } from '../../components/ui/switch-link/switch-link.js';
+import { createField, setFieldError, getFieldValue } from '../../components/ui/field/field.js';
 
 export class LoginPage {
   constructor({ navigate }) {
