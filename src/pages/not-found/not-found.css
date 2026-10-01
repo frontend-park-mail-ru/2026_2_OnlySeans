@@ -1,6 +1,139 @@
-.not-found__text {
-  margin: 0;
+.not-found {
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  padding: 30px 20px 60px;
+
+  background: transparent;
+}
+/* Телевизор */
+
+.not-found__tv {
+  position: relative;
+
+  width: min(850px, 90vw);
+  aspect-ratio: 2402 / 1586;
+
+  margin-bottom: 15px;
+}
+
+.not-found__tv-image {
+  position: absolute;
+
+  inset: 0;
+
+  width: 100%;
+  height: 100%;
+
+  object-fit: contain;
+
+  z-index: 3;
+}
+
+.not-found__noise {
+  position: absolute;
+
+  left: 6%;
+  top: 8%;
+
+  width: 68%;
+  height: 74%;
+
+  object-fit: cover;
+}
+
+.not-found__signal {
+  position: absolute;
+
+  left: 6%;
+  top: 8%;
+  width: 68%;
+  height: 74%;
+
+  z-index: 2;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.not-found__number {
+  font-family: var(--font-tv);
+  font-size: clamp(90px, 11.5vw, 165px);
+  line-height: 0.85;
+  font-weight: 400;
+  letter-spacing: 8px;
+
+  color: #f2f2f2;
+  text-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+}
+
+.not-found__signal-text {
+  margin-top: 12px;
+
+  font-family: var(--font-tv);
+  font-size: clamp(12px, 1.5vw, 20px);
+  font-weight: 700;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+
+  color: #f2f2f2;
+  text-shadow:
+    0 0 10px rgba(255, 255, 255, 0.3),
+    0.6px 0 currentColor;
+}
+
+/* Текст */
+
+.not-found__title {
+  margin: 0 0 8px;
+
+  font-size: 24px;
+  font-weight: 700;
+
+  color: var(--text-main);
+
   text-align: center;
-  color: var(--text-muted);
+}
+
+.not-found__text {
+  max-width: 750px;
+
+  margin: 0 0 20px;
+
   font-size: 14px;
+  line-height: 1.5;
+
+  color: var(--text-muted);
+
+  text-align: center;
+}
+
+/* Контейнер кнопок */
+
+.not-found__buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.not-found__buttons .button {
+  width: 100%;
+  margin-top: 0;
+}
+
+@keyframes tv-flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.88; }
+  52% { opacity: 1; }
+}
+
+.not-found__signal {
+  animation: tv-flicker 3s infinite;
 }

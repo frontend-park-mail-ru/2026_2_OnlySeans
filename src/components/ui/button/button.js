@@ -1,12 +1,12 @@
 import { BaseComponent } from '../base-component.js';
 
 const buttonTemplate = window.Handlebars.compile(`
-  <button type="{{type}}">{{text}}</button>
+  <button class="button {{#if variant}}button--{{variant}}{{/if}}" type="{{type}}">{{text}}</button>
 `);
 
 export class Button extends BaseComponent {
-  constructor({ text, type = 'button' }) {
-    super(buttonTemplate, { text, type });
+  constructor({ text, type = 'button', variant = '' }) {
+    super(buttonTemplate, { text, type, variant });
   }
 }
 
