@@ -1,0 +1,21 @@
+.theme-toggle {
+  background: var(--bg-input);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  border-color: var(--euphoria-amber);
+  box-shadow: 0 0 15px var(--euphoria-amber-glow);
+  transform: scale(1.05);
+}

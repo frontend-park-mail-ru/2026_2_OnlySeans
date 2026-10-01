@@ -1,0 +1,10 @@
+.error-box {
+  display: none;
+  background: rgba(128, 22, 43, 0.18);
+  border: 1px solid var(--euphoria-wine);
+  color: #e8a0ae;
+  padding: 12px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  margin-bottom: 18px;
+}
