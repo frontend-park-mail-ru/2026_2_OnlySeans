@@ -1,0 +1,17 @@
+.switch-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.switch-link a {
+  color: var(--euphoria-amber);
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.switch-link a:hover {
+  text-shadow: 0 0 10px var(--euphoria-amber-glow);
+}
