@@ -1,0 +1,6 @@
+.not-found__text {
+  margin: 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 14px;
+}
