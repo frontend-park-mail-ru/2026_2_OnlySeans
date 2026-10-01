@@ -5,6 +5,8 @@ import { createButton } from '../../components/ui/button/button.js';
 import { createErrorBox } from '../../components/ui/error-box/error-box.js';
 import { createSwitchLink } from '../../components/ui/switch-link/switch-link.js';
 import { createField, setFieldError, getFieldValue } from '../../components/ui/field/field.js';
+import { eventBus, EVENTS } from '../../modules/event-bus.js';
+import { store } from '../../modules/store.js';
 
 export class LoginPage {
   constructor({ navigate }) {
@@ -60,8 +62,9 @@ export class LoginPage {
           return;
         }
 
-        console.log('Вход выполнен:', data.user);
-        alert('Вход выполнен!');
+        store.setState({ user: data.user });
+        eventBus.emit(EVENTS.AUTH_LOGIN, data.user);
+        
       } catch {
         showError(errorBox, 'Не удалось связаться с сервером. Он точно запущен?');
       } finally {
