@@ -18,19 +18,4 @@ const router = new Router({
   '/register': RegisterPage,
 }, app);
 
-import { eventBus, EVENTS } from './modules/event-bus.js';
-import { store } from './modules/store.js';
-
-eventBus.listen(EVENTS.AUTH_LOGIN, (user) => {
-  console.log('[шина] вход:', user);
-});
-
-eventBus.listen(EVENTS.AUTH_REGISTER, (user) => {
-  console.log('[шина] регистрация:', user);
-});
-
-store.watch('user', (user) => {
-  console.log('[store] user изменился:', user);
-});
-
 router.start();
