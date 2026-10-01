@@ -5,6 +5,7 @@ import { createSwitchLink } from '../../components/ui/switch-link/switch-link.js
 import { validateEmail, validatePassword, showError } from '../../modules/validation.js';
 import { apiRequest } from '../../api/auth.js';
 import { createField, setFieldError, getFieldValue } from '../../components/ui/field/field.js';
+import { eventBus, EVENTS } from '../../modules/event-bus.js';
 
 export class RegisterPage {
   constructor({ navigate }) {
@@ -45,8 +46,8 @@ export class RegisterPage {
         setFieldError(emailField, 'Введите корректный email');
         hasError = true;
       }
-      if (username.length < 3) {
-        setFieldError(usernameField, 'Минимум 3 символа');
+      if (username.length < 2) {
+        setFieldError(usernameField, 'Минимум 2 символа');
         hasError = true;
       }
       const passwordError = validatePassword(password);
@@ -68,9 +69,9 @@ export class RegisterPage {
           return;
         }
 
-        console.log('Зарегистрирован пользователь:', data.user);
-        alert('Регистрация прошла успешно! Теперь можно войти.');
+        eventBus.emit(EVENTS.AUTH_REGISTER, data.user);
         this.navigate('/login');
+
       } catch {
         showError(errorBox, 'Не удалось связаться с сервером. Он точно запущен?');
       } finally {
