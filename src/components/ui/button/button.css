@@ -26,3 +26,35 @@ button[type="submit"]:disabled {
   cursor: not-allowed;
   transform: none;
 }
+
+.button {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 100px;
+  background: linear-gradient(135deg, var(--euphoria-amber) 0%, #b8783d 100%);
+  color: var(--bg-dark);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 0 8px 25px var(--euphoria-amber-glow);
+  transition: var(--transition);
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.15);
+  box-shadow: 0 12px 30px rgba(230, 161, 92, 0.45);
+}
+
+.button--secondary {
+  background: linear-gradient(135deg, #5a5d66 0%, #3d4047 100%);
+  color: var(--text-main);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+.button--secondary:hover {
+  filter: brightness(1.2);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
