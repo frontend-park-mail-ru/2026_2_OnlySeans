@@ -1,0 +1,7 @@
+.auth-gate { padding: 36px 24px; border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); background: radial-gradient(ellipse at 50% 0%, var(--euphoria-amber-glow), transparent 70%), var(--bg-card); text-align: center; }
+.auth-gate__icon { color: var(--euphoria-amber); font-size: 30px; }
+.auth-gate h3 { font-size: 20px; margin: 16px 0 12px; }
+.auth-gate p { color: var(--text-muted); font-size: 13px; line-height: 1.7; }
+.auth-gate__actions { display: flex; flex-direction: column; align-items: center; gap: 16px; margin-top: 24px; }
+.auth-gate__actions a { color: var(--euphoria-amber); font-size: 12px; text-decoration: none; }
+.auth-gate__actions a:first-child { padding: 12px 24px; border: 1px solid var(--border-active); border-radius: 100px; }

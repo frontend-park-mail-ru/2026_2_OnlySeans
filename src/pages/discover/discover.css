@@ -1,0 +1,38 @@
+.discover-page { width: min(1240px, calc(100vw - 80px)); margin: 0 auto; padding-bottom: 32px; }
+.discover-page * { box-sizing: border-box; }
+.discover-page a:focus-visible, .discover-page button:focus-visible { outline: 2px solid var(--euphoria-amber); outline-offset: 4px; }
+.discover-page__controls { margin-top: 28px; }
+.discover-page__intro { position: relative; padding: 32px 0 0; }
+.discover-page__eyebrow { color: var(--euphoria-amber); font-size: 10px; font-weight: 800; letter-spacing: 3px; margin: 0 0 20px; }
+.discover-page h1 { font-size: clamp(30px, 4vw, 44px); line-height: 1.12; font-weight: 800; letter-spacing: -2.5px; margin: 0; }
+.discover-page h1 span { color: var(--euphoria-amber); }
+.discover-page__lead { color: var(--text-muted); font-size: 14px; line-height: 1.9; margin: 24px 0; }
+.discover-page__load-status { color: var(--text-muted); font-size: 14px; }
+.discover-page__footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 10px; line-height: 1.7; }
+@media (max-width: 700px) { .discover-page { width: calc(100vw - 40px); } .discover-page__intro { padding: 40px 0 32px; } .discover-page h1 { letter-spacing: -1.5px; } .discover-page__footer { flex-direction: column; } }
+@media (prefers-reduced-motion: reduce) { .discover-page *, .discover-page *::before { transition: none !important; } }
+
+.discover-page { width: min(1400px, calc(100vw - 64px)); }
+.discover-page__layout { display: grid; grid-template-columns: minmax(0, 1fr) 310px; grid-template-areas: 'main sidebar'; gap: 32px; margin-top: 32px; }
+.discover-page__main { grid-area: main; min-width: 0; }
+.discover-page__sidebar { grid-area: sidebar; min-width: 0; }
+.discover-page__sidebar .discover-page__controls { position: sticky; top: 24px; margin: 0; }
+.discover-page__sidebar .movie-filters { padding: 24px; }
+.discover-page__sidebar .movie-filters__actions { flex-direction: column; align-items: stretch; gap: 12px; }
+.discover-page__sidebar .movie-filters__actions button[type='submit'] { width: 100%; }
+.discover-page__intro { padding-top: 0; }
+.site-header__nav { flex-wrap: wrap; justify-content: center; gap: 12px 20px; }
+.site-header__nav a { font-size: 11px; }
+.movie-category__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); padding-top: 12px; }
+@media (max-width: 900px) {
+  .discover-page__layout { grid-template-columns: 1fr; grid-template-areas: 'sidebar' 'main'; gap: 32px; }
+  .discover-page__sidebar .discover-page__controls { position: static; }
+  .discover-page__sidebar .movie-filters__actions { flex-direction: row; }
+  .discover-page__sidebar .movie-filters__actions button[type='submit'] { width: auto; flex: 1; }
+}
+@media (max-width: 560px) {
+  .discover-page { width: calc(100vw - 32px); }
+  .movie-category__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .site-header__nav { justify-content: flex-start; }
+}
+@media (max-width: 360px) { .movie-category__grid { grid-template-columns: 1fr; } }

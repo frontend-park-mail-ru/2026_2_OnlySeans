@@ -1,0 +1,18 @@
+.movie-collection { margin-top: 40px; scroll-margin-top: 24px; }
+.movie-collection__heading { display: flex; justify-content: space-between; align-items: center; gap: 24px; margin-bottom: 24px; }
+.movie-collection__eyebrow { color: var(--euphoria-amber); font-size: 10px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; margin: 0 0 8px; }
+.movie-collection h2 { font-size: 26px; letter-spacing: -.6px; margin: 0; }
+.movie-collection__subtitle { margin: 8px 0 0; font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+.movie-collection__count { color: var(--text-muted); white-space: nowrap; font-size: 12px; }
+.movie-collection__carousel { display: grid; grid-auto-flow: column; grid-auto-columns: calc((100% - 64px) / 5); gap: 16px; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; scroll-padding-inline: 8px; scrollbar-width: thin; scrollbar-color: var(--border-active) transparent; padding: 14px 8px 24px; }
+.movie-collection__carousel:focus-visible { outline: 2px solid var(--euphoria-amber); outline-offset: 4px; }
+.movie-collection__carousel .movie-card { scroll-snap-align: start; }
+.movie-collection__navigation { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 12px; }
+.movie-collection__arrow { width: 42px; height: 42px; border: 1px solid var(--border-active); border-radius: 50%; background: var(--bg-input); color: var(--text-main); font-size: 22px; cursor: pointer; }
+.movie-collection__arrow:hover:enabled { border-color: var(--euphoria-amber); color: var(--euphoria-amber); }
+.movie-collection__arrow:disabled { opacity: .3; cursor: default; }
+.movie-collection__position { min-width: 76px; text-align: center; font-size: 12px; color: var(--text-muted); }
+.movie-collection__empty { border: 1px dashed var(--border-subtle); padding: 32px; border-radius: var(--radius-md); color: var(--text-muted); font-size: 14px; line-height: 1.8; }
+@media (max-width: 1200px) { .movie-collection__carousel { grid-auto-columns: calc((100% - 48px) / 4); } }
+@media (max-width: 1000px) { .movie-collection__carousel { grid-auto-columns: calc((100% - 32px) / 3); } }
+@media (max-width: 560px) { .movie-collection__heading { flex-direction: column; align-items: flex-start; gap: 8px; } .movie-collection h2 { font-size: 22px; } .movie-collection__carousel { grid-auto-columns: 62%; } }

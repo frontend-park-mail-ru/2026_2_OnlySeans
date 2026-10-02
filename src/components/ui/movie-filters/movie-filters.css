@@ -1,0 +1,60 @@
+.movie-filters { padding: 22px; background: var(--bg-card); backdrop-filter: blur(16px); border: 1px solid var(--border-subtle); border-radius: var(--radius-lg); }
+.movie-filters h2 { font-size: 17px; margin: 0; }
+.movie-filters__description { margin: 8px 0 24px; font-size: 12px; color: var(--text-muted); }
+.movie-filters__ranges, .movie-filters__lists { display: grid; gap: 22px; }
+.movie-filters__categories { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid var(--border-subtle); }
+.movie-filters__lists { margin-top: 24px; padding-top: 24px; border-top: 1px solid var(--border-subtle); }
+.movie-filters__hint, .movie-filters__status { font-size: 10px; line-height: 1.7; color: var(--text-muted); margin: 18px 0 0; }
+.movie-filters__status:empty { display: none; }
+.movie-filters__actions { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+.movie-filters__actions button[type='submit'] { width: 100%; margin: 0; min-width: 0; font-size: 10px; white-space: nowrap; }
+.movie-filters__reset { padding: 10px 16px; color: var(--text-muted); background: transparent; border: 1px solid var(--border-subtle); border-radius: 100px; cursor: pointer; font: inherit; font-size: 12px; }
+@media (max-width: 900px) { .movie-filters__ranges, .movie-filters__lists { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 560px) { .movie-filters__ranges, .movie-filters__lists { grid-template-columns: 1fr; } }
+
+/* Keep the sidebar controls visible together; menus do not change its height. */
+.discover-page .discover-page__sidebar .movie-filters { padding: 18px; backdrop-filter: none; }
+.movie-filters__description { margin: 6px 0 16px; font-size: 11px; }
+.movie-filters__categories { margin-bottom: 16px; padding-bottom: 16px; }
+.movie-filters__ranges { gap: 14px; }
+.movie-filters .range-field legend { margin-bottom: 8px; }
+.movie-filters .range-field output { padding: 4px 3px; }
+.movie-filters .range-field__slider { height: 24px; margin-top: 4px; }
+.movie-filters .range-field__track { top: 10px; }
+.movie-filters .range-field input { height: 24px; }
+.movie-filters__lists { margin-top: 16px; padding-top: 16px; gap: 14px; }
+.movie-filters .filter-list__label { margin-bottom: 8px; }
+.movie-filters .filter-list__type { padding: 9px 12px; }
+.movie-filters .filter-list summary { padding: 9px 12px; }
+.movie-filters__hint, .movie-filters__status { margin-top: 10px; line-height: 1.5; }
+.movie-filters__actions { gap: 8px; margin-top: 12px; }
+.movie-filters__actions button[type='submit'] { padding: 11px; }
+.movie-filters__reset { padding: 8px 16px; }
+@media (min-width: 901px) and (max-height: 900px) {
+  .discover-page .discover-page__sidebar .movie-filters { padding: 12px 16px; }
+  .movie-filters__description { display: none; }
+  .movie-filters__categories { margin-top: 12px; margin-bottom: 10px; padding-bottom: 10px; }
+  .movie-filters__ranges { gap: 8px; }
+  .movie-filters__lists { margin-top: 10px; padding-top: 10px; gap: 10px; }
+  .movie-filters__hint { margin-top: 8px; }
+  .movie-filters__actions { margin-top: 8px; gap: 6px; }
+}
+@media (min-width: 901px) and (max-height: 760px) {
+  .movie-filters__ranges, .movie-filters__lists { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  .movie-filters .range-field__values { gap: 4px; }
+  .movie-filters .range-field__values label { gap: 4px; font-size: 10px; }
+  .movie-filters .range-field output { min-width: 32px; font-size: 10px; }
+  .movie-filters .range-field legend { font-size: 10px; }
+  .movie-filters__hint { display: none; }
+  .movie-filters .filter-list summary { padding: 9px 8px; font-size: 10px; }
+  .movie-filters .filter-list__dropdown .filter-list__options { left: auto; min-width: 238px; }
+  .movie-filters .filter-list:first-child .filter-list__options { left: 0; right: auto; }
+}
+@media (max-width: 560px) {
+  .movie-filters__ranges, .movie-filters__lists { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .movie-filters .range-field__values, .movie-filters .range-field__values label { gap: 4px; }
+  .movie-filters .range-field output { min-width: 32px; }
+  .movie-filters .filter-list summary { padding: 9px 8px; font-size: 10px; }
+  .movie-filters .filter-list__dropdown .filter-list__options { left: auto; min-width: 238px; }
+  .movie-filters .filter-list:first-child .filter-list__options { left: 0; right: auto; }
+}

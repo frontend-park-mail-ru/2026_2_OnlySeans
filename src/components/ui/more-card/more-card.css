@@ -1,0 +1,5 @@
+.movie-card--more { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; min-height: 280px; padding: 24px 16px; border-style: dashed; color: var(--text-main); text-decoration: none; text-align: center; background: radial-gradient(ellipse at 50% 35%, var(--euphoria-amber-glow), transparent 70%), var(--bg-card); }
+.more-card__icon { display: flex; align-items: center; justify-content: center; width: 76px; height: 76px; border: 1px solid var(--border-active); border-radius: 50%; color: var(--euphoria-amber); font-size: 36px; transition: transform .25s ease, background .25s ease; }
+.more-card__title { font-size: 23px; font-weight: 800; }
+.more-card__description { color: var(--text-muted); font-size: 13px; line-height: 1.8; }
+.movie-card--more:hover .more-card__icon { transform: translateX(4px); background: var(--euphoria-amber-glow); }

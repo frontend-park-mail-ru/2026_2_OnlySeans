@@ -31,6 +31,7 @@ export class LoginPage {
     form.append(emailField, passwordField, submitBtn);
     card.appendChild(form);
     card.appendChild(createSwitchLink({ text: 'Нет аккаунта?', linkText: 'Зарегистрироваться', href: '/register' }));
+    card.appendChild(createSwitchLink({ text: 'Выбираете кино?', linkText: 'Посмотреть подборки', href: '/discover' }));
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
@@ -64,6 +65,7 @@ export class LoginPage {
 
         store.setState({ user: data.user });
         eventBus.emit(EVENTS.AUTH_LOGIN, data.user);
+        this.navigate('/discover');
         
       } catch {
         showError(errorBox, 'Не удалось связаться с сервером. Он точно запущен?');

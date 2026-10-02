@@ -31,6 +31,7 @@ export class RegisterPage {
     form.append(emailField, usernameField, passwordField, submitBtn);
     card.appendChild(form);
     card.appendChild(createSwitchLink({ text: 'Уже есть аккаунт?', linkText: 'Войти', href: '/login' }));
+    card.appendChild(createSwitchLink({ text: 'Выбираете кино?', linkText: 'Посмотреть подборки', href: '/discover' }));
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();

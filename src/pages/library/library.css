@@ -1,0 +1,11 @@
+.media-library h1 { overflow-wrap: anywhere; }
+.movie-category__grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.discover-page__sidebar .discover-page__controls { overflow: visible; padding-right: 0; }
+.discover-page__sidebar .movie-filters__actions { flex-direction: column; }
+.theme-transition *, .theme-transition *::before { transition: background-color .8s ease, color .8s ease, border-color .8s ease, box-shadow .8s ease, transform .25s ease !important; }
+@media (max-width: 1200px) { .movie-category__grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 1000px) { .movie-category__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 900px) { .discover-page__sidebar .discover-page__controls { max-height: none; overflow: visible; padding-right: 0; } }
+@media (max-width: 560px) { .movie-category__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 360px) { .movie-category__grid { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .theme-transition *, .theme-transition *::before, body { transition: none !important; } }
