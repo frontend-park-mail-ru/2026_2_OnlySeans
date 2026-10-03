@@ -22,7 +22,7 @@ export class DiscoverPage {
     this.currentPage = Number.isSafeInteger(requested) && requested > 0 ? requested : 1;
   }
   render() {
-    document.title = 'Лента — OnlySeans';
+    document.title = 'Лента — Frame';
     this.page = renderTemplate(template, {});
     this.page.prepend(createSiteHeader());
     getMovies().then((movies) => {
@@ -35,7 +35,7 @@ export class DiscoverPage {
       this.page.querySelector('.movie-feed__count').textContent = movies.length ? `${start + 1}–${start + visible.length} из ${movies.length}` : '';
       this.page.querySelector('.movie-feed__status').textContent = movies.length ? '' : 'Каталог пока пуст.';
       this.page.querySelectorAll('.pagination').forEach((nav) => this.renderPagination(nav, totalPages));
-      document.title = `Лента · Страница ${this.currentPage} — OnlySeans`;
+      document.title = `Лента · Страница ${this.currentPage} — Frame`;
       window.scrollTo({ top: 0, behavior: 'instant' });
     }).catch(() => {
       if (this.page.isConnected) this.page.querySelector('.movie-feed__status').textContent = 'Не удалось загрузить каталог. Обновите страницу.';

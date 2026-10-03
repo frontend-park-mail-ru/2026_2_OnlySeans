@@ -1,0 +1,5 @@
+.site-logo { display: inline-block; color: #fff; font-size: 25px; font-weight: 800; letter-spacing: -1px; line-height: 1.2; text-decoration: none; }
+.site-logo span { color: var(--euphoria-amber); }
+.site-logo:focus-visible { outline: 2px solid var(--euphoria-amber); outline-offset: 5px; border-radius: 4px; }
+.site-logo--auth { display: block; width: fit-content; margin: 0 auto 24px; font-size: 32px; }
+@media (max-width: 560px) { .site-logo { font-size: 22px; } .site-logo--auth { font-size: 30px; } }

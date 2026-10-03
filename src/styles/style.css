@@ -9,5 +9,6 @@
 @import url('../pages/not-found/not-found.css');
 
 @import url('../components/ui/site-header/site-header.css');
+@import url('../components/ui/site-logo/site-logo.css');
 @import url('../components/ui/movie-card/movie-card.css');
 @import url('../pages/discover/discover.css');

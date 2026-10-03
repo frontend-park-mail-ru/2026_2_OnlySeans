@@ -7,6 +7,7 @@ import { createSwitchLink } from '../../components/ui/switch-link/switch-link.js
 import { createField, setFieldError, getFieldValue } from '../../components/ui/field/field.js';
 import { eventBus, EVENTS } from '../../modules/event-bus.js';
 import { store } from '../../modules/store.js';
+import { createSiteLogo } from '../../components/ui/site-logo/site-logo.js';
 
 export class LoginPage {
   constructor({ navigate }) {
@@ -17,6 +18,7 @@ export class LoginPage {
     document.title = 'Вход';
 
     const card = createCard({ title: 'Вход' });
+    card.prepend(createSiteLogo({ className: 'site-logo--auth' }));
     const errorBox = createErrorBox('errorBox');
     card.appendChild(errorBox);
 
@@ -31,7 +33,6 @@ export class LoginPage {
     form.append(emailField, passwordField, submitBtn);
     card.appendChild(form);
     card.appendChild(createSwitchLink({ text: 'Нет аккаунта?', linkText: 'Зарегистрироваться', href: '/register' }));
-    card.appendChild(createSwitchLink({ text: 'Выбираете кино?', linkText: 'Посмотреть подборки', href: '/discover' }));
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();

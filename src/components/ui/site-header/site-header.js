@@ -1,10 +1,10 @@
 import { BaseComponent } from '../base-component.js';
-import { createThemeToggle } from '../theme-toggle/theme-toggle.js';
+import { createSiteLogo } from '../site-logo/site-logo.js';
 
 const template = window.Handlebars.compile(`
   <header class="site-header">
-    <a class="site-header__logo" href="/discover" data-link aria-label="OnlySeans — лента фильмов">ONLY<span>SEANS</span></a>
-    <div class="site-header__actions"><a class="site-header__login" href="/login" data-link>Войти</a></div>
+    <div class="site-header__brand"></div>
+    <a class="site-header__login" href="/login" data-link>Войти</a>
   </header>
 `);
 export class SiteHeader extends BaseComponent {
@@ -12,7 +12,7 @@ export class SiteHeader extends BaseComponent {
   create() {
     if (this.element) return this.element;
     const element = super.create();
-    element.querySelector('.site-header__actions').appendChild(createThemeToggle());
+    element.querySelector('.site-header__brand').appendChild(createSiteLogo());
     return element;
   }
 }
