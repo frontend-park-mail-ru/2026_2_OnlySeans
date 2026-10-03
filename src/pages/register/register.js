@@ -6,6 +6,7 @@ import { validateEmail, validatePassword, showError } from '../../modules/valida
 import { apiRequest } from '../../api/auth.js';
 import { createField, setFieldError, getFieldValue } from '../../components/ui/field/field.js';
 import { eventBus, EVENTS } from '../../modules/event-bus.js';
+import { createSiteLogo } from '../../components/ui/site-logo/site-logo.js';
 
 export class RegisterPage {
   constructor({ navigate }) {
@@ -16,6 +17,7 @@ export class RegisterPage {
     document.title = 'Регистрация';
 
     const card = createCard({ title: 'Регистрация' });
+    card.prepend(createSiteLogo({ className: 'site-logo--auth' }));
     const errorBox = createErrorBox('errorBox');
     card.appendChild(errorBox);
 

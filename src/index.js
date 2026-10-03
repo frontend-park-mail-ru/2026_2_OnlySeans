@@ -1,3 +1,4 @@
+import { DiscoverPage } from './pages/discover/discover.js';
 import { Router } from './modules/router.js';
 import { LoginPage } from './pages/login/login.js';
 import { RegisterPage } from './pages/register/register.js';
@@ -20,6 +21,7 @@ const router = new Router({
   '/register': RegisterPage,
   '/collections': CollectionsPage,
   '404': NotFoundPage,
+  '/discover': DiscoverPage,
 }, app);
 
 router.start();

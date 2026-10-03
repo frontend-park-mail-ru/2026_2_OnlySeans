@@ -34,6 +34,16 @@ export const applyTheme = (theme, iconEl) => {
   }
 };
 
+let transitionTimer;
+export const setTheme = (theme) => {
+  if (!isTheme(theme)) return;
+  CookieService.set(THEME_KEY, theme, THEME_COOKIE_OPTIONS);
+  clearTimeout(transitionTimer);
+  document.documentElement.classList.add('theme-transition');
+  applyTheme(theme);
+  transitionTimer = setTimeout(() => document.documentElement.classList.remove('theme-transition'), 900);
+};
+
 let currentTheme = getPreferredTheme();
 applyTheme(currentTheme, null);
 

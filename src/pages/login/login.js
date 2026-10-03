@@ -7,6 +7,7 @@ import { createSwitchLink } from '../../components/ui/switch-link/switch-link.js
 import { createField, setFieldError, getFieldValue } from '../../components/ui/field/field.js';
 import { eventBus, EVENTS } from '../../modules/event-bus.js';
 import { store } from '../../modules/store.js';
+import { createSiteLogo } from '../../components/ui/site-logo/site-logo.js';
 
 export class LoginPage {
   constructor({ navigate }) {
@@ -17,6 +18,7 @@ export class LoginPage {
     document.title = 'Вход';
 
     const card = createCard({ title: 'Вход' });
+    card.prepend(createSiteLogo({ className: 'site-logo--auth' }));
     const errorBox = createErrorBox('errorBox');
     card.appendChild(errorBox);
 
@@ -64,6 +66,7 @@ export class LoginPage {
 
         store.setState({ user: data.user });
         eventBus.emit(EVENTS.AUTH_LOGIN, data.user);
+        this.navigate('/discover');
         
       } catch {
         showError(errorBox, 'Не удалось связаться с сервером. Он точно запущен?');
