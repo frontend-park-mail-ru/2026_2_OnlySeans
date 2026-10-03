@@ -17,14 +17,15 @@ const template = window.Handlebars.compile(`
 const PAGE_SIZE = 20;
 
 export class DiscoverPage {
-  constructor() {
+  constructor({ navigate }) {
+    this.navigate = navigate;
     const requested = Number(new URLSearchParams(window.location.search).get('page'));
     this.currentPage = Number.isSafeInteger(requested) && requested > 0 ? requested : 1;
   }
   render() {
     document.title = 'Лента — Frame';
     this.page = renderTemplate(template, {});
-    this.page.prepend(createSiteHeader());
+    this.page.prepend(createSiteHeader({ navigate: this.navigate }));
     getMovies().then((movies) => {
       if (!this.page.isConnected) return;
       const totalPages = Math.max(1, Math.ceil(movies.length / PAGE_SIZE));

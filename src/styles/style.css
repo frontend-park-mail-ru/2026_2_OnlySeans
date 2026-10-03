@@ -3,6 +3,7 @@
 @import url('../components/ui/card/card.css');
 @import url('../components/ui/field/field.css');
 @import url('../components/ui/button/button.css');
+@import url('../components/ui/logout-button/logout-button.css');
 @import url('../components/ui/error-box/error-box.css');
 @import url('../components/ui/switch-link/switch-link.css');
 @import url('../components/ui/theme-toggle/theme-toggle.css');
