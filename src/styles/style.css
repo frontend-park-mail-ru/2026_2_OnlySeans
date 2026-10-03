@@ -7,14 +7,7 @@
 @import url('../components/ui/switch-link/switch-link.css');
 @import url('../components/ui/theme-toggle/theme-toggle.css');
 @import url('../pages/not-found/not-found.css');
+
 @import url('../components/ui/site-header/site-header.css');
 @import url('../components/ui/movie-card/movie-card.css');
-@import url('../components/ui/more-card/more-card.css');
-@import url('../components/ui/movie-collection/movie-collection.css');
-@import url('../components/ui/movie-filters/movie-filters.css');
 @import url('../pages/discover/discover.css');
-@import url('../pages/movie-category/movie-category.css');
-@import url('../components/ui/range-field/range-field.css');
-@import url('../components/ui/filter-list/filter-list.css');
-@import url('../components/ui/auth-gate/auth-gate.css');
-@import url('../pages/library/library.css');

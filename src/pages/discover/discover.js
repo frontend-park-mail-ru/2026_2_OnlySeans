@@ -1,50 +1,67 @@
 import { renderTemplate } from '../../components/ui/render-template.js';
 import { createSiteHeader } from '../../components/ui/site-header/site-header.js';
-import { MovieFilters } from '../../components/ui/movie-filters/movie-filters.js';
-import { MovieCollection } from '../../components/ui/movie-collection/movie-collection.js';
+import { createMovieCard } from '../../components/ui/movie-card/movie-card.js';
 import { getMovies } from '../../api/movies.js';
-import { getFiltersFromUrl, getCategoryUrl, MOVIE_CATEGORIES, selectCategoryMovies, shuffleMovies } from '../../services/movies.js';
-import { store } from '../../modules/store.js';
+
 const template = window.Handlebars.compile(`
-  <div class="discover-page"><div class="discover-page__layout">
-    <aside class="discover-page__sidebar" aria-label="Поиск и фильтры"><div class="discover-page__controls"></div></aside>
-    <main class="discover-page__main">
-      <section class="discover-page__intro" aria-labelledby="discover-title">
-        <h1 id="discover-title">Хороший вечер<br>начинается <span>с кино.</span></h1>
-      </section>
-      <p class="discover-page__load-status" role="status">Загружаем подборки…</p>
-      <div class="discover-page__collections"></div>
-    </main></div>
-    <footer class="discover-page__footer"><span>Демонстрационный каталог · Оценки условные</span></footer>
+  <div class="discover-page">
+    <main class="movie-feed" aria-labelledby="discover-title">
+      <div class="movie-feed__heading"><h1 id="discover-title">Лента фильмов и сериалов</h1><p class="movie-feed__count"></p></div>
+      <nav class="pagination" data-position="top" aria-label="Страницы ленты в начале" hidden></nav>
+      <div class="movie-feed__list"></div>
+      <p class="movie-feed__status" role="status">Загружаем каталог…</p>
+      <nav class="pagination" data-position="bottom" aria-label="Страницы ленты в конце" hidden></nav>
+    </main>
   </div>
 `);
+const PAGE_SIZE = 20;
+
 export class DiscoverPage {
-  constructor({ navigate }) { this.navigate = navigate; this.movies = []; this.filters = getFiltersFromUrl(); }
+  constructor() {
+    const requested = Number(new URLSearchParams(window.location.search).get('page'));
+    this.currentPage = Number.isSafeInteger(requested) && requested > 0 ? requested : 1;
+  }
   render() {
-    document.title = 'Что посмотреть — OnlySeans';
+    document.title = 'Лента — OnlySeans';
     this.page = renderTemplate(template, {});
-    this.page.prepend(createSiteHeader({ navigate: this.navigate }));
-    const parent = this.page.querySelector('.discover-page__collections');
-    this.collections = MOVIE_CATEGORIES.map((category) => new MovieCollection({ id: category.id, href: getCategoryUrl(category.id), eyebrow: category.eyebrow, title: category.title, subtitle: category.description }));
-    this.collections.forEach((collection) => collection.mount(parent));
+    this.page.prepend(createSiteHeader());
     getMovies().then((movies) => {
-      if (this.destroyed) return;
-      this.movies = movies;
-      this.randomMovies = shuffleMovies(movies.filter((movie) => movie.type === 'movie'));
-      this.filtersComponent = new MovieFilters({ years: movies.map((movie) => movie.year), values: this.filters });
-      this.filtersComponent.mount(this.page.querySelector('.discover-page__controls'));
-      this.page.querySelector('.discover-page__load-status').hidden = true;
-      this.updateCollections();
-      this.stopUserWatch = store.watch('user', () => this.updateCollections());
-    }).catch(() => { if (!this.destroyed) this.page.querySelector('.discover-page__load-status').textContent = 'Не удалось загрузить каталог. Обновите страницу.'; });
+      if (!this.page.isConnected) return;
+      const totalPages = Math.max(1, Math.ceil(movies.length / PAGE_SIZE));
+      this.currentPage = Math.min(this.currentPage, totalPages);
+      const start = (this.currentPage - 1) * PAGE_SIZE;
+      const visible = movies.slice(start, start + PAGE_SIZE);
+      this.page.querySelector('.movie-feed__list').replaceChildren(...visible.map(createMovieCard));
+      this.page.querySelector('.movie-feed__count').textContent = movies.length ? `${start + 1}–${start + visible.length} из ${movies.length}` : '';
+      this.page.querySelector('.movie-feed__status').textContent = movies.length ? '' : 'Каталог пока пуст.';
+      this.page.querySelectorAll('.pagination').forEach((nav) => this.renderPagination(nav, totalPages));
+      document.title = `Лента · Страница ${this.currentPage} — OnlySeans`;
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }).catch(() => {
+      if (this.page.isConnected) this.page.querySelector('.movie-feed__status').textContent = 'Не удалось загрузить каталог. Обновите страницу.';
+    });
     return this.page;
   }
-  updateCollections() {
-    MOVIE_CATEGORIES.forEach((category, index) => {
-      const recommended = category.id === 'recommended';
-      this.collections[index].update(selectCategoryMovies(recommended ? this.randomMovies : this.movies, category), 'Подборка пока пуста.',
-        { href: getCategoryUrl(category.id), locked: recommended && !store.get('user') });
-    });
+  renderPagination(nav, totalPages) {
+    nav.hidden = totalPages <= 1;
+    if (nav.hidden) return;
+    const createItem = (text, page, disabled = false) => {
+      const current = page === this.currentPage && /^\d+$/.test(text);
+      const item = document.createElement(disabled || current ? 'span' : 'a');
+      item.className = 'pagination__item';
+      item.textContent = text;
+      if (current) item.setAttribute('aria-current', 'page');
+      else if (disabled) item.setAttribute('aria-disabled', 'true');
+      else {
+        item.href = '/discover?page=' + page;
+        item.setAttribute('data-link', '');
+        item.setAttribute('aria-label', /^\d+$/.test(text) ? 'Страница ' + page : text);
+      }
+      return item;
+    };
+    const items = [createItem('← Назад', this.currentPage - 1, this.currentPage === 1)];
+    for (let page = 1; page <= totalPages; page++) items.push(createItem(String(page), page));
+    items.push(createItem('Вперёд →', this.currentPage + 1, this.currentPage === totalPages));
+    nav.replaceChildren(...items);
   }
-  destroy() { this.destroyed = true; this.stopUserWatch?.(); this.collections?.forEach((collection) => collection.remove()); }
 }

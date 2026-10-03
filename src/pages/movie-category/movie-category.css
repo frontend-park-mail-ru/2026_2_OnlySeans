@@ -1,7 +1,0 @@
-.movie-category__back { display: inline-block; margin-top: 28px; color: var(--euphoria-amber); text-decoration: none; font-size: 13px; }
-.movie-category__heading { margin-top: 32px; }
-.movie-category__status { font-size: 14px; color: var(--text-muted); margin: 28px 0 20px; line-height: 1.7; }
-.movie-category__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
-@media (max-width: 1000px) { .movie-category__grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (max-width: 560px) { .movie-category__grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .movie-category .movie-card__body { padding: 12px; } .movie-category .movie-card__meta { flex-wrap: wrap; } }
-@media (max-width: 360px) { .movie-category__grid { grid-template-columns: 1fr; } }
