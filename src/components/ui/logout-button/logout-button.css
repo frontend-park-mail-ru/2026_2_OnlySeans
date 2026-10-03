@@ -1,0 +1,26 @@
+.site-header__logout {
+  min-height: 44px;
+  padding: 10px 24px;
+  color: var(--text-main);
+  background: var(--bg-input);
+  border: 1px solid var(--border-active);
+  font: inherit;
+  font-size: 13px;
+}
+
+.site-header__logout:hover {
+  color: var(--euphoria-amber);
+  background: var(--euphoria-amber-glow);
+}
+
+.site-header__logout:disabled {
+  opacity: 0.6;
+  cursor: wait;
+  transform: none;
+}
+
+@media (max-width: 560px) {
+  .site-header__logout {
+    padding: 10px 20px;
+  }
+}

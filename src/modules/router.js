@@ -1,3 +1,5 @@
+import { CookieService } from '../utils/cookies.js';
+
 export class Router {
     /**
      * @param {Object} routes - Карта маршрутов вида { '/': MainView, '/login': LoginView }
@@ -7,6 +9,8 @@ export class Router {
     constructor(routes, rootElement){
         this.routes = routes;
         this.rootElement = rootElement;
+        this.publicRoutes = new Set(['/', '/index.html', '/login', '/register', '/discover',]);
+        this.authenticatedRoutes = new Set(['/collections']);
 
         window.addEventListener('popstate', () => this.route());
 
@@ -24,14 +28,40 @@ export class Router {
         });
     }
 
+    hasSession() {
+        return Boolean(
+            CookieService.get('session_id') ||
+            CookieService.get('sessionId') ||
+            CookieService.get('session')
+        );
+    }
+
+    getRedirectPath(path) {
+        const normalizedPath = new URL(path || '/', window.location.origin).pathname.replace(/\/+$/, '') || '/';
+        const isAuthenticated = this.hasSession();
+
+        if (isAuthenticated && this.publicRoutes.has(normalizedPath)) {
+            return '/discover';
+        }
+
+        if (!isAuthenticated && this.authenticatedRoutes.has(normalizedPath)) {
+            return '/login';
+        }
+
+        return null;
+    }
+
     /**
      * Метод для программного перехода на другой URL
      * @param {string} path - Путь для перехода (например, '/login')
      */
     navigate(path){
-        if (window.location.pathname === path) return;
+        const redirectPath = this.getRedirectPath(path);
+        const targetPath = redirectPath || path;
 
-        window.history.pushState({}, '', path);
+        if (window.location.pathname === targetPath) return;
+
+        window.history.pushState({}, '', targetPath);
         this.route();
     }
     /**
@@ -39,8 +69,16 @@ export class Router {
      */
     route() {
         const path = window.location.pathname;
+        const redirectPath = this.getRedirectPath(path);
+        const activePath = redirectPath || path;
 
-        const ViewClass = this.routes[path] || this.routes['404'];
+        if (redirectPath) {
+            if (window.location.pathname !== redirectPath) {
+                window.history.replaceState({}, '', redirectPath);
+            }
+        }
+
+        const ViewClass = this.routes[activePath] || this.routes['404'];
 
         if (!ViewClass) {
             this.rootElement.textContent = '404 - Page not found';
