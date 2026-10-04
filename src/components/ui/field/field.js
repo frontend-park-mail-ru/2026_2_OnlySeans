@@ -16,7 +16,8 @@ export class Field extends BaseComponent {
 export const createField = (props) => new Field(props).render();
 
 export const getFieldValue = (fieldEl) => {
-  return fieldEl.querySelector('input').value.trim();
+  const input = fieldEl.querySelector('input');
+  return input.type === 'password' ? input.value : input.value.trim();
 };
 
 export const setFieldError = (fieldEl, message) => {

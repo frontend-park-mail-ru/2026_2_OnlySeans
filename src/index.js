@@ -19,7 +19,6 @@ const router = new Router({
   '/discover': DiscoverPage,
   '/login': LoginPage,
   '/register': RegisterPage,
-  '/collections': CollectionsPage,
   '404': NotFoundPage,
 }, app);
 

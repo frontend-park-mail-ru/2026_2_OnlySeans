@@ -32,6 +32,8 @@
   object-fit: contain;
 
   z-index: 3;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .not-found__noise {
@@ -44,6 +46,9 @@
   height: 74%;
 
   object-fit: cover;
+
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .not-found__signal {
@@ -113,13 +118,13 @@
 }
 
 .not-found__buttons {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  justify-content: center;
   gap: 10px;
 }
 
 .not-found__buttons .button {
-  width: 100%;
+  width: auto;
   margin-top: 0;
 }
 
