@@ -48,7 +48,7 @@ export class NotFoundPage {
     const text = document.createElement('p');
     text.className = 'not-found__text';
     text.textContent =
-      'Возможно, её удалили или в ссылке опечатка. Загляните в подборки — там вы точно найдёте что-то интересное';
+      'Возможно, её удалили или в ссылке опечатка.';
 
     // Кнопки
     const buttons = document.createElement('div');
@@ -58,20 +58,20 @@ export class NotFoundPage {
       text: 'На главную',
     });
 
-    const collectionsButton = createButton({
-        text: 'Смотреть подборки',
-        variant: 'secondary',
-    });
+    //const collectionsButton = createButton({
+    //    text: 'Смотреть подборки',
+    //     variant: 'secondary',
+    // });
 
     homeButton.addEventListener('click', () => {
       this.navigate('/');
     });
 
-    collectionsButton.addEventListener('click', () => {
-      this.navigate('/collections');
-    });
+    // collectionsButton.addEventListener('click', () => {
+    //   this.navigate('/collections');
+    // });
 
-    buttons.append(homeButton, collectionsButton);
+    buttons.append(homeButton); //collectionsButton);
 
     page.append(tv, title, text, buttons);
 
