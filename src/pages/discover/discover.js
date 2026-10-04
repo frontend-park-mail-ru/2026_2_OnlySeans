@@ -14,7 +14,7 @@ const template = window.Handlebars.compile(`
     </main>
   </div>
 `);
-const PAGE_SIZE = 20;
+const PAGE_SIZE = 10;
 
 export class DiscoverPage {
   constructor({ navigate }) {

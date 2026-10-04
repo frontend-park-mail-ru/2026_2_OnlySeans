@@ -1,4 +1,5 @@
 import { apiRequest } from '../api/auth.js';
+import { store } from './store.js';
 
 export class Router {
     /**
@@ -32,9 +33,10 @@ export class Router {
     }
 
     async isAuthorized() {
-        const { ok, status } = await apiRequest('/api/authorised');
+        const { ok, status, data } = await apiRequest('/api/authorised');
 
         if (status === 401 || status === 403) {
+            store.setState({ user: null });
             return false;
         }
 
@@ -42,6 +44,11 @@ export class Router {
             throw new Error(`Authorization check failed with status ${status}`);
         }
 
+        if (!data?.user) {
+            throw new Error('Authorization check response is missing the user');
+        }
+
+        store.setState({ user: data.user });
         return true;
     }
 

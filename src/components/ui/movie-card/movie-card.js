@@ -4,7 +4,7 @@ import { getGenreLabel } from '../../../services/movies.js';
 const template = window.Handlebars.compile(`
   <article class="movie-card" data-movie-id="{{id}}">
     <div class="movie-card__cover">
-      <img class="movie-card__poster" src="{{poster}}" alt="Постер: {{title}}" loading="lazy" decoding="async" width="360" height="540">
+      <img class="movie-card__poster" src="{{poster}}" alt="Постер: {{title}}" loading="lazy" decoding="async" width="360" height="900">
       <span class="movie-card__fallback" hidden>Постер недоступен</span>
     </div>
     <div class="movie-card__body">
@@ -12,7 +12,7 @@ const template = window.Handlebars.compile(`
       <div class="movie-card__meta"><span>{{year}} · {{typeLabel}}</span><span class="movie-card__rating">★ {{rating}}</span></div>
       <h3>{{title}}</h3>
       <p class="movie-card__english-title" lang="en">{{englishTitle}}</p>
-      <p class="movie-card__runtime">{{#if isSeries}}{{seasonsLabel}} · {{episodesLabel}}<span class="movie-card__series-runtime">≈ {{episodeMinutes}} мин/серия · Всего ≈ {{totalDuration}}</span>{{else}}{{durationLabel}}{{/if}}</p>
+      <p class="movie-card__runtime">{{#if isSeries}}{{#if hasEpisodeInfo}}{{seasonsLabel}} · {{episodesLabel}}{{/if}}{{#if episodeDurationLabel}}<span class="movie-card__series-runtime">{{episodeDurationLabel}}/серия</span>{{/if}}{{else}}{{durationLabel}}{{/if}}</p>
       <p class="movie-card__genres">{{genreLabels}}</p>
       <dl class="movie-card__credits"><div><dt>Режиссёр</dt><dd>{{directorLabel}}</dd></div><div><dt>Продюсер</dt><dd>{{producerLabel}}</dd></div></dl>
       </div>
@@ -31,12 +31,14 @@ const plural = (count, forms) => {
 };
 export class MovieCard extends BaseComponent {
   constructor(movie) {
+    const hasEpisodeInfo = Number.isFinite(movie.seasons) && Number.isFinite(movie.episodes);
     super(template, { ...movie, isSeries: movie.type === 'series',
+      hasEpisodeInfo,
       seasonsLabel: plural(movie.seasons || 0, ['сезон', 'сезона', 'сезонов']),
       episodesLabel: plural(movie.episodes || 0, ['серия', 'серии', 'серий']),
       durationLabel: formatDuration(movie.durationMinutes || 0),
-      totalDuration: formatDuration((movie.episodeMinutes || 0) * (movie.episodes || 0)),
-      directorLabel: (movie.directors || []).join(', ') || 'Нет данных', producerLabel: (movie.producers || []).join(', ') || 'Не указан', rating: movie.rating.toFixed(1),
+      episodeDurationLabel: movie.episodeMinutes ? `≈ ${formatDuration(movie.episodeMinutes)}` : '',
+      directorLabel: (movie.directors || []).join(', ') || 'Нет данных', producerLabel: (movie.producers || []).join(', ') || 'Не указан', rating: Number.isFinite(movie.rating) ? movie.rating.toFixed(1) : '—',
       typeLabel: movie.type === 'series' ? 'Сериал' : 'Фильм', genreLabels: movie.genres.map(getGenreLabel).join(' · ') });
   }
   create() {
