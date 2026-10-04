@@ -13,3 +13,16 @@
 @import url('../components/ui/site-logo/site-logo.css');
 @import url('../components/ui/movie-card/movie-card.css');
 @import url('../pages/discover/discover.css');
+
+@import url('../components/ui/page-shell/page-shell.css');
+@import url('../components/ui/side-menu/side-menu.css');
+@import url('../components/ui/film-cover/film-cover.css');
+@import url('../components/ui/film-tile/film-tile.css');
+@import url('../components/ui/film-row/film-row.css');
+@import url('../components/ui/list-toggle/list-toggle.css');
+@import url('../components/ui/filters/filters.css');
+@import url('../pages/home/home.css');
+@import url('../pages/collections/collections.css');
+@import url('../pages/collection/collection.css');
+@import url('../pages/film/film.css');
+@import url('../pages/profile/profile.css');

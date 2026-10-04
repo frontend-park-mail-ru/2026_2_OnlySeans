@@ -1,0 +1,60 @@
+.collection-row {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.collection-row:hover,
+.collection-row:focus-visible {
+  background: var(--bg-input);
+  outline: none;
+}
+
+.collection-row__cover {
+  display: block;
+  height: 56px;
+}
+
+.collection-row__cover .film-cover__letter {
+  font-size: 26px;
+}
+
+.collection-row__info {
+  min-width: 0;
+}
+
+.collection-row__title {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.collection-row__text {
+  display: block;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.collection-row__count {
+  font-size: 14px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+@media (max-width: 560px) {
+  .collection-row {
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .collection-row__count {
+    grid-column: 2;
+  }
+}
