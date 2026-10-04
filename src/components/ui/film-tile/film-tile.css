@@ -13,6 +13,7 @@
 
 .film-tile__cover {
   aspect-ratio: 2 / 3;
+  border-radius: var(--radius-md);
   transition: var(--transition);
 }
 
