@@ -1,0 +1,10 @@
+.list-toggle {
+  white-space: nowrap;
+}
+
+.list-toggle--active {
+  color: var(--euphoria-amber);
+  background: var(--bg-input);
+  border: 1px solid var(--border-active);
+  box-shadow: none;
+}

@@ -1,0 +1,49 @@
+.film-cover {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: linear-gradient(180deg, var(--euphoria-wine) 0%, var(--bg-dark) 100%);
+}
+
+.film-cover--tone-1 {
+  background: linear-gradient(180deg, #14375f 0%, var(--bg-dark) 100%);
+}
+
+.film-cover--tone-2 {
+  background: linear-gradient(180deg, #b8783d 0%, var(--bg-dark) 100%);
+}
+
+.film-cover--tone-3 {
+  background: linear-gradient(180deg, #1e2a4a 0%, var(--bg-dark) 100%);
+}
+
+.film-cover--tone-4 {
+  background: linear-gradient(180deg, var(--euphoria-magenta) 0%, var(--bg-dark) 100%);
+}
+
+.film-cover--tone-5 {
+  background: linear-gradient(180deg, #2a3f3a 0%, var(--bg-dark) 100%);
+}
+
+.film-cover__letter {
+  font-family: var(--font-tv);
+  font-size: 72px;
+  line-height: 1;
+  text-transform: uppercase;
+  color: var(--tv-text);
+  opacity: 0.2;
+}
+
+.film-cover__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

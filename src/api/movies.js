@@ -11,6 +11,8 @@ function toMovie(film) {
     rating: null,
     type: film.film_type,
     durationMinutes: film.duration_min,
+    ageLimit: film.age_limit,
+    trailer: film.trailer_url || '',
     episodeMinutes: film.film_type === 'series' ? film.duration_min : null,
     genres: (film.genres || []).map((genre) => genre.name || genre.slug),
     description: film.description || '',
@@ -47,4 +49,38 @@ export async function getMovies() {
   } while (offset < total);
 
   return movies;
+}
+
+function toCollection(collection) {
+  return {
+    id: collection.id,
+    title: collection.title,
+    description: collection.description || '',
+    movies: (collection.films || []).map(toMovie),
+  };
+}
+
+async function load(endpoint, params) {
+  const { ok, status, data } = await http.get(endpoint, { params });
+
+  if (!ok) {
+    throw new Error(data?.error || `Request failed: HTTP ${status}`);
+  }
+
+  return data;
+}
+
+export async function getMovie(id) {
+  const data = await load(`/api/films/${id}`);
+  return toMovie(data.film);
+}
+
+export async function getCollections() {
+  const data = await load('/api/collections', { limit: PAGE_SIZE });
+  return data.collections.map(toCollection);
+}
+
+export async function getCollection(id) {
+  const data = await load(`/api/collections/${id}`, { limit: PAGE_SIZE });
+  return toCollection(data.collection);
 }

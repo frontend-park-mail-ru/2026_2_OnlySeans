@@ -11,7 +11,7 @@ export class Router {
         this.routes = routes;
         this.rootElement = rootElement;
         this.authRoutes = new Set(['/login', '/register']);
-        this.authenticatedRoutes = new Set(['/collections']);
+        this.authenticatedRoutes = new Set(['/favorites', '/watchlist', '/profile']);
         this.navigationId = 0;
 
         window.addEventListener('popstate', () => {
