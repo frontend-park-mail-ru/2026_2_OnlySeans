@@ -1,0 +1,54 @@
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.modal__dialog {
+  position: relative;
+  width: min(480px, 100%);
+  margin: auto;
+}
+
+.modal__dialog .auth-card {
+  min-width: 0;
+  background: var(--bg-glass);
+}
+
+.modal__close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 50%;
+  background: var(--bg-input);
+  color: var(--text-main);
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.modal__close:hover,
+.modal__close:focus-visible {
+  border-color: var(--euphoria-amber);
+  box-shadow: 0 0 15px var(--euphoria-amber-glow);
+  outline: none;
+}
+
+@media (max-width: 560px) {
+  .modal__dialog .auth-card {
+    padding: 48px 24px 32px;
+  }
+}

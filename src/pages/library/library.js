@@ -68,6 +68,6 @@ export class WatchlistPage extends LibraryPage {
   }
 
   createList(movies, content) {
-    return createFilmRows(movies, { navigate: this.navigate, onChange: () => this.show(content) });
+    return createFilmRows(movies, { onChange: () => this.show(content) });
   }
 }

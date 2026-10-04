@@ -1,7 +1,6 @@
 import { DiscoverPage } from './pages/discover/discover.js';
 import { Router } from './modules/router.js';
-import { LoginPage } from './pages/login/login.js';
-import { RegisterPage } from './pages/register/register.js';
+import { LoginModalPage, RegisterModalPage } from './pages/auth/auth.js';
 import { CollectionsPage } from './pages/collections/collections.js';
 import { applyTheme, getPreferredTheme } from './services/theme.js';
 import { NotFoundPage } from './pages/not-found/not-found.js';
@@ -23,8 +22,8 @@ applyTheme(getPreferredTheme());
 const router = new Router({
   '/': HomePage,
   '/discover': DiscoverPage,
-  '/login': LoginPage,
-  '/register': RegisterPage,
+  '/login': LoginModalPage,
+  '/register': RegisterModalPage,
   '/films': FilmsPage,
   '/series': SeriesPage,
   '/film': FilmPage,

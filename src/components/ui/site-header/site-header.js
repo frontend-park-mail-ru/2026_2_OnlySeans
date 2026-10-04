@@ -2,6 +2,7 @@ import { BaseComponent } from '../base-component.js';
 import { createSiteLogo } from '../site-logo/site-logo.js';
 import { createLogoutButton } from '../logout-button/logout-button.js';
 import { createThemeToggle } from '../theme-toggle/theme-toggle.js';
+import { openAuthModal } from '../auth-modal/auth-modal.js';
 import { store } from '../../../modules/store.js';
 import { logout } from '../../../services/auth.js';
 
@@ -52,6 +53,13 @@ export class SiteHeader extends BaseComponent {
       loginLink.href = '/login';
       loginLink.dataset.link = '';
       loginLink.textContent = 'Войти';
+      loginLink.addEventListener('click', (event) => {
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+
+        event.preventDefault();
+        event.stopPropagation();
+        openAuthModal();
+      });
       actions.replaceChildren(loginLink, status);
       return;
     }

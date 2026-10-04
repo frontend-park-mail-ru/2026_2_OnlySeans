@@ -21,6 +21,7 @@
 @import url('../components/ui/film-row/film-row.css');
 @import url('../components/ui/list-toggle/list-toggle.css');
 @import url('../components/ui/filters/filters.css');
+@import url('../components/ui/modal/modal.css');
 @import url('../pages/home/home.css');
 @import url('../pages/collections/collections.css');
 @import url('../pages/collection/collection.css');

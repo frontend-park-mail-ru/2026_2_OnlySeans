@@ -76,7 +76,7 @@ export class FilmPage extends BaseComponent {
     });
     watchCovers(details);
 
-    const shared = { movieId: movie.id, navigate: this.navigate };
+    const shared = { movieId: movie.id };
     details.querySelector('.film__actions').append(
       createListToggle({ ...shared, list: LISTS.WATCHLIST, addText: 'Буду смотреть', removeText: 'В списке' }),
       createListToggle({ ...shared, list: LISTS.FAVORITES, addText: 'В избранное', removeText: 'В избранном' }),

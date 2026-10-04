@@ -17,7 +17,7 @@ const template = window.Handlebars.compile(`
 `);
 
 export class FilmRow extends BaseComponent {
-  constructor(movie, { number, navigate, onChange }) {
+  constructor(movie, { number, onChange }) {
     super(template, {
       id: movie.id,
       number,
@@ -27,7 +27,6 @@ export class FilmRow extends BaseComponent {
       cover: coverProps(movie),
     });
     this.movie = movie;
-    this.navigate = navigate;
     this.onChange = onChange;
   }
 
@@ -37,7 +36,7 @@ export class FilmRow extends BaseComponent {
     const element = super.create();
     watchCovers(element);
 
-    const shared = { movieId: this.movie.id, navigate: this.navigate, onChange: this.onChange };
+    const shared = { movieId: this.movie.id, onChange: this.onChange };
     element.querySelector('.film-row__actions').append(
       createListToggle({ ...shared, list: LISTS.WATCHLIST, addText: 'Буду смотреть', removeText: 'Убрать' }),
       createListToggle({ ...shared, list: LISTS.FAVORITES, addText: 'В избранное', removeText: 'В избранном' }),
@@ -47,7 +46,7 @@ export class FilmRow extends BaseComponent {
   }
 }
 
-export const createFilmRows = (movies, options) => {
+export const createFilmRows = (movies, options = {}) => {
   const list = document.createElement('div');
   list.className = 'film-rows';
   list.append(...movies.map((movie, index) => new FilmRow(movie, { ...options, number: index + 1 }).render()));

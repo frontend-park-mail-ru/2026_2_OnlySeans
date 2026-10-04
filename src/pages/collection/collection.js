@@ -78,7 +78,7 @@ export class CollectionPage extends BaseComponent {
     content.querySelector('.collection__count').textContent = countLabel(movies);
     content.querySelector('.page-status').textContent = movies.length ? '' : 'Ничего не найдено.';
     content.querySelector('.collection__list').replaceChildren(
-      createFilmRows(movies, { navigate: this.navigate }),
+      createFilmRows(movies),
     );
   }
 }

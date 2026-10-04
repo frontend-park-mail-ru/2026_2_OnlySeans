@@ -1,8 +1,9 @@
 import { createButton } from '../button/button.js';
 import { store } from '../../../modules/store.js';
 import { isInList, toggleInList } from '../../../services/library.js';
+import { openAuthModal } from '../auth-modal/auth-modal.js';
 
-export const createListToggle = ({ list, movieId, navigate, addText, removeText, onChange }) => {
+export const createListToggle = ({ list, movieId, addText, removeText, onChange }) => {
   const button = createButton({ text: addText, variant: 'secondary' });
   button.classList.add('list-toggle');
 
@@ -15,7 +16,7 @@ export const createListToggle = ({ list, movieId, navigate, addText, removeText,
 
   button.addEventListener('click', () => {
     if (!store.get('user')) {
-      navigate('/login');
+      openAuthModal();
       return;
     }
 
