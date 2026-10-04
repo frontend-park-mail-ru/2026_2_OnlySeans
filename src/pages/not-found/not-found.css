@@ -11,7 +11,6 @@
 
   background: transparent;
 }
-/* Телевизор */
 
 .not-found__tv {
   position: relative;
@@ -75,8 +74,8 @@
   font-weight: 400;
   letter-spacing: 8px;
 
-  color: #f2f2f2;
-  text-shadow: 0 0 18px rgba(255, 255, 255, 0.45);
+  color: var(--tv-text);
+  text-shadow: 0 0 18px var(--tv-glow);
 }
 
 .not-found__signal-text {
@@ -88,13 +87,11 @@
   letter-spacing: 6px;
   text-transform: uppercase;
 
-  color: #f2f2f2;
+  color: var(--tv-text);
   text-shadow:
-    0 0 10px rgba(255, 255, 255, 0.3),
+    0 0 10px var(--tv-glow-soft),
     0.6px 0 currentColor;
 }
-
-/* Текст */
 
 .not-found__title {
   margin: 0 0 8px;
@@ -119,8 +116,6 @@
 
   text-align: center;
 }
-
-/* Контейнер кнопок */
 
 .not-found__buttons {
   display: flex;
