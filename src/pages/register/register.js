@@ -2,7 +2,7 @@ import { createButton } from '../../components/ui/button/button.js';
 import { createCard } from '../../components/ui/card/card.js';
 import { createErrorBox } from '../../components/ui/error-box/error-box.js';
 import { createSwitchLink } from '../../components/ui/switch-link/switch-link.js';
-import { validateEmail, validatePassword, showError } from '../../modules/validation.js';
+import { validateEmail, validateUsername, validatePassword, showError } from '../../modules/validation.js';
 import { apiRequest } from '../../api/auth.js';
 import { createField, setFieldError, getFieldValue } from '../../components/ui/field/field.js';
 import { eventBus, EVENTS } from '../../modules/event-bus.js';
@@ -48,8 +48,9 @@ export class RegisterPage {
         setFieldError(emailField, 'Введите корректный email');
         hasError = true;
       }
-      if (username.length < 2) {
-        setFieldError(usernameField, 'Минимум 2 символа');
+      const usernameError = validateUsername(username);
+      if (usernameError) {
+        setFieldError(usernameField, usernameError);
         hasError = true;
       }
       const passwordError = validatePassword(password);
@@ -61,13 +62,16 @@ export class RegisterPage {
 
       submitBtn.disabled = true;
       try {
-        const { ok, data } = await apiRequest('/api/register', {
+        const { ok, status, data } = await apiRequest('/api/register', {
           method: 'POST',
           body: { email, username, password },
         });
 
         if (!ok) {
-          showError(errorBox, data.error || 'Не удалось зарегистрироваться');
+          const message = status === 409
+            ? 'Пользователь с таким email уже существует'
+            : data.error || 'Не удалось зарегистрироваться';
+          showError(errorBox, message);
           return;
         }
 
