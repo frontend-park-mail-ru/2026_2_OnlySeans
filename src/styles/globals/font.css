@@ -1,0 +1,6 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=VT323&display=swap');
+
+:root {
+  --font-main: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-tv: 'VT323', 'Courier New', monospace;
+}

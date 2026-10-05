@@ -1,0 +1,21 @@
+.discover-page { width: min(1120px, calc(100vw - clamp(64px, 12vw, 192px))); margin: 0 auto; padding-bottom: 40px; }
+.discover-page * { box-sizing: border-box; }
+.discover-page a:focus-visible { outline: 2px solid var(--euphoria-amber); outline-offset: 4px; }
+.movie-feed { padding-top: 36px; }
+.movie-feed h1 { margin: 0; font-size: clamp(24px, 3vw, 34px); font-weight: 800; line-height: 1.25; letter-spacing: -1px; }
+.movie-feed__heading { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px 24px; margin-bottom: 24px; }
+.movie-feed__count { margin: 0; color: var(--text-muted); font-size: 12px; white-space: nowrap; }
+.movie-feed__list { display: grid; gap: 20px; }
+.movie-feed__status { margin: 24px 0; font-size: 12px; color: var(--text-muted); line-height: 1.8; }
+.movie-feed__status:empty { display: none; }
+.pagination { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; margin: 24px 0; }
+.pagination[hidden] { display: none; }
+.pagination__item { display: inline-flex; align-items: center; justify-content: center; min-width: 40px; min-height: 40px; padding: 8px 12px; border: 1px solid var(--border-subtle); border-radius: 10px; background: var(--bg-input); color: var(--text-main); text-decoration: none; font-size: 12px; }
+a.pagination__item:hover { border-color: var(--euphoria-amber); color: var(--euphoria-amber); }
+.pagination__item[aria-current='page'] { background: var(--euphoria-amber-glow); border-color: var(--border-active); color: var(--euphoria-amber); font-weight: 800; }
+.pagination__item[aria-disabled='true'] { opacity: .4; }
+@media (max-width: 560px) { .pagination { gap: 6px; } .pagination__item { min-width: 34px; min-height: 40px; padding: 8px; font-size: 11px; } }
+@media (max-width: 900px) { .discover-page { width: calc(100vw - 64px); } }
+@media (max-width: 560px) { .discover-page { width: calc(100vw - 40px); } .movie-feed { padding-top: 28px; } }
+.theme-transition .discover-page, .theme-transition .discover-page * { transition: background-color .8s ease, color .8s ease, border-color .8s ease, box-shadow .8s ease, transform .25s ease; }
+@media (prefers-reduced-motion: reduce) { .discover-page *, .discover-page *::before { transition: none !important; } }
