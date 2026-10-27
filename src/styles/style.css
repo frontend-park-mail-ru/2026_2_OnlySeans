@@ -14,6 +14,7 @@
 @import url('../pages/login/login.css');
 @import url('../components/ui/sidebar/sidebar.css');
 @import url('./catalog-transition.css');
+@import url('../components/ui/catalog-view/catalog-view.css');
 @import url('./surface-depth.css');
 @import url('../components/ui/site-header/header-layout.css');
 @import url('./personal-library.css');
