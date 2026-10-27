@@ -12,7 +12,10 @@
 @import url('../components/ui/site-logo/site-logo.css');
 @import url('../pages/discover/discover.css');
 @import url('../pages/login/login.css');
+@import url('../pages/discover/catalog.css');
 @import url('../pages/discover/spotlight.css');
+@import url('../pages/discover/home-club.css');
+@import url('../pages/discover/home-motion.css');
 @import url('../components/ui/sidebar/sidebar.css');
 @import url('./catalog-transition.css');
 @import url('../components/ui/catalog-view/catalog-view.css');

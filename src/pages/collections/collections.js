@@ -1,30 +1,46 @@
-import { createCard } from '../../components/ui/card/card.js';
-import { createSwitchLink } from '../../components/ui/switch-link/switch-link.js';
+import { getCollections, getCollection } from '../../api/collections.js';
+import { createCatalogPage, sectionHeading, createStatus, showLoadError, createCollectionCard, createPosterStack, createMovieTile, filmCount } from '../discover/catalog-ui.js';
+import { createCatalogViewToggle } from '../../components/ui/catalog-view/catalog-view.js';
+import { getMovies } from '../../api/movies.js';
+import { readSharedCollection } from '../../services/collection-sharing.js';
 
 export class CollectionsPage {
-  constructor({ navigate }) {
-    this.navigate = navigate;
-  }
-
+  constructor({ navigate }) { this.navigate = navigate; }
   render() {
-    document.title = 'Коллекции';
-
-    const card = createCard({
-      title: 'Мои коллекции',
-    });
-
-    const text = document.createElement('p');
-    text.textContent = 'Здесь будут отображаться ваши коллекции.';
-    card.appendChild(text);
-
-    card.appendChild(
-      createSwitchLink({
-        text: 'Вернуться на',
-        linkText: 'главную',
-        href: '/',
-      })
-    );
-
-    return card;
+    document.title = 'Подборки — Frame';
+    const { page, main } = createCatalogPage(this.navigate);main.className = 'collections-page';
+    const id = new URLSearchParams(location.search).get('id');
+    const shared = new URLSearchParams(location.hash.slice(1)).has('shared');
+    const status = createStatus(id ? 'Загружаем подборку…' : 'Загружаем подборки…');
+    if (!id && !shared) { main.append(sectionHeading('Подборки', { level: 1 }));const subtitle = document.createElement('p');subtitle.className = 'collections-page__intro';subtitle.textContent = 'Подборки редакции — от драм до сериалов на выходные.';main.append(subtitle); }
+    main.append(status);const content = document.createElement('div');main.append(content);
+    const load = async () => {
+      // Render-time validation errors should be shown after the page is mounted.
+      await Promise.resolve();
+      if (!page.isConnected) return;
+      content.replaceChildren();status.textContent = 'Загружаем подборки…';
+      try {
+        if (id || shared) {
+          let collection;
+          if (shared) {
+            const snapshot = readSharedCollection(location.hash);const catalog = await getMovies();const byId = new Map(catalog.map(movie => [movie.id, movie]));
+            collection = { title: snapshot.name, description: 'С вами поделились коллекцией. Это копия на момент отправки ссылки.', films: snapshot.filmIds.map(filmId => byId.get(filmId)).filter(Boolean) };
+          } else {
+            if (!/^\d+$/.test(id) || Number(id) <= 0) throw new Error('Подборка не найдена.');
+            collection = await getCollection(id);
+          }
+          if (!page.isConnected) return;document.title = `${collection.title} — Frame`;
+          const hero = document.createElement('section');hero.className = 'collection-hero';
+          const text = document.createElement('div');const eyebrow = document.createElement('p');eyebrow.className = 'featured-movie__eyebrow';eyebrow.textContent = `Подборки / ${filmCount(collection.films.length)}`;
+          const title = document.createElement('h1');title.textContent = collection.title;const description = document.createElement('p');description.textContent = collection.description || '';
+          const back = document.createElement('a');back.href = '/collections';back.dataset.link = '';back.className = 'button button--secondary';back.textContent = '← Все подборки';text.append(eyebrow, title, description, back);
+          hero.append(text, createPosterStack(collection.films));const heading = sectionHeading('Фильмы подборки', { count: filmCount(collection.films.length) });const grid = document.createElement('div');grid.className = 'movie-grid';heading.append(createCatalogViewToggle(grid));grid.replaceChildren(...collection.films.map(movie => createMovieTile(movie, page)));content.append(hero, heading, grid);
+          status.textContent = collection.films.length ? '' : 'В этой подборке пока нет фильмов.';
+        } else {
+          const collections = await getCollections();if (!page.isConnected) return;content.className = 'collection-grid';content.replaceChildren(...collections.map(createCollectionCard));status.textContent = collections.length ? '' : 'Подборок пока нет.';
+        }
+      } catch (error) { if (page.isConnected) showLoadError(status, load, error.message); }
+    };
+    void load();return page;
   }
 }

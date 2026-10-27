@@ -1,0 +1,60 @@
+.home-club { isolation: isolate; position: relative; background: radial-gradient(ellipse 900px 440px at 50% 60px, rgba(230, 161, 92,.065), transparent 75%), var(--bg-dark); }
+.home-club::before { content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none; background: url('../../media/home/grain.svg'); opacity: .045; }
+.home-club .featured-carousel { border-color: rgba(230, 161, 92,.24); box-shadow: 0 14px 50px rgba(0,0,0,.09); background: linear-gradient(115deg,rgba(230, 161, 92,.06),transparent 55%),var(--bg-card); }
+.home-club .spotlight-about { min-height: 40px; }
+.home-club .featured-slot { margin-bottom: 36px; }
+.home-club .catalog-heading { margin-bottom: 20px; }
+.home-club .catalog-heading h2 { font-size: var(--text-heading); line-height: 38px; }
+.home-club .home-section-note { margin: -10px 0 22px; font-size: var(--text-meta); line-height: 22px; color: var(--text-muted); }
+.home-club .home-collections .collection-grid { align-items: stretch; grid-auto-rows: 1fr; }
+.home-club .collection-card { border-radius: 14px; min-height: 174px; }
+.home-club .poster-stack__frame { transition: transform 220ms ease; }
+.home-club .movie-tile__cover { border-radius: 8px; aspect-ratio: 2 / 3; }
+.home-club .movie-tile__rating--unavailable { display: none; }
+.home-club .movie-tile__title { font-weight: 650; line-height: 21px; }
+.home-club .movie-tile__cover img { transition: filter 200ms ease; }
+.home-club .movie-tile-shell > .movie-list-button { width: 36px; height: 36px; }
+.home-club .watch-later { margin-bottom: 38px; }
+.home-club .watch-later .catalog-count { margin-right: auto; }
+.home-club .watch-later__controls { display: flex; gap: 8px; }
+.home-club .watch-later__controls[hidden] { display: none; }
+.home-club .watch-later__controls button { width: 44px; height: 44px; border: 1px solid var(--border-subtle); border-radius: 50%; background: var(--bg-card); color: var(--text-main); cursor: pointer; font-size: var(--text-title); }
+.home-club .watch-later__controls button:disabled { opacity: .3; cursor: default; }
+.home-club .watch-later__grid { grid-auto-columns: 300px; gap: 16px; padding: 5px 1px 14px; scroll-snap-type: x proximity; }
+.home-club .watch-later__grid .movie-tile-shell { padding: 12px; border: 1px solid var(--border-subtle); background: var(--bg-card); border-radius: 14px; scroll-snap-align: start; }
+.home-club .watch-later__grid .movie-tile { display: grid; grid-template-columns: 80px minmax(0,1fr); grid-template-rows: 1fr 1fr; column-gap: 16px; height: 120px; }
+.home-club .watch-later__grid .movie-tile__cover { grid-row: 1 / 3; width: 80px; height: 120px; border-radius: 5px; }
+.home-club .watch-later__grid .movie-tile__rating { display: none; }
+.home-club .watch-later__grid .movie-tile__title { grid-column: 2; margin: 0 22px 6px 0; align-self: end; font-size: var(--text-meta); display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; overflow: hidden; }
+.home-club .watch-later__grid .movie-tile__meta { grid-column: 2; align-self: start; margin: 0; font-size: var(--text-meta); line-height: 18px; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; }
+.home-club .watch-later__grid .movie-list-button { top: 8px; right: 8px; width: 32px; height: 32px; background: transparent; border-color: transparent; color: var(--text-muted); }
+.home-club .watch-later__grid .movie-list-button[aria-pressed=true] { color: var(--euphoria-amber); }
+.home-club .watch-later__empty { display: flex; align-items: center; gap: 18px; min-height: 108px; padding: 22px 24px; background: var(--bg-card); border-style: solid; }
+.home-club .watch-later__empty[hidden] { display: none; }
+.home-club .watch-later__empty-icon { display: grid; place-items: center; width: 48px; height: 48px; flex: none; border-radius: 12px; color: var(--euphoria-amber); background: rgba(230, 161, 92,.09); }
+.home-club .watch-later__empty strong { color: var(--text-main); font-size: var(--text-small); font-weight: 650; }
+.home-club .watch-later__empty p { margin: 5px 0 0; font-size: var(--text-meta); line-height: 20px; }
+.home-club .watch-later__empty button { margin-left: auto; padding: 10px 12px; min-height: 44px; flex: none; background: transparent; border: 0; color: var(--euphoria-amber); cursor: pointer; font-size: var(--text-meta); }
+.home-club .movie-feedback { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; align-items: center; gap: 24px; width: max-content; max-width: calc(100% - 32px); padding: 6px 8px 6px 18px; border: 1px solid var(--border-active); border-radius: 12px; background: var(--bg-card); color: var(--text-main); box-shadow: 0 12px 50px rgba(0,0,0,.3); font-size: var(--text-meta); line-height: 20px; animation: feedback-in 180ms ease-out; }
+.home-club .movie-feedback button { padding: 10px 12px; min-height: 44px; border: 0; background: transparent; color: var(--euphoria-amber); cursor: pointer; font-size: var(--text-meta); }
+@keyframes feedback-in { from { opacity: 0; translate: 0 6px; } to { opacity: 1; translate: 0 0; } }
+@media (hover: hover) {
+  .home-club .collection-card:hover { box-shadow: 0 12px 32px rgba(230, 161, 92,.09); }
+  .home-club .collection-card:hover .poster-stack__frame:first-child { transform: rotate(-5deg) translateX(-3px); }
+  .home-club .collection-card:hover .poster-stack__frame:last-child { transform: rotate(5deg) translateX(3px); }
+  .home-club .movie-tile:hover .movie-tile__cover img { filter: brightness(1.06); }
+}
+.home-club .movie-tile:focus-visible .movie-tile__cover { box-shadow: 0 8px 25px rgba(230, 161, 92,.16); }
+@media (max-width: 560px) {
+  .home-club .catalog-heading h2 { font-size: var(--text-large); line-height: 34px; }
+  .home-club .spotlight-actions .movie-list-button { width: 36px; height: 36px; }
+  .home-club .spotlight-eyebrow { padding-right: 84px; min-height: 36px; }
+
+  .home-club .watch-later__grid { grid-auto-columns: min(300px,calc(100% - 20px)); }
+  .home-club .watch-later__empty { flex-wrap: wrap; gap: 12px; padding: 18px; }
+  .home-club .watch-later__empty > div { flex: 1; min-width: 150px; }
+  .home-club .watch-later__empty button { margin: 0 0 0 48px; }
+  .home-club .watch-later__empty-icon { width: 36px; height: 42px; }
+  .home-club .movie-feedback { gap: 8px; padding-left: 12px; bottom: 16px; }
+}
+@media (prefers-reduced-motion: reduce) { .home-club .movie-feedback { animation: none; } }

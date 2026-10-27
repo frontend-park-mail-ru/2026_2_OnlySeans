@@ -2,31 +2,29 @@ import { API_BASE_URL, http } from '../utils/http.js';
 
 const PAGE_SIZE = 100;
 
-function toMovie(film) {
+export function toMovie(film) {
   return {
     id: film.id,
     title: film.title,
     englishTitle: film.original_title || '',
     year: film.release_year,
-    rating: null,
+    rating: Number.isFinite(film.rating) ? film.rating : null,
     type: film.film_type,
     durationMinutes: film.duration_min,
-    episodeMinutes: film.film_type === 'series' ? film.duration_min : null,
     genres: (film.genres || []).map((genre) => genre.name || genre.slug),
     description: film.description || '',
-    directors: [],
-    producers: [],
     poster: film.poster_url ? new URL(film.poster_url, API_BASE_URL).href : '',
   };
 }
 
-export async function getMovies() {
+export async function getMovies(options = {}) {
   const movies = [];
   let offset = 0;
-  let total = 0;
+  let total;
 
   do {
     const { ok, status, data } = await http.get('/api/films', {
+      signal: options.signal,
       params: { limit: PAGE_SIZE, offset },
     });
 
@@ -47,4 +45,11 @@ export async function getMovies() {
   } while (offset < total);
 
   return movies;
+}
+
+export async function getMovie(filmId, options = {}) {
+  const { ok, status, data } = await http.get(`/api/films/${encodeURIComponent(filmId)}`, options);
+  if (!ok) throw Object.assign(new Error(data?.error || 'Не удалось загрузить фильм.'), { status });
+  if (!data?.film || !Number.isSafeInteger(data.film.id)) throw new Error('Некорректный ответ каталога.');
+  return toMovie(data.film);
 }
