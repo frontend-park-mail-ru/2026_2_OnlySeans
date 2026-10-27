@@ -27,6 +27,8 @@
 
 @import url('./navigation-back.css');
 
+@import url('../pages/film/film.css');
+
 @import url('./interaction-motion.css');
 
 @import url('../pages/film/discussion-refresh.css');
@@ -36,6 +38,8 @@
 @import url('../pages/film/conversations.css');
 
 @import url('./shadow-consistency.css');
+
+@import url('../pages/film/film-profile.css');
 
 @import url('../pages/film/merch.css');
 @import url('../pages/film/film-insights.css');
