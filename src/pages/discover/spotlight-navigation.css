@@ -1,0 +1,23 @@
+.home-club .spotlight-navigation { gap: 0; }
+.spotlight-rubrics { display: flex; gap: 6px; flex: 1; min-width: 0; overflow-x: auto; overscroll-behavior-x: contain; padding: 3px 0 8px; scrollbar-width: thin; scrollbar-color: color-mix(in srgb, var(--text-muted) 45%, transparent) transparent; }
+.spotlight-rubrics:not(.is-scrollable) { padding-bottom: 3px; scrollbar-width: none; }
+.spotlight-rubrics::-webkit-scrollbar { height: 4px; }
+.spotlight-rubrics::-webkit-scrollbar-track { background: transparent; }
+.spotlight-rubrics::-webkit-scrollbar-thumb { border-radius: 999px; background: color-mix(in srgb, var(--text-muted) 45%, transparent); }
+.spotlight-rubrics::-webkit-scrollbar-thumb:hover { background: var(--euphoria-amber); }
+.spotlight-rubrics.is-scrollable:not(.at-end):not(.at-start) { -webkit-mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, transparent, #000 32px, #000 calc(100% - 40px), transparent); }
+.spotlight-rubrics.is-scrollable.at-start:not(.at-end) { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 40px), transparent); }
+.spotlight-rubrics.is-scrollable.at-end:not(.at-start) { -webkit-mask-image: linear-gradient(90deg, transparent, #000 32px); mask-image: linear-gradient(90deg, transparent, #000 32px); }
+.spotlight-rubrics button { position: relative; overflow: hidden; flex: none; min-height: 34px; padding: 7px 10px; border: 1px solid transparent; border-radius: 7px; background: transparent; color: var(--text-muted); font: inherit; font-size: var(--text-meta); line-height: 18px; white-space: nowrap; cursor: pointer; }
+.spotlight-rubrics button:hover { color: var(--text-main); background: var(--bg-input); }
+.spotlight-rubrics button[aria-pressed=true] { color: var(--euphoria-amber); background: rgba(230, 161, 92,.12); border-color: var(--border-active); }
+.catalog-page .spotlight-rubrics button:focus-visible { outline-offset: -2px; }
+/* Отсчёт до следующей рекомендации: тонкая полоска внизу активной рубрики. */
+.spotlight-rubric__progress { position: absolute; left: 10px; right: 10px; bottom: 4px; height: 2px; border-radius: 2px; background: currentColor; opacity: 0; transform: scaleX(0); transform-origin: left center; pointer-events: none; }
+.spotlight-rubrics button[aria-pressed=true] .spotlight-rubric__progress { opacity: .55; }
+@media (max-width: 560px) {
+  .home-club .spotlight-navigation { margin-top: 12px; padding-top: 8px; }
+  .spotlight-rubrics button { min-height: 36px; font-size: var(--text-meta); }
+}
+
+.featured-carousel.is-paused .spotlight-rubric__progress { opacity: .25; }
