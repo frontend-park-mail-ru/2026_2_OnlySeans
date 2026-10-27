@@ -1,0 +1,36 @@
+/* One shadow per surface level, with theme-aware opacity. */
+.catalog-page {
+ --shadow-surface: 0 3px 12px rgba(0,0,0,.12);
+ --shadow-surface-hover: 0 6px 18px rgba(0,0,0,.18);
+ --shadow-overlay: 0 12px 32px rgba(0,0,0,.28);
+ --shadow-poster: 0 5px 12px rgba(0,0,0,.2);
+}
+[data-theme=light] .catalog-page {
+ --shadow-surface: 0 3px 12px rgba(65,51,36,.045);
+ --shadow-surface-hover: 0 6px 18px rgba(65,51,36,.075);
+ --shadow-overlay: 0 12px 32px rgba(65,51,36,.14);
+ --shadow-poster: 0 5px 12px rgba(65,51,36,.12);
+}
+.catalog-page :is(.film-hero,.fandom-thread,.thread-post,.comment-composer,.collection-card,.my-fandoms-film) { box-shadow: var(--shadow-surface); }
+.catalog-page .film-hero__poster { box-shadow: var(--shadow-poster); }
+.catalog-page :is(.content-actions-popover,.reaction-menu,.personal-library-popover,.collection-settings-menu) { box-shadow: var(--shadow-overlay); }
+/* Inline actions must not inherit raised-button hover/pressed styles. */
+.catalog-page .film-page .entry-actions > .button,
+.catalog-page .film-page .entry-actions > .button:hover,
+.catalog-page .film-page .entry-actions > .button:active,
+.catalog-page .film-page .entry-actions > .button:disabled { box-shadow: none; transform: none; translate: none; filter: none; }
+/* A submit button has the same elevation as other controls, including while hovered. */
+.catalog-page .button:hover { transform: none; filter: none; }
+.catalog-page .button:disabled:hover { box-shadow: inset 0 1px rgba(255,255,255,.025); translate: none; }
+.catalog-page :is(.spotlight-rubrics button,.catalog-view-toggle button,.fandom-sort button),
+.catalog-page :is(.spotlight-rubrics button,.catalog-view-toggle button,.fandom-sort button):hover,
+.catalog-page :is(.spotlight-rubrics button,.catalog-view-toggle button,.fandom-sort button):active { box-shadow: none; transform: none; translate: none; filter: none; }
+.catalog-page :is(.spotlight-rubrics button,.catalog-view-toggle button)[aria-pressed=true],
+.catalog-page .fandom-sort button[aria-pressed=true] { box-shadow: inset 0 0 0 1px var(--border-subtle); }
+.catalog-page .film-page .field :is(input,textarea,select):focus { outline: none; border-color: var(--euphoria-amber); box-shadow: 0 0 0 3px color-mix(in srgb,var(--euphoria-amber) 16%,transparent); }
+.catalog-page .film-page .field.field--invalid :is(input,textarea,select):focus { border-color: #cf6673; box-shadow: 0 0 0 3px rgba(207,102,115,.16); }
+@media(hover:hover) and (pointer:fine) {
+ .catalog-page .collection-card:hover { box-shadow: var(--shadow-surface-hover); }
+}
+
+.catalog-page .thread-post.post-highlight { box-shadow: 0 0 0 3px color-mix(in srgb,var(--euphoria-amber) 16%,transparent), var(--shadow-surface); }

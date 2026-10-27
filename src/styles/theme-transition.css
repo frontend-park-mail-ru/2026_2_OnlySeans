@@ -1,0 +1,29 @@
+:root.theme-wave { view-transition-name: theme-surface; }
+.theme-wave .catalog-page main { view-transition-name: none; }
+::view-transition-group(theme-surface) { animation: none; }
+::view-transition-old(theme-surface),
+::view-transition-new(theme-surface) {
+  animation: none;
+  mix-blend-mode: normal;
+  height: 100%;
+}
+::view-transition-old(theme-surface) { z-index: 1; }
+::view-transition-new(theme-surface) { z-index: 2; }
+.theme-toggle__icon { display: block; }
+.theme-wave .theme-toggle__icon { animation: theme-orbit 650ms cubic-bezier(.22,.61,.36,1) both; }
+@keyframes theme-orbit {
+  from { transform: rotate(-65deg) scale(.65); opacity: .4; }
+  to { transform: rotate(0) scale(1); opacity: 1; }
+}
+/* Older browsers blend surfaces without moving the page or its content. */
+.theme-transition body,
+.theme-transition .catalog-page,
+.theme-transition .catalog-page :is(header, aside, section, article, button, a, input, h1, h2, h3, p, span),
+.theme-transition [data-auth-shell],
+.theme-transition [data-auth-shell] :is(section, button, a, input, h1, h2, p, label, span) {
+  transition: background-color 320ms ease, color 320ms ease, border-color 320ms ease, box-shadow 320ms ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .theme-wave .theme-toggle__icon { animation: none; }
+  .theme-transition, .theme-transition * { transition: none !important; }
+}

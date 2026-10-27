@@ -15,9 +15,7 @@ export class ThemeToggle extends BaseComponent {
     const element = super.create();
     element.addEventListener('click', () => {
       const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      setTheme(theme);
-      element.querySelector('span').textContent = theme === 'light' ? '☀' : '☾';
-      element.setAttribute('aria-label', theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему');
+      void setTheme(theme, { origin: element });
     });
     return element;
   }

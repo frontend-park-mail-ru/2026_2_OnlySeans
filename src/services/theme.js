@@ -1,4 +1,5 @@
 import { CookieService } from '../utils/cookies.js';
+import { stopViewTransition, trackViewTransition } from './view-transitions.js';
 
 export const THEME_KEY = 'theme';
 const THEME_COOKIE_OPTIONS = {
@@ -30,33 +31,75 @@ export const applyTheme = (theme, iconEl) => {
   } else {
     document.documentElement.removeAttribute('data-theme');
 
-    if (iconEl) iconEl.textContent = '\u1F319';
+    if (iconEl) iconEl.textContent = '☾';
   }
+  document.querySelectorAll('.theme-toggle, #themeToggle').forEach(button => {
+    const icon = button.querySelector('.theme-toggle__icon');
+    if (icon) icon.textContent = theme === 'light' ? '☀' : '☾';
+    button.setAttribute('aria-label', theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему');
+  });
 };
 
 let transitionTimer;
-export const setTheme = (theme) => {
-  if (!isTheme(theme)) return;
+let changing = false;
+export const setTheme = async (theme, { origin } = {}) => {
+  if (!isTheme(theme) || changing) return;
+  stopViewTransition();
   CookieService.set(THEME_KEY, theme, THEME_COOKIE_OPTIONS);
   clearTimeout(transitionTimer);
-  document.documentElement.classList.add('theme-transition');
-  applyTheme(theme);
-  transitionTimer = setTimeout(() => document.documentElement.classList.remove('theme-transition'), 900);
+  const root = document.documentElement;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.startViewTransition || reduced) {
+    if (!reduced) root.classList.add('theme-transition');
+    applyTheme(theme);
+    transitionTimer = setTimeout(() => root.classList.remove('theme-transition'), 350);
+    return;
+  }
+
+  const rect = origin?.getBoundingClientRect();
+  const x = rect ? rect.left + rect.width / 2 : innerWidth / 2;
+  const y = rect ? rect.top + rect.height / 2 : innerHeight / 2;
+  const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  changing = true;
+  root.classList.remove('theme-transition');
+  root.classList.add('theme-wave');
+  const buttons = [...document.querySelectorAll('.theme-toggle, #themeToggle')];
+  buttons.forEach(button => button.setAttribute('aria-busy', 'true'));
+  let animation;
+  const cleanup = () => {
+    animation?.cancel();
+    root.classList.remove('theme-wave');
+    buttons.forEach(button => button.removeAttribute('aria-busy'));
+    changing = false;
+  };
+  const transition = document.startViewTransition(() => applyTheme(theme));
+  trackViewTransition(transition, cleanup);
+  try {
+    await transition.ready;
+    animation = root.animate({ clipPath: [
+      `circle(0px at ${x}px ${y}px)`,
+      `circle(${radius}px at ${x}px ${y}px)`,
+    ] }, {
+      duration: 780,
+      easing: 'cubic-bezier(.22,.61,.36,1)',
+      pseudoElement: '::view-transition-new(theme-surface)',
+    });
+  } catch {
+    // A new route can intentionally interrupt the wave.
+  }
 };
 
-let currentTheme = getPreferredTheme();
-applyTheme(currentTheme, null);
+applyTheme(getPreferredTheme(), null);
 
 document.addEventListener('DOMContentLoaded', () => {
   const themeToggleBtn = document.getElementById('themeToggle');
   if (!themeToggleBtn) return;
 
   const themeIcon = themeToggleBtn.querySelector('.theme-toggle__icon') || themeToggleBtn;
-  applyTheme(currentTheme, themeIcon);
+  applyTheme(getPreferredTheme(), themeIcon);
 
   themeToggleBtn.addEventListener('click', () => {
-    currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-    CookieService.set(THEME_KEY, currentTheme, THEME_COOKIE_OPTIONS);
-    applyTheme(currentTheme, themeIcon);
+    const theme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    void setTheme(theme, { origin: themeToggleBtn });
   });
 });

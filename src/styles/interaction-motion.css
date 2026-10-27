@@ -1,0 +1,25 @@
+/* Keep state changes consistent without delaying input or navigation. */
+:is(.catalog-page, .login-page, dialog) :is(button, a[data-link]) {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform, filter;
+  transition-duration: 240ms;
+  transition-timing-function: cubic-bezier(.22,.7,.25,1);
+}
+
+.film-tabs a::after {
+  position: absolute;
+  content: '';
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--euphoria-amber);
+  opacity: 0;
+  transform: scaleX(.65);
+  transition: opacity 240ms ease, transform 280ms cubic-bezier(.22,1,.36,1);
+}
+.film-tabs a[aria-current]::after { opacity: 1; transform: scaleX(1); }
+@media (prefers-reduced-motion: reduce) {
+  :is(.catalog-page, .login-page, dialog) :is(button, a[data-link]),
+  .film-tabs a::after { transition: none; }
+}

@@ -17,6 +17,7 @@ applyTheme(getPreferredTheme());
 const router = new Router({
   '/': DiscoverPage,
   '/discover': DiscoverPage,
+  '/collections': CollectionsPage,
   '/login': LoginPage,
   '/register': RegisterPage,
   '404': NotFoundPage,

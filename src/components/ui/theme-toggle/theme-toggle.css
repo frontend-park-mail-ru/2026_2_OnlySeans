@@ -9,7 +9,7 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 18px;
+  font-size: var(--text-lead);
   transition: var(--transition);
   flex-shrink: 0;
 }
