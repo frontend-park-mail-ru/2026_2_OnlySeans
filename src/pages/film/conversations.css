@@ -187,3 +187,8 @@ html:has(.catalog-page--chat), body:has(.catalog-page--chat) { height: 100%; ove
 .chat-go-start:hover:not(:disabled) { color: var(--euphoria-amber); border-color: var(--border-active); }
 .chat-go-start:focus-visible { outline: 2px solid var(--euphoria-amber); outline-offset: 2px; }
 .chat-go-start:disabled { opacity: .6; cursor: wait; }
+
+/* Счётчик символов коротко мигает, когда ввод упёрся в лимит длины. */
+.thread-character-count.is-at-limit { color: var(--euphoria-amber); animation: char-limit-pulse 600ms ease; }
+@keyframes char-limit-pulse { 0%, 100% { transform: none; } 30% { transform: translateX(-3px); } 60% { transform: translateX(3px); } }
+@media (prefers-reduced-motion: reduce) { .thread-character-count.is-at-limit { animation: none; } }

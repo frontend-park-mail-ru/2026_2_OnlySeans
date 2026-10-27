@@ -6,6 +6,7 @@ import { createButton } from '../../components/ui/button/button.js';
 import { createErrorBox } from '../../components/ui/error-box/error-box.js';
 import { createSwitchLink } from '../../components/ui/switch-link/switch-link.js';
 import { createField, getFieldValue } from '../../components/ui/field/field.js';
+import { limitTextInput } from '../../utils/text-limit.js';
 import { validateEmail, validateUsername, validatePassword, showError } from '../../modules/validation.js';
 import { apiRequest } from '../../api/auth.js';
 import { eventBus, EVENTS } from '../../modules/event-bus.js';
@@ -28,6 +29,10 @@ export const createAuthPage = ({ mode: initialMode, navigate }) => {
   const usernameField = createField({ id: 'username', label: 'Имя пользователя' });
   const passwordField = createField({ id: 'password', label: 'Пароль', type: 'password' });
   emailField.querySelector('input').autocomplete = 'email';
+  // Лимиты длины как на сервере: лишние символы просто не вводятся.
+  limitTextInput(emailField.querySelector('input'), 254);
+  limitTextInput(usernameField.querySelector('input'), 32);
+  limitTextInput(passwordField.querySelector('input'), 32);
   const usernameInput = usernameField.querySelector('input');
   usernameInput.autocomplete = 'username';
   const passwordInput = addPasswordToggle(passwordField, 'current-password');

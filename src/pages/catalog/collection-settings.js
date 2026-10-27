@@ -1,5 +1,6 @@
 import { renamePersonalCollection, deletePersonalCollection } from '../../services/personal-library.js';
 import { collectionShareUrl } from '../../services/collection-sharing.js';
+import { limitTextInput } from '../../utils/text-limit.js';
 
 export const createCollectionSettings = (item, page, onChange, { gear = false } = {}) => {
   const trigger = document.createElement('button');trigger.type = 'button';trigger.className = 'collection-settings-trigger';trigger.dataset.collectionSettings = item.id;
@@ -21,7 +22,7 @@ export const createCollectionSettings = (item, page, onChange, { gear = false } 
     if (action !== 'delete') {
       const label = document.createElement('label');label.textContent = action === 'share' ? 'Ссылка на коллекцию' : 'Новое название';
       input = document.createElement('input');input.value = action === 'share' ? collectionShareUrl(item) : item.name;input.readOnly = action === 'share';input.required = true;
-      if (action === 'rename') input.maxLength = 80;
+      if (action === 'rename') limitTextInput(input, 80);
       label.append(input);form.append(label);
     } else submit.className = 'collection-settings-delete';
     form.append(cancel, submit);dialog.append(title, description, error, form);page.append(dialog);

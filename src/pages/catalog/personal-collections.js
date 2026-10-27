@@ -5,6 +5,7 @@ import { createCatalogPage, sectionHeading, createStatus, showLoadError, createM
 import { createCatalogViewToggle } from '../../components/ui/catalog-view/catalog-view.js';
 import { notifyPersonalLibrary } from '../../components/ui/movie-actions/personal-library.js';
 import { createCollectionSettings } from './collection-settings.js';
+import { limitTextInput } from '../../utils/text-limit.js';
 
 export class PersonalCollectionsPage {
   constructor({ navigate }) { this.navigate = navigate; }
@@ -19,7 +20,7 @@ export class PersonalCollectionsPage {
     let movies = [], ready = false, busy = false;
     const makeForm = (label, buttonLabel, initial = '') => {
       const form = document.createElement('form');form.className = 'personal-collection-form';const field = document.createElement('label');field.textContent = label;
-      const input = document.createElement('input');input.name = 'collection-name';input.maxLength = 80;input.required = true;input.autocomplete = 'off';input.value = initial;input.placeholder = 'Например, пересмотреть зимой';field.append(input);
+      const input = document.createElement('input');input.name = 'collection-name';limitTextInput(input, 80);input.required = true;input.autocomplete = 'off';input.value = initial;input.placeholder = 'Например, пересмотреть зимой';field.append(input);
       const button = document.createElement('button');button.type = 'submit';button.textContent = buttonLabel;form.append(field, button);return form;
     };
     const run = async task => {
