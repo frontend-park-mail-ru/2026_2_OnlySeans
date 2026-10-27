@@ -1,3 +1,4 @@
+import { MyFandomsPage } from './pages/film/my-fandoms.js';
 import { DiscoverPage } from './pages/discover/discover.js';
 import { CatalogPage } from './pages/catalog/catalog.js';
 import { PersonalCollectionsPage } from './pages/catalog/personal-collections.js';
@@ -26,6 +27,7 @@ const router = new Router({
   '/favorites': CatalogPage,
   '/watched': CatalogPage,
   '/my-collections': PersonalCollectionsPage,
+  '/me/discussions': MyFandomsPage,
   '/login': LoginPage,
   '/register': RegisterPage,
   '404': NotFoundPage,
