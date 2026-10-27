@@ -1,5 +1,10 @@
+import { getAuthReturnPath } from '../services/auth-return.js';
+import { NavigationHistory } from './navigation-history.js';
 import { apiRequest } from '../api/auth.js';
 import { store } from './store.js';
+import { updateAuthLayout } from '../pages/login/auth-layout.js';
+import { preserveCatalogNavigation } from './catalog-transition.js';
+import { stopViewTransition, trackViewTransition } from '../services/view-transitions.js';
 
 export class Router {
     /**
@@ -11,8 +16,9 @@ export class Router {
         this.routes = routes;
         this.rootElement = rootElement;
         this.authRoutes = new Set(['/login', '/register']);
-        this.authenticatedRoutes = new Set(['/collections']);
         this.navigationId = 0;
+        this.navigationHistory = new NavigationHistory(window.history, document.referrer, location.origin);
+        this.catalogRoutes = new Set(['/', '/profile', '/discover', '/films', '/series', '/collections', '/watch-later', '/favorites', '/watched', '/my-collections', '/me/discussions']);
 
         window.addEventListener('popstate', () => {
             void this.route();
@@ -56,21 +62,29 @@ export class Router {
      * Метод для программного перехода на другой URL
      * @param {string} path - Путь для перехода (например, '/login')
      */
-    navigate(path){
+    navigate(path, { refresh = false, render = true, replace = false } = {}){
         const target = new URL(path, window.location.href);
         const targetPath = `${target.pathname}${target.search}${target.hash}`;
         const currentPath = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-        if (currentPath === targetPath) return;
+        if (currentPath === targetPath) { if (refresh) void this.route();return; }
 
-        window.history.pushState({}, '', targetPath);
-        void this.route();
+        if (replace) history.replaceState(history.state, '', targetPath);else this.navigationHistory.push(targetPath);
+        if (render) void this.route();else this.updateBackButton();
     }
     /**
      * Метод определения текущего пути и отрисовки соответствующего View
      */
     async route() {
         const navigationId = ++this.navigationId;
-        this.rootElement.textContent = 'Проверка сессии...';
+        if (/^\/film\/[^/]+\/fandom\/?$/.test(location.pathname)) history.replaceState(history.state,'',`${location.pathname.replace(/\/fandom\/?$/, '/discussion')}${location.search}${location.hash}`);
+        stopViewTransition();
+        this.transition?.skipTransition();
+        this.rootElement.querySelector('main')?.getAnimations().forEach(animation => animation.cancel());
+        const currentAuthShell = this.rootElement.querySelector('[data-auth-shell]');
+        const requestedAuthPath = window.location.pathname.replace(/\/+$/, '');
+        const preserveAuthShell = currentAuthShell && this.authRoutes.has(requestedAuthPath);
+        if (!this.rootElement.firstChild) this.rootElement.textContent = 'Проверка сессии...';
+        this.rootElement.setAttribute('aria-busy', 'true');
 
         try {
             const isAuthorized = await this.isAuthorized();
@@ -79,39 +93,92 @@ export class Router {
             const requestedPath = window.location.pathname;
             const normalizedPath = requestedPath.replace(/\/+$/, '') || '/';
             const redirectPath = isAuthorized && this.authRoutes.has(normalizedPath)
-                ? '/'
-                : !isAuthorized && this.authenticatedRoutes.has(normalizedPath)
-                    ? '/login'
-                    : null;
-            const activePath = redirectPath || requestedPath;
+                ? getAuthReturnPath() || '/'
+                : null;
+            const activePath = redirectPath ? new URL(redirectPath, location.origin).pathname : requestedPath;
 
             if (redirectPath) {
-                window.history.replaceState({}, '', redirectPath);
+                window.history.replaceState(window.history.state, '', redirectPath);
             }
 
-            const ViewClass = this.routes[activePath] || this.routes['404'];
+            let ViewClass = this.routes[activePath];let params = {};
+            if (!ViewClass) {
+                for (const [pattern, View] of Object.entries(this.routes)) {
+                    if (!pattern.includes(':')) continue;
+                    const keys = [];
+                    const expression = pattern.split('/').map(part => { if (!part.startsWith(':')) return part;keys.push(part.slice(1));return '([^/]+)'; }).join('/');
+                    const match = activePath.match(new RegExp(`^${expression}/?$`));
+                    if (match) { ViewClass = View;params = Object.fromEntries(keys.map((key, index) => [key, match[index + 1]]));break; }
+                }
+            }
+            ViewClass ||= this.routes['404'];
 
             if (!ViewClass) {
                 this.rootElement.textContent = '404 - Page not found';
                 return;
             }
 
-            this.rootElement.innerHTML = '';
-
-            const viewInstance = new ViewClass({ navigate: (nextPath) => this.navigate(nextPath) });
-
-            const renderedContent = viewInstance.render();
-
-            if (typeof renderedContent === 'string'){
-                this.rootElement.innerHTML = renderedContent;
-            } else if (renderedContent instanceof HTMLElement) {
-                this.rootElement.appendChild(renderedContent);
+            const currentCatalog = this.rootElement.querySelector('.catalog-page');
+            const catalogTransition = currentCatalog && (this.catalogRoutes.has(activePath) || /^\/(film|actor|director|producer)\//.test(activePath));
+            const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+            const animateNavigation = Boolean(this.rootElement.firstElementChild) && !preserveAuthShell && !reducedMotion;
+            const focusedLink = document.activeElement?.closest('a[data-link]');
+            const navigationFocus = focusedLink?.closest('.site-sidebar, .catalog-topbar') ? focusedLink.getAttribute('href') : null;
+            const commit = () => {
+                if (navigationId !== this.navigationId) return;
+                const viewInstance = new ViewClass({ params, navigate: (nextPath, options) => this.navigate(nextPath, options) });
+                const renderedContent = viewInstance.render();
+                if (preserveAuthShell && currentAuthShell.isConnected && renderedContent instanceof HTMLElement && renderedContent.hasAttribute('data-auth-shell')) {
+                    updateAuthLayout(currentAuthShell, renderedContent);return;
+                }
+                if (catalogTransition && renderedContent instanceof HTMLElement && renderedContent.classList.contains('catalog-page')) preserveCatalogNavigation(currentCatalog, renderedContent);
+                this.rootElement.replaceChildren();
+                if (typeof renderedContent === 'string') this.rootElement.innerHTML = renderedContent;
+                else if (renderedContent instanceof HTMLElement) this.rootElement.appendChild(renderedContent);
+                if (catalogTransition) {
+                    window.scrollTo({ top: 0, behavior: 'instant' });
+                    if (navigationFocus) [...this.rootElement.querySelectorAll('.site-sidebar a, .catalog-topbar a')].find(link => link.getAttribute('href') === navigationFocus && link.getClientRects().length && !link.closest('[inert]'))?.focus({ preventScroll: true });
+                }
+            };
+            if (animateNavigation && document.startViewTransition) {
+                stopViewTransition();
+                // Catalog navigation keeps its shell; other routes blend the full page.
+                if (!catalogTransition) document.documentElement.classList.add('route-surface');
+                if (this.authRoutes.has(activePath) || currentAuthShell) document.documentElement.classList.add('route-auth');
+                const transition = document.startViewTransition(commit);this.transition = transition;
+                trackViewTransition(transition, () => document.documentElement.classList.remove('route-surface', 'route-auth'));
+                // Skipping a transition during fast navigation is expected.
+                transition.ready.catch(() => {});
+                await transition.updateCallbackDone;
+            } else {
+                commit();
+                if (animateNavigation) (this.rootElement.querySelector('main') || this.rootElement.firstElementChild)?.animate([{ opacity: 0, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 340, easing: 'cubic-bezier(.22,1,.36,1)' });
             }
         } catch (error) {
             if (navigationId !== this.navigationId) return;
             console.error('Failed to check authorization:', error);
             this.rootElement.textContent = 'Не удалось проверить сессию. Попробуйте обновить страницу.';
+        } finally {
+            if (navigationId === this.navigationId) {
+                this.rootElement.removeAttribute('aria-busy');
+                this.updateBackButton();
+            }
         }
+    }
+
+    updateBackButton() {
+        this.rootElement.querySelector('.navigation-back')?.remove();
+        if (!this.navigationHistory.canGoBack() && !/^\/(film|actor|director|producer)\//.test(location.pathname)) return;
+        const host = this.rootElement.querySelector('.site-header__brand, .login-panel__brand');
+        if (!host) return;
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'navigation-back';
+        button.setAttribute('aria-label', 'Вернуться на предыдущую страницу');
+        button.title = 'Вернуться на предыдущую страницу';
+        button.innerHTML = '<span aria-hidden="true">←</span><span>Назад</span>';
+        button.addEventListener('click', () => { if (this.navigationHistory.canGoBack()) this.navigationHistory.back();else this.navigate('/films', { replace: true }); });
+        host.prepend(button);
     }
 
     start() {

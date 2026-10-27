@@ -1,0 +1,11 @@
+.navigation-back {
+  display: inline-flex;align-items: center;gap: 7px;flex: none;
+  min-height: 36px;padding: 7px 10px;margin-right: 12px;
+  border: 1px solid var(--border-subtle);border-radius: 10px;
+  background: var(--bg-input);color: var(--text-main);font: inherit;font-size: var(--text-meta);
+  cursor: pointer;transition: background .18s ease,border-color .18s ease;
+}
+.navigation-back:hover { background: var(--bg-card);border-color: var(--border-active); }
+.navigation-back:focus-visible { outline: 2px solid var(--euphoria-amber);outline-offset: 3px; }
+.navigation-back span:first-child { font-size: var(--text-title);line-height: 1; }
+.login-panel__brand .navigation-back { margin-right: 8px; }

@@ -1,0 +1,26 @@
+:root { view-transition-name: none; }
+.catalog-page main { view-transition-name: catalog-content; }
+:root.route-surface { view-transition-name: page-surface; }
+.route-surface .catalog-page main { view-transition-name: none; }
+::view-transition-group(catalog-content),
+::view-transition-group(page-surface) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(.22,1,.36,1);
+}
+::view-transition-old(catalog-content),
+::view-transition-old(page-surface) { animation: page-leave 180ms ease-out both; mix-blend-mode: normal; }
+::view-transition-new(catalog-content),
+::view-transition-new(page-surface) { animation: page-arrive 340ms cubic-bezier(.22,1,.36,1) both; mix-blend-mode: normal; }
+/* Full-page authentication fades across a fixed viewport, without resizing the layout. */
+.route-auth::view-transition-group(page-surface) { animation: none; }
+.route-auth::view-transition-old(page-surface) { animation: page-leave 260ms ease-out both; }
+.route-auth::view-transition-new(page-surface) { animation: auth-arrive 460ms cubic-bezier(.22,1,.36,1) both; }
+@keyframes auth-arrive { from { opacity: 0; } to { opacity: 1; } }
+::view-transition { pointer-events: none; }
+@keyframes page-leave { to { opacity: 0; } }
+@keyframes page-arrive { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(catalog-content), ::view-transition-old(catalog-content), ::view-transition-new(catalog-content),
+  ::view-transition-group(page-surface), ::view-transition-old(page-surface), ::view-transition-new(page-surface),
+  .route-auth::view-transition-old(page-surface), .route-auth::view-transition-new(page-surface) { animation: none; }
+}

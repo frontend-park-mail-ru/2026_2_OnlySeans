@@ -1,11 +1,10 @@
 import { BaseComponent } from '../base-component.js';
 import { createSiteLogo } from '../site-logo/site-logo.js';
-import { createLogoutButton } from '../logout-button/logout-button.js';
 import { store } from '../../../modules/store.js';
-import { logout } from '../../../services/auth.js';
+import { createThemeToggle } from '../theme-toggle/theme-toggle.js';
 
 const template = window.Handlebars.compile(`
-  <header class="site-header">
+  <header class="site-header site-header--minimal">
     <div class="site-header__brand"></div>
     <div class="site-header__actions">
       <p class="site-header__status" role="status" aria-live="polite"></p>
@@ -20,7 +19,13 @@ export class SiteHeader extends BaseComponent {
   create() {
     if (this.element) return this.element;
     const element = super.create();
-    element.querySelector('.site-header__brand').appendChild(createSiteLogo());
+    const logoMark = document.createElement('img');
+    logoMark.src = new URL('../../../media/auth/logo-mark.svg', import.meta.url).href;
+    logoMark.width = 30;
+    logoMark.height = 30;
+    logoMark.alt = '';
+    element.querySelector('.site-header__brand').append(logoMark, createSiteLogo());
+    element.refreshAuthActions = () => this.renderActions(element);
     this.renderActions(element);
     return element;
   }
@@ -29,44 +34,24 @@ export class SiteHeader extends BaseComponent {
     const actions = element.querySelector('.site-header__actions');
     const status = element.querySelector('.site-header__status');
     const user = store.get('user');
-
     if (!user) {
       const loginLink = document.createElement('a');
       loginLink.className = 'site-header__login';
       loginLink.href = '/login';
       loginLink.dataset.link = '';
       loginLink.textContent = 'Войти';
-      actions.replaceChildren(loginLink, status);
+      actions.replaceChildren(createThemeToggle(), loginLink, status);
       return;
     }
 
-    const username = document.createElement('span');
-    username.className = 'site-header__username';
-    username.textContent = user.username || user.name || user.email || 'Пользователь';
-
-    const logoutButton = createLogoutButton({
-      onClick: async () => {
-        const status = element.querySelector('.site-header__status');
-        logoutButton.disabled = true;
-        status.textContent = '';
-
-        try {
-          if (!await logout()) {
-            status.textContent = 'Не удалось выйти из аккаунта. Попробуйте ещё раз.';
-            logoutButton.disabled = false;
-            return;
-          }
-
-          this.navigate('/login');
-        } catch (error) {
-          console.error('Не удалось выйти из аккаунта:', error);
-          status.textContent = 'Не удалось связаться с сервером. Попробуйте ещё раз.';
-          logoutButton.disabled = false;
-        }
-      },
-    });
-
-    actions.replaceChildren(username, logoutButton, status);
+    const account = document.createElement('a');account.className = 'site-header__account';
+    account.href = '/profile';account.dataset.link = '';account.setAttribute('aria-label', 'Открыть мой профиль');
+    account.title = 'Мой профиль';if (location.pathname === '/profile') account.setAttribute('aria-current', 'page');
+    const name = user.username || user.name || user.email || 'Пользователь';
+    const avatar = document.createElement('span');avatar.className = 'site-header__user-avatar';avatar.setAttribute('aria-hidden', 'true');
+    avatar.textContent = name.split(/\s+/).slice(0,2).map(part => part[0]).join('');
+    const username = document.createElement('span');username.className = 'site-header__username';username.textContent = name;
+    account.append(avatar, username);actions.replaceChildren(createThemeToggle(), account, status);
   }
 }
 export const createSiteHeader = (options) => new SiteHeader(options).render();
