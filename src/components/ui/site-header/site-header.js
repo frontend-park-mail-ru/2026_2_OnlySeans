@@ -3,8 +3,9 @@ import { createSiteLogo } from '../site-logo/site-logo.js';
 import { createLogoutButton } from '../logout-button/logout-button.js';
 import { store } from '../../../modules/store.js';
 import { logout } from '../../../services/auth.js';
+import Handlebars from 'handlebars';
 
-const template = window.Handlebars.compile(`
+const template = Handlebars.compile(`
   <header class="site-header">
     <div class="site-header__brand"></div>
     <div class="site-header__actions">
@@ -13,9 +14,8 @@ const template = window.Handlebars.compile(`
   </header>
 `);
 export class SiteHeader extends BaseComponent {
-  constructor({ navigate } = {}) {
+  constructor() {
     super(template, {});
-    this.navigate = navigate;
   }
   create() {
     if (this.element) return this.element;
@@ -56,8 +56,6 @@ export class SiteHeader extends BaseComponent {
             logoutButton.disabled = false;
             return;
           }
-
-          this.navigate('/login');
         } catch (error) {
           console.error('Не удалось выйти из аккаунта:', error);
           status.textContent = 'Не удалось связаться с сервером. Попробуйте ещё раз.';
@@ -69,4 +67,4 @@ export class SiteHeader extends BaseComponent {
     actions.replaceChildren(username, logoutButton, status);
   }
 }
-export const createSiteHeader = (options) => new SiteHeader(options).render();
+export const createSiteHeader = () => new SiteHeader().render();

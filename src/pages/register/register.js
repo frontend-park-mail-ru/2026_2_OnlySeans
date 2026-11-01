@@ -74,9 +74,7 @@ export class RegisterPage {
           showError(errorBox, message);
           return;
         }
-
         eventBus.emit(EVENTS.AUTH_REGISTER, data.user);
-        this.navigate('/login');
 
       } catch {
         showError(errorBox, 'Не удалось связаться с сервером. Он точно запущен?');

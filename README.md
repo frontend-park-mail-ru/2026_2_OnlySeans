@@ -1,20 +1,24 @@
-# 2026_2_OnlySeans
-Репозиторий команды OnlySeans. Проект Кинопоиск
+# OnlySeans frontend (Webpack)
 
-### [Деплой фронтенда]()  
-### [Деплой бекенда]()  
-### [Репозиторий бекенда]()  
-### [Макет]()  
+This folder is an isolated Webpack setup built from the frontend sources in `Front/`.
 
+## Install and run locally
 
-### Состав команды:
-- [Яковлева Светлана](https://github.com/Svetlana17yak)
-- [Ушакова Полина](https://github.com/polinauss)
-- [Городов Егор](https://github.com/Pom1dorka-Salat1k)
-- [Нестеров Георгий](https://github.com/GeR017)
+```sh
+npm install
+npm run dev
+```
 
-### Менторы:
-- [Шахмар Абдуллаев](https://github.com/abdullShah) - Frontend
-- [Антон Самойлов](https://github.com/samantonio28) - Backend
-- [???]() - UX
-- [???]() - Database
+Open `http://localhost:3000`. The Go API should be running on port `8080`.
+Set the backend's `server.allowed_origin` to `http://localhost:3000` and restart
+the backend after changing its config.
+
+## Production build
+
+```sh
+npm run build
+```
+
+Webpack writes the static SPA to `dist/`. Serve that directory with SPA fallback,
+for example `npx serve -s -l 3000 dist`. The backend must allow the page's exact
+origin in `server.allowed_origin`.

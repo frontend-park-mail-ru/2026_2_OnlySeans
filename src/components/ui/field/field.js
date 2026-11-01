@@ -1,6 +1,7 @@
 import { BaseComponent } from '../base-component.js';
+import Handlebars from 'handlebars';
 
-const fieldTemplate = window.Handlebars.compile(`
+const fieldTemplate = Handlebars.compile(`
   <div class="field">
     <label for="{{id}}">{{label}}</label>
     <input type="{{type}}" id="{{id}}" name="{{name}}" {{#if required}}required{{/if}}>

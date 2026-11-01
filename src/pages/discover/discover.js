@@ -2,8 +2,9 @@ import { renderTemplate } from '../../components/ui/render-template.js';
 import { createSiteHeader } from '../../components/ui/site-header/site-header.js';
 import { createMovieCard } from '../../components/ui/movie-card/movie-card.js';
 import { getMovies } from '../../api/movies.js';
+import Handlebars from 'handlebars';
 
-const template = window.Handlebars.compile(`
+const template = Handlebars.compile(`
   <div class="discover-page">
     <main class="movie-feed" aria-labelledby="discover-title">
       <div class="movie-feed__heading"><h1 id="discover-title">Лента фильмов и сериалов</h1><p class="movie-feed__count"></p></div>
@@ -25,7 +26,7 @@ export class DiscoverPage {
   render() {
     document.title = 'Лента — Frame';
     this.page = renderTemplate(template, {});
-    this.page.prepend(createSiteHeader({ navigate: this.navigate }));
+    this.page.prepend(createSiteHeader());
     getMovies().then((movies) => {
       if (!this.page.isConnected) return;
       const totalPages = Math.max(1, Math.ceil(movies.length / PAGE_SIZE));

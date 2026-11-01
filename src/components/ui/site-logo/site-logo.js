@@ -1,6 +1,7 @@
 import { BaseComponent } from '../base-component.js';
+import Handlebars from 'handlebars';
 
-const template = window.Handlebars.compile(`
+const template = Handlebars.compile(`
   <a class="site-logo {{className}}" href="/discover" data-link aria-label="Frame — лента фильмов"><span>F</span>rame</a>
 `);
 
