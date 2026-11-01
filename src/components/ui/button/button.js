@@ -1,6 +1,7 @@
 import { BaseComponent } from '../base-component.js';
+import Handlebars from 'handlebars';
 
-const buttonTemplate = window.Handlebars.compile(`
+const buttonTemplate = Handlebars.compile(`
   <button class="button {{#if variant}}button--{{variant}}{{/if}}" type="{{type}}">{{text}}</button>
 `);
 

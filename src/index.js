@@ -1,3 +1,5 @@
+import './styles/style.css';
+
 import { DiscoverPage } from './pages/discover/discover.js';
 import { Router } from './modules/router.js';
 import { LoginPage } from './pages/login/login.js';
@@ -14,11 +16,20 @@ if (!app) {
 
 applyTheme(getPreferredTheme());
 
+if (__ENABLE_SERVICE_WORKER__ && 'serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').catch((error) => {
+      console.error('Failed to register service worker:', error);
+    });
+  });
+}
+
 const router = new Router({
   '/': DiscoverPage,
   '/discover': DiscoverPage,
   '/login': LoginPage,
   '/register': RegisterPage,
+  '/collections': CollectionsPage,
   '404': NotFoundPage,
 }, app);
 

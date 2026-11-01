@@ -1,5 +1,6 @@
 import { apiRequest } from '../api/auth.js';
 import { store } from './store.js';
+import { eventBus, EVENTS } from './event-bus.js';
 
 export class Router {
     /**
@@ -13,6 +14,15 @@ export class Router {
         this.authRoutes = new Set(['/login', '/register']);
         this.authenticatedRoutes = new Set(['/collections']);
         this.navigationId = 0;
+        eventBus.listen(EVENTS.AUTH_LOGIN, (user) => {
+            store.setState({ user });
+            this.navigate('/discover');
+        });
+        eventBus.listen(EVENTS.AUTH_REGISTER, () => this.navigate('/login'));
+        eventBus.listen(EVENTS.AUTH_LOGOUT, () => {
+            store.setState({ user: null });
+            this.navigate('/login');
+        });
 
         window.addEventListener('popstate', () => {
             void this.route();
@@ -83,7 +93,7 @@ export class Router {
                 : !isAuthorized && this.authenticatedRoutes.has(normalizedPath)
                     ? '/login'
                     : null;
-            const activePath = redirectPath || requestedPath;
+            const activePath = redirectPath || normalizedPath;
 
             if (redirectPath) {
                 window.history.replaceState({}, '', redirectPath);

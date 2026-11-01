@@ -1,7 +1,8 @@
 import { BaseComponent } from '../base-component.js';
 import { getGenreLabel } from '../../../services/movies.js';
+import Handlebars from 'handlebars';
 
-const template = window.Handlebars.compile(`
+const template = Handlebars.compile(`
   <article class="movie-card" data-movie-id="{{id}}">
     <div class="movie-card__cover">
       <img class="movie-card__poster" src="{{poster}}" alt="Постер: {{title}}" loading="lazy" decoding="async" width="360" height="900">

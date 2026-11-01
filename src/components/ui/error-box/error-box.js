@@ -1,6 +1,7 @@
 import { BaseComponent } from '../base-component.js';
+import Handlebars from 'handlebars';
 
-const errorBoxTemplate = window.Handlebars.compile(`
+const errorBoxTemplate = Handlebars.compile(`
   <div class="error-box" id="{{id}}"></div>
 `);
 

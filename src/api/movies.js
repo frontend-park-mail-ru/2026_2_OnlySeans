@@ -23,7 +23,7 @@ function toMovie(film) {
 export async function getMovies() {
   const movies = [];
   let offset = 0;
-  let total = 0;
+  let total;
 
   do {
     const { ok, status, data } = await http.get('/api/films', {

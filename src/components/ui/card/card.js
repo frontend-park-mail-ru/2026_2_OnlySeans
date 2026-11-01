@@ -1,6 +1,7 @@
 import { BaseComponent } from '../base-component.js';
+import Handlebars from 'handlebars';
 
-const cardTemplate = window.Handlebars.compile(`
+const cardTemplate = Handlebars.compile(`
   <div class="auth-card">
     <h1>{{title}}</h1>
   </div>

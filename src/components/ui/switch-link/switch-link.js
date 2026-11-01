@@ -1,6 +1,7 @@
 import { BaseComponent } from '../base-component.js';
+import Handlebars from 'handlebars';
 
-const switchLinkTemplate = window.Handlebars.compile(`
+const switchLinkTemplate = Handlebars.compile(`
   <div class="switch-link">{{text}} <a href="{{href}}" data-link>{{linkText}}</a></div>
 `);
 

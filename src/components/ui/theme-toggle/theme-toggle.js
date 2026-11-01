@@ -1,7 +1,8 @@
 import { BaseComponent } from '../base-component.js';
 import { getPreferredTheme, setTheme } from '../../../services/theme.js';
+import Handlebars from 'handlebars';
 
-const template = window.Handlebars.compile(`
+const template = Handlebars.compile(`
   <button class="theme-toggle" type="button" aria-label="{{label}}"><span class="theme-toggle__icon" aria-hidden="true">{{icon}}</span></button>
 `);
 
