@@ -1,8 +1,7 @@
 import { BaseComponent } from '../../components/ui/base-component.js';
 import { createButton } from '../../components/ui/button/button.js';
-import Handlebars from 'handlebars';
 
-const notFoundTemplate = Handlebars.compile(`
+const notFoundTemplate = window.Handlebars.compile(`
   <div class="not-found">
     <div class="not-found__tv">
       <img class="not-found__noise" src="/src/media/not-found/noise.png" alt="">
@@ -32,13 +31,14 @@ export class NotFoundPage extends BaseComponent {
     document.title = '404';
 
     const page = this.create();
-    const buttons = page.querySelector('.not-found__buttons');
+
     const homeButton = createButton({ text: 'На главную' });
-    const collectionsButton = createButton({ text: 'Смотреть подборки', variant: 'secondary' });
+    // const collectionsButton = createButton({ text: 'Смотреть подборки', variant: 'secondary' });
 
     homeButton.addEventListener('click', () => this.navigate('/'));
-    collectionsButton.addEventListener('click', () => this.navigate('/collections'));
-    buttons.append(homeButton, collectionsButton);
+    // collectionsButton.addEventListener('click', () => this.navigate('/collections'));
+
+    page.querySelector('.not-found__buttons').append(homeButton); //, collectionsButton
 
     return page;
   }
