@@ -1,11 +1,11 @@
 import { BaseComponent } from '../base-component.js';
 import { createSiteLogo } from '../site-logo/site-logo.js';
-import { createLogoutButton } from '../logout-button/logout-button.js';
 import { store } from '../../../modules/store.js';
-import { logout } from '../../../services/auth.js';
+import { createThemeToggle } from '../theme-toggle/theme-toggle.js';
+import { element } from '../../../utils/dom.js';
 
 const template = window.Handlebars.compile(`
-  <header class="site-header">
+  <header class="site-header site-header--minimal">
     <div class="site-header__brand"></div>
     <div class="site-header__actions">
       <p class="site-header__status" role="status" aria-live="polite"></p>
@@ -19,54 +19,49 @@ export class SiteHeader extends BaseComponent {
   }
   create() {
     if (this.element) return this.element;
-    const element = super.create();
-    element.querySelector('.site-header__brand').appendChild(createSiteLogo());
-    this.renderActions(element);
-    return element;
+    const header = super.create();
+    const logoMark = element('img');
+    logoMark.src = new URL('../../../media/auth/logo-mark.svg', import.meta.url).href;
+    logoMark.width = 30;
+    logoMark.height = 30;
+    logoMark.alt = '';
+    header.querySelector('.site-header__brand').append(logoMark, createSiteLogo());
+    this.renderActions(header);
+    this.watchUser(header);
+    return header;
   }
 
-  renderActions(element) {
-    const actions = element.querySelector('.site-header__actions');
-    const status = element.querySelector('.site-header__status');
-    const user = store.get('user');
+  // шапка сама перерисовывается при входе, выходе и истёкшей сессии;
+  // отписку вызывает боковая панель, вместе с которой шапка живёт и удаляется
+  watchUser(header) {
+    header.disposeUserWatch = store.watch('user', () => this.renderActions(header));
+  }
 
+  renderActions(header) {
+    const actions = header.querySelector('.site-header__actions');
+    const status = header.querySelector('.site-header__status');
+    const user = store.get('user');
     if (!user) {
-      const loginLink = document.createElement('a');
-      loginLink.className = 'site-header__login';
+      const loginLink = element('a', 'site-header__login');
       loginLink.href = '/login';
       loginLink.dataset.link = '';
       loginLink.textContent = 'Войти';
-      actions.replaceChildren(loginLink, status);
+      actions.replaceChildren(createThemeToggle(), loginLink, status);
       return;
     }
 
-    const username = document.createElement('span');
-    username.className = 'site-header__username';
-    username.textContent = user.username || user.name || user.email || 'Пользователь';
-
-    const logoutButton = createLogoutButton({
-      onClick: async () => {
-        const status = element.querySelector('.site-header__status');
-        logoutButton.disabled = true;
-        status.textContent = '';
-
-        try {
-          if (!await logout()) {
-            status.textContent = 'Не удалось выйти из аккаунта. Попробуйте ещё раз.';
-            logoutButton.disabled = false;
-            return;
-          }
-
-          this.navigate('/login');
-        } catch (error) {
-          console.error('Не удалось выйти из аккаунта:', error);
-          status.textContent = 'Не удалось связаться с сервером. Попробуйте ещё раз.';
-          logoutButton.disabled = false;
-        }
-      },
-    });
-
-    actions.replaceChildren(username, logoutButton, status);
+    const account = element('span', 'site-header__account');
+    const name = user.username || user.name || user.email || 'Пользователь';
+    const avatar = element('span', 'site-header__user-avatar');
+    avatar.setAttribute('aria-hidden', 'true');
+    avatar.textContent = name
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((part) => part[0])
+      .join('');
+    const username = element('span', 'site-header__username', name);
+    account.append(avatar, username);
+    actions.replaceChildren(createThemeToggle(), account, status);
   }
 }
 export const createSiteHeader = (options) => new SiteHeader(options).render();

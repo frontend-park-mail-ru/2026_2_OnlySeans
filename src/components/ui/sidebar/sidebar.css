@@ -1,0 +1,257 @@
+.catalog-page {
+  --sidebar-width: 192px;
+  --sidebar-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  padding-left: var(--sidebar-width);
+  transition: padding-left 340ms var(--sidebar-ease);
+}
+.catalog-page[data-sidebar-collapsed='true'] {
+  --sidebar-width: 64px;
+}
+.site-sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  width: var(--sidebar-width);
+  padding: 20px 10px;
+  overflow: hidden;
+  background: var(--bg-dark);
+  border-right: 1px solid var(--border-subtle);
+  transition:
+    width 340ms var(--sidebar-ease),
+    transform 340ms var(--sidebar-ease);
+}
+.site-sidebar__head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  width: 172px;
+  min-height: 54px;
+  margin-bottom: 14px;
+  padding: 0 4px;
+}
+.site-sidebar__head .sidebar-toggle {
+  order: -1;
+}
+.site-sidebar__title {
+  font-size: var(--text-meta);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.sidebar-toggle {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  flex: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  background: var(--bg-card);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.sidebar-toggle:hover {
+  color: var(--text-main);
+  border-color: var(--border-active);
+}
+.sidebar-opener {
+  display: none;
+}
+.sidebar-nav {
+  flex: 1;
+  min-height: 100px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+}
+.sidebar-nav::-webkit-scrollbar {
+  display: none;
+}
+.sidebar-nav__group + .sidebar-nav__group {
+  margin-top: 20px;
+}
+.sidebar-nav__caption {
+  margin: 0 10px 7px;
+  font-size: var(--text-meta);
+  line-height: 16px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+.sidebar-nav__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-height: 40px;
+  margin: 3px 0;
+  /* в свёрнутой панели ссылка 43px: отступ 12px слева + значок 19px — центр ровно посередине;
+     справа 8px, чтобы в развёрнутой панели хватило места для «Смотреть позже» */
+  padding: 8px 8px 8px 12px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 20px;
+  transition:
+    background 160ms ease,
+    color 160ms ease;
+}
+.sidebar-nav__link svg {
+  flex: none;
+  width: 19px;
+  height: 19px;
+}
+.sidebar-nav__text {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.site-sidebar__title,
+.sidebar-nav__text,
+.sidebar-nav__caption,
+.sidebar-nav__count {
+  opacity: 1;
+  transition: opacity 170ms ease 90ms;
+}
+.site-sidebar__head .sidebar-toggle svg {
+  transition: transform 340ms var(--sidebar-ease);
+}
+.sidebar-nav__link:hover {
+  background: var(--bg-input);
+  color: var(--text-main);
+}
+.sidebar-nav__link[aria-current='page'] {
+  color: var(--euphoria-amber);
+  background: rgba(230, 161, 92, 0.12);
+}
+.sidebar-nav__count {
+  position: absolute;
+  top: 3px;
+  right: calc(100% - 39px);
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border: 2px solid var(--bg-dark);
+  border-radius: 999px;
+  background: var(--euphoria-amber);
+  color: #21160d;
+  font-size: 11px;
+  font-weight: 800;
+  line-height: 13px;
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+[data-theme='light'] .sidebar-nav__count {
+  color: #fff;
+}
+/* Счётчик — бейдж на углу иконки: он заканчивается до начала названия, поэтому «Смотреть позже» и «99+» не накладываются; в свёрнутой панели число остаётся видно. */
+.catalog-page .catalog-container {
+  padding-top: 0;
+}
+.catalog-page .featured-slot {
+  margin-top: 28px;
+}
+.sidebar-backdrop {
+  display: none;
+}
+.library-page {
+  padding-top: 32px;
+}
+.library-page > .catalog-heading {
+  margin-bottom: 8px;
+}
+.library-empty-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: var(--euphoria-amber);
+  font-size: var(--text-small);
+}
+@media (min-width: 1001px) {
+  [data-sidebar-collapsed='true'] .site-sidebar__title,
+  [data-sidebar-collapsed='true'] .sidebar-nav__text,
+  [data-sidebar-collapsed='true'] .sidebar-nav__caption {
+    opacity: 0;
+    transition-delay: 0ms;
+  }
+  [data-sidebar-collapsed='true'] .sidebar-toggle svg {
+    transform: rotate(180deg);
+  }
+}
+@media (max-width: 1000px) {
+  .catalog-page,
+  .catalog-page[data-sidebar-collapsed='true'] {
+    padding-left: 0;
+    --sidebar-width: 216px;
+  }
+  .sidebar-opener {
+    display: grid;
+  }
+  .site-sidebar {
+    transform: translateX(-100%);
+    padding-top: 12px;
+    max-height: 100dvh;
+    box-shadow: 20px 0 60px rgba(0, 0, 0, 0.25);
+  }
+  .site-sidebar__head {
+    margin-bottom: 14px;
+  }
+  .sidebar-nav__link {
+    min-height: 44px;
+  }
+  [data-sidebar-open='true'] .site-sidebar {
+    transform: translateX(0);
+  }
+  .sidebar-backdrop:not([hidden]) {
+    display: block;
+    position: fixed;
+    inset: 0;
+    z-index: 25;
+    border: 0;
+    background: rgba(0, 0, 0, 0.6);
+    touch-action: none;
+  }
+  .catalog-page .catalog-topbar {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+}
+@media (max-width: 560px) {
+  .catalog-page .catalog-topbar .site-header__brand {
+    gap: 6px;
+  }
+  .catalog-topbar .sidebar-opener {
+    width: 34px;
+    height: 36px;
+    margin-right: 2px;
+  }
+  .catalog-topbar .site-header__brand > img {
+    width: 24px;
+    height: 24px;
+  }
+  .catalog-page .catalog-topbar .site-header__brand .site-logo {
+    font-size: var(--text-section);
+  }
+  .catalog-page .catalog-topbar .site-header__actions {
+    gap: 6px;
+  }
+  .catalog-page .catalog-topbar .site-header__login {
+    min-width: 62px;
+    padding-inline: 10px;
+    font-size: var(--text-meta);
+    height: 40px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-page,
+  .site-sidebar,
+  .site-sidebar * {
+    transition: none !important;
+  }
+}
