@@ -82,7 +82,7 @@
   margin-top: 12px;
 
   font-family: var(--font-tv);
-  font-size: clamp(12px, 1.5vw, 20px);
+  font-size: clamp(var(--text-meta), 1.5vw, var(--text-title));
   font-weight: 700;
   letter-spacing: 6px;
   text-transform: uppercase;
@@ -96,7 +96,7 @@
 .not-found__title {
   margin: 0 0 8px;
 
-  font-size: 24px;
+  font-size: var(--text-large);
   font-weight: 700;
 
   color: var(--text-main);
@@ -109,7 +109,7 @@
 
   margin: 0 0 20px;
 
-  font-size: 14px;
+  font-size: var(--text-small);
   line-height: 1.5;
 
   color: var(--text-muted);
@@ -129,9 +129,16 @@
 }
 
 @keyframes tv-flicker {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.88; }
-  52% { opacity: 1; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.88;
+  }
+  52% {
+    opacity: 1;
+  }
 }
 
 .not-found__signal {

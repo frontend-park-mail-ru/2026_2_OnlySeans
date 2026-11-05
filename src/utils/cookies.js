@@ -7,13 +7,9 @@ export class CookieService {
   static get(name) {
     // Экранируем спецсимволы в имени для RegExp
     const matches = document.cookie.match(
-      new RegExp(
-        '(?:^|; )' +
-          name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') +
-          '=([^;]*)'
-      )
+      new RegExp('(?:^|; )' + name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '=([^;]*)'),
     );
-    
+
     return matches ? decodeURIComponent(matches[1]) : null;
   }
 
@@ -38,7 +34,7 @@ export class CookieService {
 
     for (const [optionKey, optionValue] of Object.entries(options)) {
       updatedCookie += `; ${optionKey}`;
-      
+
       if (optionValue !== true) {
         updatedCookie += `=${optionValue}`;
       }

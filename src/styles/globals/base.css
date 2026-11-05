@@ -9,5 +9,7 @@ body {
   justify-content: center;
   min-height: 100vh;
   margin: 0;
-  transition: background-color 0.4s ease, color 0.4s ease;
+  transition:
+    background-color 0.4s ease,
+    color 0.4s ease;
 }

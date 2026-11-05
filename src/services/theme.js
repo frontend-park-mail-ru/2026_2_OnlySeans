@@ -1,10 +1,11 @@
 import { CookieService } from '../utils/cookies.js';
+import { stopViewTransition, trackViewTransition } from './view-transitions.js';
 
 export const THEME_KEY = 'theme';
 const THEME_COOKIE_OPTIONS = {
-  path: '/',
+  'path': '/',
   'max-age': 60 * 60 * 24 * 365,
-  SameSite: 'Lax',
+  'SameSite': 'Lax',
 };
 
 const isTheme = (value) => value === 'light' || value === 'dark';
@@ -23,40 +24,65 @@ export const getPreferredTheme = () => {
   return 'dark';
 };
 
-export const applyTheme = (theme, iconEl) => {
-  if (theme === 'light') {
-    document.documentElement.setAttribute('data-theme', 'light');
-    if (iconEl) iconEl.textContent = '\u2600';
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-
-    if (iconEl) iconEl.textContent = '\u1F319';
-  }
+export const applyTheme = (theme) => {
+  if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+  else document.documentElement.removeAttribute('data-theme');
+  // значок на кнопке меняет CSS, здесь обновляется только подпись для экранного диктора
+  document.querySelectorAll('.theme-toggle').forEach((button) => {
+    button.setAttribute(
+      'aria-label',
+      theme === 'light' ? 'Включить тёмную тему' : 'Включить светлую тему',
+    );
+  });
 };
 
 let transitionTimer;
-export const setTheme = (theme) => {
-  if (!isTheme(theme)) return;
+let changing = false;
+export const setTheme = async (theme, { origin } = {}) => {
+  if (!isTheme(theme) || changing) return;
+  stopViewTransition();
   CookieService.set(THEME_KEY, theme, THEME_COOKIE_OPTIONS);
   clearTimeout(transitionTimer);
-  document.documentElement.classList.add('theme-transition');
-  applyTheme(theme);
-  transitionTimer = setTimeout(() => document.documentElement.classList.remove('theme-transition'), 900);
+  const root = document.documentElement;
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!document.startViewTransition || reduced) {
+    if (!reduced) root.classList.add('theme-transition');
+    applyTheme(theme);
+    transitionTimer = setTimeout(() => root.classList.remove('theme-transition'), 350);
+    return;
+  }
+
+  const rect = origin?.getBoundingClientRect();
+  const x = rect ? rect.left + rect.width / 2 : innerWidth / 2;
+  const y = rect ? rect.top + rect.height / 2 : innerHeight / 2;
+  const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+  changing = true;
+  root.classList.remove('theme-transition');
+  root.classList.add('theme-wave');
+  const buttons = [...document.querySelectorAll('.theme-toggle')];
+  buttons.forEach((button) => button.setAttribute('aria-busy', 'true'));
+  let animation;
+  const cleanup = () => {
+    animation?.cancel();
+    root.classList.remove('theme-wave');
+    buttons.forEach((button) => button.removeAttribute('aria-busy'));
+    changing = false;
+  };
+  const transition = document.startViewTransition(() => applyTheme(theme));
+  trackViewTransition(transition, cleanup);
+  try {
+    await transition.ready;
+    animation = root.animate(
+      { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+      {
+        duration: 780,
+        easing: 'cubic-bezier(.22,.61,.36,1)',
+        pseudoElement: '::view-transition-new(theme-surface)',
+      },
+    );
+  } catch {
+    // переход на другую страницу может прервать волну — так и задумано
+  }
 };
 
-let currentTheme = getPreferredTheme();
-applyTheme(currentTheme, null);
-
-document.addEventListener('DOMContentLoaded', () => {
-  const themeToggleBtn = document.getElementById('themeToggle');
-  if (!themeToggleBtn) return;
-
-  const themeIcon = themeToggleBtn.querySelector('.theme-toggle__icon') || themeToggleBtn;
-  applyTheme(currentTheme, themeIcon);
-
-  themeToggleBtn.addEventListener('click', () => {
-    currentTheme = currentTheme === 'light' ? 'dark' : 'light';
-    CookieService.set(THEME_KEY, currentTheme, THEME_COOKIE_OPTIONS);
-    applyTheme(currentTheme, themeIcon);
-  });
-});
+applyTheme(getPreferredTheme());

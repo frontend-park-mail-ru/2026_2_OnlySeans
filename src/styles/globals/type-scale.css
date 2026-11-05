@@ -1,0 +1,48 @@
+:root {
+  --text-meta: 15px;
+  --text-small: 16px;
+  --text-control: 16px;
+  --text-body: 17px;
+  --text-record: 18px;
+  --text-lead: 19px;
+  --text-title-small: 19px;
+  --text-title: 20px;
+  --text-section-small: 21px;
+  --text-section: 22px;
+  --text-large: 24px;
+  --text-heading: 28px;
+}
+body {
+  font-size: var(--text-body);
+  line-height: 1.6;
+}
+button,
+input,
+textarea,
+select {
+  font-size: var(--text-control);
+}
+
+:root {
+  --text-size-23: 23px;
+  --text-size-25: 25px;
+  --text-size-26: 26px;
+  --text-size-30: 30px;
+  --text-size-32: 32px;
+  --text-size-36: 36px;
+  --text-size-48: 48px;
+  --text-size-58: 58px;
+}
+
+/* !important — чтобы перебить размеры в старых компонентах */
+button,
+input,
+textarea,
+select {
+  font-size: var(--text-control) !important;
+}
+
+.catalog-page .movie-tile__title {
+  font-size: var(--text-small);
+  line-height: 1.5;
+}

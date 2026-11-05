@@ -9,7 +9,6 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 18px;
   transition: var(--transition);
   flex-shrink: 0;
 }
@@ -18,4 +17,23 @@
   border-color: var(--euphoria-amber);
   box-shadow: 0 0 15px var(--euphoria-amber-glow);
   transform: scale(1.05);
+}
+
+.theme-toggle__icon svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* видна луна на тёмной теме и солнце на светлой */
+.theme-toggle__moon,
+[data-theme='light'] .theme-toggle__sun {
+  display: block;
+}
+.theme-toggle__sun,
+[data-theme='light'] .theme-toggle__moon {
+  display: none;
 }
