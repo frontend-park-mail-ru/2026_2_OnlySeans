@@ -1,6 +1,7 @@
 import { getAuthReturnPath } from '../services/auth-return.js';
 import { apiRequest } from '../api/auth.js';
 import { store } from './store.js';
+import { updateAuthLayout } from '../pages/login/auth-layout.js';
 import { preserveCatalogNavigation } from './catalog-transition.js';
 import { stopViewTransition, trackViewTransition } from '../services/view-transitions.js';
 
@@ -113,6 +114,9 @@ export class Router {
       .querySelector('main')
       ?.getAnimations()
       .forEach((animation) => animation.cancel());
+    const currentAuthShell = this.rootElement.querySelector('[data-auth-shell]');
+    const requestedAuthPath = window.location.pathname.replace(/\/+$/, '');
+    const preserveAuthShell = currentAuthShell && this.authRoutes.has(requestedAuthPath);
     if (!this.rootElement.firstChild) this.rootElement.textContent = 'Проверка сессии...';
     this.rootElement.setAttribute('aria-busy', 'true');
 
@@ -151,7 +155,8 @@ export class Router {
       const currentCatalog = this.rootElement.querySelector('.catalog-page');
       const catalogTransition = currentCatalog && this.catalogRoutes.has(activePath);
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const animateNavigation = Boolean(this.rootElement.firstElementChild) && !reducedMotion;
+      const animateNavigation =
+        Boolean(this.rootElement.firstElementChild) && !preserveAuthShell && !reducedMotion;
       const focusedLink = document.activeElement?.closest('a[data-link]');
       const navigationFocus = focusedLink?.closest('.site-sidebar, .catalog-topbar')
         ? focusedLink.getAttribute('href')
@@ -163,6 +168,15 @@ export class Router {
           navigate: (nextPath, options) => this.navigate(nextPath, options),
         });
         const renderedContent = viewInstance.render();
+        if (
+          preserveAuthShell &&
+          currentAuthShell.isConnected &&
+          renderedContent instanceof HTMLElement &&
+          renderedContent.hasAttribute('data-auth-shell')
+        ) {
+          updateAuthLayout(currentAuthShell, renderedContent);
+          return;
+        }
         if (
           catalogTransition &&
           renderedContent instanceof HTMLElement &&
@@ -190,6 +204,8 @@ export class Router {
         stopViewTransition();
         // в каталоге оболочка остаётся на месте, остальные страницы сменяются целиком
         if (!catalogTransition) document.documentElement.classList.add('route-surface');
+        if (this.authRoutes.has(activePath) || currentAuthShell)
+          document.documentElement.classList.add('route-auth');
         const transition = document.startViewTransition(commit);
         this.transition = transition;
         trackViewTransition(transition, () =>
