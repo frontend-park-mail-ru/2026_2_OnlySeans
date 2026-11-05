@@ -1,5 +1,7 @@
 import { createSidebar } from '../../components/ui/sidebar/sidebar.js';
 import { getMoviePoster } from '../../services/posters.js';
+import { createMovieListButton } from '../../components/ui/movie-actions/movie-actions.js';
+import { createPersonalLibraryButton } from '../../components/ui/movie-actions/personal-library.js';
 import { pluralize } from '../../utils/plural.js';
 import { element } from '../../utils/dom.js';
 
@@ -93,7 +95,7 @@ export const createCollectionCard = (collection) => {
   return card;
 };
 
-export const createMovieTile = (movie) => {
+export const createMovieTile = (movie, page) => {
   const tile = element('a');
   tile.href = `/film/${movie.id}`;
   tile.dataset.link = '';
@@ -118,6 +120,15 @@ export const createMovieTile = (movie) => {
   const description = element('span', 'movie-tile__description', movie.description);
   tile.append(cover, title, meta, description);
   const shell = element('div', 'movie-tile-shell');
-  shell.append(tile);
+  const actions = element('div', 'movie-tile-actions');
+  actions.setAttribute('role', 'group');
+  actions.setAttribute('aria-label', `Действия с фильмом «${movie.title}»`);
+  actions.append(
+    createMovieListButton(movie, page, 'favorite'),
+    createMovieListButton(movie, page, 'watchlater'),
+  );
+  const personal = createPersonalLibraryButton(movie, page);
+  if (personal) actions.append(personal);
+  shell.append(tile, actions);
   return shell;
 };

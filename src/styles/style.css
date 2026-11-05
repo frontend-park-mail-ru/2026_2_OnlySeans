@@ -22,6 +22,7 @@
 @import url('../pages/discover/spotlight-navigation.css');
 @import url('./surface-depth.css');
 @import url('../components/ui/site-header/header-layout.css');
+@import url('./personal-library.css');
 @import url('./theme-transition.css');
 
 @import url('./interaction-motion.css');

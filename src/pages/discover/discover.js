@@ -9,6 +9,8 @@ import {
   createMovieTile,
 } from './catalog-ui.js';
 import { createFeaturedMovie } from './hero.js';
+import { getSavedMovieIds, toggleSavedMovie } from '../../services/movie-lists.js';
+import { syncMovieListButtons } from '../../components/ui/movie-actions/movie-actions.js';
 import { observeHomeEntrances } from './home-motion.js';
 import { createCatalogViewToggle } from '../../components/ui/catalog-view/catalog-view.js';
 import { createPaginationMotion } from './pagination-motion.js';
@@ -35,6 +37,126 @@ export class DiscoverPage {
     page.classList.add('home-club');
     const featured = element('div', 'featured-slot');
     featured.append(createStatus('Загружаем фильм недели…'));
+    const watchLater = element('section', 'watch-later');
+    watchLater.setAttribute('aria-label', 'Смотреть позже');
+    watchLater.append(sectionHeading('Смотреть позже', { count: '' }));
+    const watchEmpty = element('div', 'watch-later__empty');
+    watchEmpty.innerHTML = `<span class="watch-later__empty-icon" aria-hidden="true"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 7v5l3 2"/></svg></span><div><strong>Соберите свой киновечер</strong><p>Нажимайте на часы у фильма — здесь будет ваш список.</p></div><button type="button">Выбрать фильм →</button>`;
+    watchEmpty.querySelector('button').addEventListener('click', () => {
+      feed.scrollIntoView({
+        block: 'start',
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+          ? 'instant'
+          : 'smooth',
+      });
+      feed
+        .querySelector('.catalog-view-toggle [aria-pressed="true"]')
+        ?.focus({ preventScroll: true });
+    });
+    const watchGrid = element('div', 'watch-later__grid');
+    watchGrid.setAttribute('aria-label', 'Сохранённые фильмы');
+    watchLater.append(watchEmpty, watchGrid);
+    const watchControls = element('div', 'watch-later__controls');
+    watchControls.hidden = true;
+    const previous = element('button');
+    previous.type = 'button';
+    previous.textContent = '←';
+    previous.setAttribute('aria-label', 'Прокрутить сохранённые фильмы назад');
+    const next = element('button');
+    next.type = 'button';
+    next.textContent = '→';
+    next.setAttribute('aria-label', 'Прокрутить сохранённые фильмы вперёд');
+    watchControls.append(previous, next);
+    watchLater.querySelector('.catalog-heading').append(watchControls);
+    const updateWatchControls = () => {
+      const overflow = watchGrid.scrollWidth - watchGrid.clientWidth;
+      watchControls.hidden = watchGrid.hidden || overflow < 2;
+      previous.disabled = watchGrid.scrollLeft <= 1;
+      next.disabled = watchGrid.scrollLeft >= overflow - 1;
+    };
+    [previous, next].forEach((button, index) =>
+      button.addEventListener('click', () =>
+        watchGrid.scrollBy({
+          left: (index ? 1 : -1) * Math.max(260, watchGrid.clientWidth * 0.8),
+          behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+            ? 'instant'
+            : 'smooth',
+        }),
+      ),
+    );
+    watchGrid.addEventListener('scroll', updateWatchControls, { passive: true });
+    const watchResize = new ResizeObserver(() => {
+      if (!page.isConnected) {
+        watchResize.disconnect();
+        return;
+      }
+      updateWatchControls();
+    });
+    watchResize.observe(watchGrid);
+    let catalogMovies = [];
+    const renderWatchLater = () => {
+      const byId = new Map(catalogMovies.map((movie) => [movie.id, movie]));
+      const saved = getSavedMovieIds('watchlater')
+        .map((id) => byId.get(id))
+        .filter(Boolean);
+      const scroll = watchGrid.scrollLeft;
+      const focusedButton = watchGrid.contains(document.activeElement)
+        ? document.activeElement
+        : null;
+      const focusedId = focusedButton?.dataset.movieId;
+      const previousIds = [...watchGrid.querySelectorAll('[data-movie-list]')].map(
+        (button) => button.dataset.movieId,
+      );
+      watchGrid.replaceChildren(...saved.map((movie) => createMovieTile(movie, page)));
+      watchGrid.scrollLeft = scroll;
+      watchEmpty.hidden = saved.length > 0;
+      watchGrid.hidden = !saved.length;
+      watchLater.querySelector('.catalog-count').textContent = saved.length
+        ? String(saved.length)
+        : '';
+      if (focusedButton) {
+        const buttons = [...watchGrid.querySelectorAll('[data-movie-list]')];
+        const target =
+          buttons.find((button) => button.dataset.movieId === focusedId) ||
+          buttons[Math.min(Math.max(0, previousIds.indexOf(focusedId)), buttons.length - 1)] ||
+          watchEmpty.querySelector('button');
+        target.focus({ preventScroll: true });
+      }
+      requestAnimationFrame(updateWatchControls);
+    };
+    let feedbackTimer;
+    page.addEventListener('movielistchange', (event) => {
+      const { list, id, undo } = event.detail;
+      if (list === 'watchlater') renderWatchLater();
+      clearTimeout(feedbackTimer);
+      page.querySelector('.movie-feedback')?.remove();
+      if (undo) return;
+      const added = getSavedMovieIds(list).includes(id);
+      const feedback = element('div', 'movie-feedback');
+      const message = element('span');
+      message.setAttribute('role', 'status');
+      message.textContent = `${added ? 'Добавлено в' : 'Убрано из'} ${list === 'favorite' ? 'избранного' : '«Смотреть позже»'}`;
+      if (added && list === 'favorite') message.textContent = 'Добавлено в избранное';
+      const undoButton = element('button');
+      undoButton.type = 'button';
+      undoButton.textContent = 'Отменить';
+      undoButton.addEventListener('click', () => {
+        if (!toggleSavedMovie(list, id)) {
+          message.textContent = 'Не удалось отменить действие.';
+          return;
+        }
+        syncMovieListButtons(page);
+        page.dispatchEvent(
+          new CustomEvent('movielistchange', { detail: { list, id, undo: true } }),
+        );
+      });
+      feedback.append(message, undoButton);
+      page.append(feedback);
+      feedbackTimer = setTimeout(() => {
+        if (!feedback.matches(':hover') && !feedback.contains(document.activeElement))
+          feedback.remove();
+      }, 6500);
+    });
     const collections = element('section', 'home-collections');
     collections.append(
       sectionHeading('Подборки', { link: 'Все подборки →', href: '/collections' }),
@@ -60,7 +182,7 @@ export class DiscoverPage {
       return url.href;
     };
     feed.append(feedNote, status, moviesGrid, pagination);
-    main.append(featured, collections, feed);
+    main.append(featured, watchLater, collections, feed);
     const loadCollections = async () => {
       collectionsStatus.textContent = 'Загружаем подборки…';
       collectionGrid.replaceChildren();
@@ -81,6 +203,8 @@ export class DiscoverPage {
       try {
         const movies = await getMovies();
         if (!page.isConnected) return;
+        catalogMovies = movies;
+        renderWatchLater();
         featured.replaceChildren(
           movies.length ? createFeaturedMovie(movies, page) : createStatus('Каталог пока пуст.'),
         );
@@ -91,7 +215,7 @@ export class DiscoverPage {
           this.currentPage = Math.min(this.currentPage, totalPages);
           const start = (this.currentPage - 1) * pageSize;
           moviesGrid.replaceChildren(
-            ...filtered.slice(start, start + pageSize).map((movie) => createMovieTile(movie)),
+            ...filtered.slice(start, start + pageSize).map((movie) => createMovieTile(movie, page)),
           );
           feed.querySelector('.catalog-count').textContent =
             `${filtered.length} фильмов и сериалов`;
