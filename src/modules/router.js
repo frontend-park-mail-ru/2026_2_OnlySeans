@@ -38,7 +38,17 @@ export class Router {
     this.rootElement = rootElement;
     this.authRoutes = new Set(['/login', '/register']);
     this.navigationId = 0;
-    this.catalogRoutes = new Set(['/', '/discover', '/films', '/series', '/collections']);
+    this.catalogRoutes = new Set([
+      '/',
+      '/discover',
+      '/films',
+      '/series',
+      '/collections',
+      '/watch-later',
+      '/favorites',
+      '/watched',
+      '/my-collections',
+    ]);
 
     window.addEventListener('popstate', () => {
       void this.route();

@@ -1,5 +1,6 @@
 import { DiscoverPage } from './pages/discover/discover.js';
 import { CatalogPage } from './pages/catalog/catalog.js';
+import { PersonalCollectionsPage } from './pages/catalog/personal-collections.js';
 import { Router } from './modules/router.js';
 import { LoginPage } from './pages/login/login.js';
 import { RegisterPage } from './pages/register/register.js';
@@ -22,6 +23,10 @@ const router = new Router(
     '/collections': CollectionsPage,
     '/films': CatalogPage,
     '/series': CatalogPage,
+    '/watch-later': CatalogPage,
+    '/favorites': CatalogPage,
+    '/watched': CatalogPage,
+    '/my-collections': PersonalCollectionsPage,
     '/login': LoginPage,
     '/register': RegisterPage,
     '404': NotFoundPage,

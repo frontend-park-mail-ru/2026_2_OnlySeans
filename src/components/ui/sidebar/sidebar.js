@@ -1,4 +1,6 @@
 import { createSiteHeader } from '../site-header/site-header.js';
+import { getSavedMovieIds } from '../../../services/movie-lists.js';
+import { store } from '../../../modules/store.js';
 import { element } from '../../../utils/dom.js';
 
 const icons = {
@@ -8,6 +10,12 @@ const icons = {
   series: '<rect x="3" y="6" width="18" height="14" rx="2"/><path d="m8 2 4 4 4-4m-6 9 5 3-5 3z"/>',
   collections:
     '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
+  watchlater: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>',
+  favorite:
+    '<path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 0 0-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 0 0 0-7.8Z"/>',
+  watched:
+    '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+  personal: '<path d="M3 7V5h6l2 2h10v13H3V7Z"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   collapse: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m7-12-4 4 4 4"/>',
 };
@@ -49,6 +57,15 @@ export const createSidebar = (page, container, navigate) => {
         ['/collections', 'Подборки', 'collections'],
       ],
     ],
+    [
+      'Моё кино',
+      [
+        ['/watch-later', 'Смотреть позже', 'watchlater'],
+        ['/watched', 'Просмотрено', 'watched'],
+        ['/favorites', 'Избранное', 'favorite'],
+        ['/my-collections', 'Мои коллекции', 'personal'],
+      ],
+    ],
   ];
   for (const [label, links] of items) {
     const group = element('div', 'sidebar-nav__group');
@@ -62,6 +79,15 @@ export const createSidebar = (page, container, navigate) => {
       link.title = text;
       link.setAttribute('aria-label', text);
       link.innerHTML = `${icon(name)}<span class="sidebar-nav__text">${text}</span>`;
+      if (['watched', 'personal'].includes(name)) {
+        link.dataset.authOnly = '';
+        link.hidden = !store.get('user');
+      }
+      if (['watchlater', 'favorite'].includes(name)) {
+        const count = element('span', 'sidebar-nav__count');
+        count.dataset.savedCount = name;
+        link.append(count);
+      }
       if (location.pathname === href || (href === '/' && location.pathname === '/discover'))
         link.setAttribute('aria-current', 'page');
       group.append(link);
@@ -161,30 +187,55 @@ export const createSidebar = (page, container, navigate) => {
       return;
     if (mobile.matches) close();
   });
+  const updateCounts = () => {
+    nav.querySelectorAll('[data-auth-only]').forEach((link) => {
+      link.hidden = !store.get('user');
+    });
+    sidebar.querySelectorAll('[data-saved-count]').forEach((node) => {
+      const list = node.dataset.savedCount;
+      const count = getSavedMovieIds(list).length;
+      node.textContent = count > 99 ? '99+' : String(count || '');
+      node.title = count > 99 ? `Всего: ${count}` : '';
+      node.hidden = !count;
+    });
+  };
   const onResize = () => {
     open = false;
     refresh();
     if (sidebar.contains(document.activeElement) && mobile.matches) opener.focus();
   };
   mobile.addEventListener('change', onResize);
+  window.addEventListener('storage', updateCounts);
+  page.addEventListener('movielistchange', updateCounts);
+  page.addEventListener('personallibrarychange', updateCounts);
+  const stopUserWatch = store.watch('user', updateCounts);
   let disposal;
   sidebar.catalogNavigation = {
     attach(nextPage, nextContainer) {
+      page.removeEventListener('movielistchange', updateCounts);
+      page.removeEventListener('personallibrarychange', updateCounts);
       container.inert = false;
       page = nextPage;
       container = nextContainer;
       open = false;
       page.dataset.sidebarCollapsed = String(collapsed);
+      page.addEventListener('movielistchange', updateCounts);
+      page.addEventListener('personallibrarychange', updateCounts);
       nav.querySelectorAll('a').forEach((link) => {
         const path = new URL(link.href).pathname;
         if (path === location.pathname || (path === '/' && location.pathname === '/discover'))
           link.setAttribute('aria-current', 'page');
         else link.removeAttribute('aria-current');
       });
+      updateCounts();
       refresh();
     },
     dispose() {
       mobile.removeEventListener('change', onResize);
+      window.removeEventListener('storage', updateCounts);
+      page.removeEventListener('movielistchange', updateCounts);
+      page.removeEventListener('personallibrarychange', updateCounts);
+      stopUserWatch();
       header.disposeUserWatch();
       disposal?.disconnect();
     },
@@ -196,6 +247,7 @@ export const createSidebar = (page, container, navigate) => {
     });
     disposal.observe(page.parentElement, { childList: true });
   });
+  updateCounts();
   refresh();
   return [sidebar, backdrop];
 };

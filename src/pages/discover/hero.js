@@ -1,4 +1,6 @@
 import { getMoviePoster } from '../../services/posters.js';
+import { createMovieListButton } from '../../components/ui/movie-actions/movie-actions.js';
+import { createPersonalLibraryButton } from '../../components/ui/movie-actions/personal-library.js';
 import { element } from '../../utils/dom.js';
 
 export const buildFeaturedSlides = (movies) => {
@@ -114,6 +116,23 @@ export const createFeaturedMovie = (movies, page) => {
       .join(' · ');
     hero.querySelector('.spotlight-description').textContent = movie.description;
     hero.querySelector('.spotlight-description').title = movie.description;
+    const actions = hero.querySelector('.spotlight-actions');
+    const focusedList = actions.contains(document.activeElement)
+      ? document.activeElement.dataset.movieList
+      : null;
+    const focusedPersonal =
+      actions.contains(document.activeElement) &&
+      document.activeElement.hasAttribute('data-library-movie-id');
+    actions.replaceChildren(
+      createMovieListButton(movie, page, 'favorite'),
+      createMovieListButton(movie, page, 'watchlater'),
+    );
+    const personal = createPersonalLibraryButton(movie, page);
+    if (personal) actions.append(personal);
+    if (focusedList)
+      actions.querySelector(`[data-movie-list="${focusedList}"]`)?.focus({ preventScroll: true });
+    else if (focusedPersonal)
+      actions.querySelector('[data-library-movie-id]')?.focus({ preventScroll: true });
     for (const [index, rubric] of [...rubrics.children].entries()) {
       rubric.setAttribute('aria-pressed', String(index === current));
       if (index === current) rubric.setAttribute('aria-current', 'true');

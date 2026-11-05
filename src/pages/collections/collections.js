@@ -10,9 +10,22 @@ import {
   filmCount,
 } from '../discover/catalog-ui.js';
 import { createCatalogViewToggle } from '../../components/ui/catalog-view/catalog-view.js';
+import { getMovies } from '../../api/movies.js';
+import { readSharedCollection } from '../../services/collection-sharing.js';
 import { element } from '../../utils/dom.js';
 
-const loadCollection = async (id) => {
+// подборка из ссылки «поделиться» собирается из адреса, обычная приходит с сервера
+const loadCollection = async (id, shared) => {
+  if (shared) {
+    const snapshot = readSharedCollection(location.hash);
+    const catalog = await getMovies();
+    const byId = new Map(catalog.map((movie) => [movie.id, movie]));
+    return {
+      title: snapshot.name,
+      description: 'С вами поделились коллекцией. Это копия на момент отправки ссылки.',
+      films: snapshot.filmIds.map((filmId) => byId.get(filmId)).filter(Boolean),
+    };
+  }
   if (!/^\d+$/.test(id) || Number(id) <= 0) throw new Error('Подборка не найдена.');
   return getCollection(id);
 };
@@ -26,8 +39,9 @@ export class CollectionsPage {
     const { page, main } = createCatalogPage(this.navigate);
     main.className = 'collections-page';
     const id = new URLSearchParams(location.search).get('id');
+    const shared = new URLSearchParams(location.hash.slice(1)).has('shared');
     const status = createStatus(id ? 'Загружаем подборку…' : 'Загружаем подборки…');
-    if (!id) {
+    if (!id && !shared) {
       main.append(sectionHeading('Подборки', { level: 1 }));
       const subtitle = element(
         'p',
@@ -46,8 +60,8 @@ export class CollectionsPage {
       content.replaceChildren();
       status.textContent = 'Загружаем подборки…';
       try {
-        if (id) {
-          const collection = await loadCollection(id);
+        if (id || shared) {
+          const collection = await loadCollection(id, shared);
           if (!page.isConnected) return;
           document.title = `${collection.title} — Frame`;
           const hero = element('section', 'collection-hero');
@@ -71,7 +85,7 @@ export class CollectionsPage {
           });
           const grid = element('div', 'movie-grid');
           heading.append(createCatalogViewToggle(grid));
-          grid.replaceChildren(...collection.films.map((movie) => createMovieTile(movie)));
+          grid.replaceChildren(...collection.films.map((movie) => createMovieTile(movie, page)));
           content.append(hero, heading, grid);
           status.textContent = collection.films.length ? '' : 'В этой подборке пока нет фильмов.';
         } else {
