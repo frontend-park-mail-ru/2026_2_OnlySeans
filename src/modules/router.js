@@ -40,6 +40,7 @@ export class Router {
     this.navigationId = 0;
     this.catalogRoutes = new Set([
       '/',
+      '/profile',
       '/discover',
       '/films',
       '/series',

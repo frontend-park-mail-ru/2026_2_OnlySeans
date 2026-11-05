@@ -16,6 +16,7 @@ const icons = {
   watched:
     '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
   personal: '<path d="M3 7V5h6l2 2h10v13H3V7Z"/>',
+  user: '<circle cx="12" cy="8" r="4"/><path d="M4 21v-2a8 8 0 0 1 16 0v2"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
   collapse: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M9 4v16m7-12-4 4 4 4"/>',
 };
@@ -60,6 +61,7 @@ export const createSidebar = (page, container, navigate) => {
     [
       'Моё кино',
       [
+        ['/profile', 'Мой профиль', 'user'],
         ['/watch-later', 'Смотреть позже', 'watchlater'],
         ['/watched', 'Просмотрено', 'watched'],
         ['/favorites', 'Избранное', 'favorite'],
@@ -79,7 +81,7 @@ export const createSidebar = (page, container, navigate) => {
       link.title = text;
       link.setAttribute('aria-label', text);
       link.innerHTML = `${icon(name)}<span class="sidebar-nav__text">${text}</span>`;
-      if (['watched', 'personal'].includes(name)) {
+      if (['watched', 'personal', 'user'].includes(name)) {
         link.dataset.authOnly = '';
         link.hidden = !store.get('user');
       }

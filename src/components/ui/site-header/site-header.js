@@ -50,7 +50,12 @@ export class SiteHeader extends BaseComponent {
       return;
     }
 
-    const account = element('span', 'site-header__account');
+    const account = element('a', 'site-header__account');
+    account.href = '/profile';
+    account.dataset.link = '';
+    account.setAttribute('aria-label', 'Открыть мой профиль');
+    account.title = 'Мой профиль';
+    if (location.pathname === '/profile') account.setAttribute('aria-current', 'page');
     const name = user.username || user.name || user.email || 'Пользователь';
     const avatar = element('span', 'site-header__user-avatar');
     avatar.setAttribute('aria-hidden', 'true');

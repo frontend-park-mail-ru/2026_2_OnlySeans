@@ -42,9 +42,3 @@ export class EventBus {
 }
 
 export const eventBus = new EventBus();
-
-export const EVENTS = {
-  AUTH_LOGIN: 'auth:login',
-  AUTH_LOGOUT: 'auth:logout',
-  AUTH_REGISTER: 'auth:register',
-};
