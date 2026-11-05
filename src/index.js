@@ -14,12 +14,16 @@ if (!app) {
 
 applyTheme(getPreferredTheme());
 
-const router = new Router({
-  '/': DiscoverPage,
-  '/discover': DiscoverPage,
-  '/login': LoginPage,
-  '/register': RegisterPage,
-  '404': NotFoundPage,
-}, app);
+const router = new Router(
+  {
+    '/': DiscoverPage,
+    '/discover': DiscoverPage,
+    '/collections': CollectionsPage,
+    '/login': LoginPage,
+    '/register': RegisterPage,
+    '404': NotFoundPage,
+  },
+  app,
+);
 
 router.start();

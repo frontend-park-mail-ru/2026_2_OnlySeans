@@ -1,0 +1,171 @@
+/* место под полосу прокрутки резервируем заранее, чтобы страница не прыгала при загрузке */
+html:has(.catalog-page) {
+  scrollbar-gutter: stable;
+}
+#app:has(> .catalog-page) {
+  width: 100%;
+  min-width: 0;
+  align-self: stretch;
+}
+.catalog-page {
+  width: 100%;
+}
+
+.catalog-page .catalog-topbar {
+  display: grid;
+  grid-template-columns: minmax(max-content, 1fr) auto minmax(max-content, 1fr);
+  align-items: center;
+  column-gap: 24px;
+}
+.catalog-page .catalog-topbar .site-header__brand {
+  justify-self: start;
+  flex: none;
+  white-space: nowrap;
+}
+.catalog-page .catalog-topbar .site-header__brand > img {
+  display: block;
+  flex: none;
+}
+.catalog-page .catalog-topbar .site-header__brand .site-logo {
+  width: auto;
+  flex: none;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.catalog-topbar .site-header__actions {
+  justify-self: end;
+}
+
+@media (max-width: 1000px) {
+  .catalog-page .catalog-topbar {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 46px auto;
+    column-gap: 14px;
+    row-gap: 14px;
+  }
+  .catalog-topbar .site-header__brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .catalog-topbar .site-header__actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+@media (max-width: 360px) {
+  .catalog-page .catalog-topbar {
+    column-gap: 8px;
+  }
+  .catalog-topbar .site-header__username {
+    display: none;
+  }
+}
+
+/* логотип одного размера на всех страницах */
+.catalog-page .catalog-topbar .site-header__brand .site-logo {
+  font-size: var(--text-size-36);
+}
+.catalog-page .catalog-topbar .site-header__brand > img {
+  width: 40px;
+  height: 40px;
+}
+@media (max-width: 560px) {
+  .catalog-page .catalog-topbar .site-header__brand .site-logo {
+    font-size: var(--text-size-32);
+  }
+  .catalog-page .catalog-topbar .site-header__brand > img {
+    width: 32px;
+    height: 32px;
+  }
+}
+@media (max-width: 360px) {
+  .catalog-page .catalog-topbar .site-header__brand {
+    gap: 6px;
+  }
+  .catalog-page .catalog-topbar .site-header__brand .site-logo {
+    font-size: var(--text-heading);
+  }
+  .catalog-page .catalog-topbar .site-header__brand > img {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* пока нет поиска, шапка минимальная */
+.catalog-page .catalog-topbar.site-header--minimal {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto;
+  column-gap: 20px;
+}
+.catalog-topbar.site-header--minimal .site-header__actions {
+  grid-column: 2;
+  grid-row: 1;
+  justify-self: end;
+}
+.site-header__account {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  max-width: 240px;
+  padding: 6px 14px 6px 6px;
+  border: 1px solid var(--border-active);
+  border-radius: 24px;
+  color: var(--text-main);
+  background: var(--bg-input);
+}
+.site-header__account:hover {
+  background: var(--bg-card);
+}
+.site-header__user-avatar {
+  display: grid;
+  place-items: center;
+  flex: 0 0 30px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #21160d;
+  background: var(--euphoria-amber);
+  font-size: 12px;
+  font-weight: 750;
+}
+.catalog-page .site-header__account .site-header__username {
+  display: block;
+  min-width: 0;
+  max-width: 170px;
+  font-size: var(--text-small);
+  font-weight: 650;
+}
+@media (max-width: 640px) {
+  .catalog-page .catalog-topbar.site-header--minimal {
+    column-gap: 10px;
+  }
+  .catalog-page .site-header__account .site-header__username {
+    max-width: 85px;
+  }
+  .site-header__account {
+    padding-right: 10px;
+    gap: 7px;
+  }
+}
+@media (max-width: 420px) {
+  .catalog-page .site-header__account .site-header__username {
+    display: none;
+  }
+  .site-header__account {
+    padding: 6px;
+    min-width: 44px;
+    justify-content: center;
+  }
+  .catalog-page .catalog-topbar.site-header--minimal .site-header__brand {
+    gap: 4px;
+  }
+  .catalog-page .catalog-topbar.site-header--minimal .site-header__brand .site-logo {
+    font-size: 24px;
+  }
+  .catalog-page .catalog-topbar.site-header--minimal .site-header__brand > img {
+    width: 24px;
+    height: 24px;
+  }
+}
