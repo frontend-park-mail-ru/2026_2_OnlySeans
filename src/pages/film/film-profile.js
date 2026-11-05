@@ -6,6 +6,7 @@ import { getMoviePoster } from '../../services/posters.js';
 import { createMovieTile } from '../discover/catalog-ui.js';
 import { skeletons, showRetry } from './film-ui.js';
 import { element } from '../../utils/dom.js';
+import { createAudienceRose } from './audience-rose.js';
 import { createScrollRow } from './scroll-row.js';
 import { formatPremiere, getFilmFacts, getFilmVersions } from '../../data/film-facts.js';
 
@@ -269,6 +270,7 @@ export const createFilmProfile = async ({ movie, page, signal, hero }) => {
     hero.querySelector('h1')?.after(original);
   }
   hero.after(createStory(movie, credits, facts, people));
+  profile.append(createAudienceRose({ movie, signal }));
   const cast = createCast(credits);
   if (cast) profile.append(cast);
   const versionsSlot = element('div', 'film-profile-versions-slot');

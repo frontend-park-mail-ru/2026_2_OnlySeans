@@ -1,0 +1,381 @@
+import { showFandomError } from '../../services/fandom-notice.js';
+import { createButton } from '../../components/ui/button/button.js';
+import { createField } from '../../components/ui/field/field.js';
+import { createErrorBox } from '../../components/ui/error-box/error-box.js';
+import { showError } from '../../modules/validation.js';
+import { setupLiveValidation } from '../login/live-validation.js';
+import { readFandomDraft, saveFandomDraft, clearFandomDraft } from '../../services/fandom-draft.js';
+import { loginForCurrentPage } from '../../services/auth-return.js';
+import { fandomErrorMessage } from '../../api/fandom.js';
+import { threadTypes, textLength, checkTextLength, filmIcon } from './film-ui.js';
+import { element } from '../../utils/dom.js';
+import { createRatingPicker } from './rating-picker.js';
+import { limitTextInput } from '../../utils/text-limit.js';
+
+let nextEditor = 0;
+// Счётчик коротко подсвечивается, когда ввод упёрся в лимит длины.
+const flashLimit = (counter) => {
+  counter.classList.remove('is-at-limit');
+  void counter.offsetWidth;
+  counter.classList.add('is-at-limit');
+};
+export const createContentEditor = ({
+  draftKey,
+  initial = {},
+  topic = false,
+  label = 'Ваш ответ',
+  submitLabel = 'Отправить',
+  onSubmit,
+  onDone,
+  onCancel,
+  onAccessError = () => {},
+  compact = false,
+  typeButtons = false,
+  placeholder = '',
+  textLabel: customTextLabel,
+  chat = false,
+  replyTo = () => null,
+  ratings = false,
+}) => {
+  const prefix = `content-editor-${++nextEditor}`;
+  const saved = readFandomDraft(draftKey);
+  const draft = { ...initial, ...saved };
+  const form = element('form', 'thread-composer__form content-editor');
+  form.noValidate = true;
+  form.setAttribute('aria-label', label);
+  form.append(element('h3', 'editor-heading', label));
+  if (chat) form.classList.add('chat-editor');
+  if (compact) form.classList.add('content-editor--compact');
+  const fields = [];
+  let title;
+  let type;
+  let titleCounter;
+  const typeControls = [];
+  if (topic) {
+    const field = createField({ id: `${prefix}-title`, label: 'Заголовок' });
+    title = field.querySelector('input');
+    title.value = draft.title || '';
+    titleCounter = element('span', 'thread-character-count');
+    field.append(titleCounter);
+    limitTextInput(title, 120, { onLimit: () => flashLimit(titleCounter) });
+    form.append(field);
+    fields.push({ field, check: (value) => checkTextLength(value, 3, 120) });
+    const typeField = element('div', 'field');
+    const typeLabel = element('label', '', 'Тип темы');
+    type = element('select');
+    type.id = `${prefix}-type`;
+    typeLabel.htmlFor = type.id;
+    for (const [value, name] of Object.entries(threadTypes)) {
+      const option = element('option', '', name);
+      option.value = value;
+      type.append(option);
+    }
+    type.value = draft.type || 'discussion';
+    typeField.append(typeLabel, type);
+    if (typeButtons) {
+      type.hidden = true;
+      const group = element('div', 'topic-types');
+      group.setAttribute('role', 'group');
+      group.setAttribute('aria-label', 'Тип темы');
+      const hints = {
+        theory: 'Ваша версия сюжета',
+        discussion: 'Мнения и впечатления',
+        question: 'Спросите, что непонятно',
+      };
+      for (const [value, name] of Object.entries(threadTypes)) {
+        const button = element('button', 'topic-type');
+        button.type = 'button';
+        button.dataset.type = value;
+        button.append(element('strong', '', name), element('span', '', hints[value]));
+        button.addEventListener('click', () => {
+          type.value = value;
+          type.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+        typeControls.push(button);
+        group.append(button);
+      }
+      typeField.append(group);
+    }
+    form.insertBefore(typeField, form.children[1]);
+    fields.push({
+      field: typeField,
+      check: (value) => (threadTypes[value] ? '' : 'Выберите тип темы'),
+    });
+  }
+  const field = element('div', 'field');
+  const textLabel = element(
+    'label',
+    '',
+    customTextLabel || (topic ? 'Текст темы' : 'Текст сообщения'),
+  );
+  const text = element('textarea');
+  text.id = `${prefix}-text`;
+  textLabel.htmlFor = text.id;
+  text.rows = chat || compact ? 1 : 4;
+  text.placeholder = placeholder;
+  text.required = true;
+  text.value = draft.text || '';
+  const counter = element('span', 'thread-character-count');
+  counter.id = `${prefix}-count`;
+  field.append(textLabel, text, counter);
+  limitTextInput(text, topic ? 5000 : 2000, {
+    onLimit: () => {
+      counter.hidden = false;
+      flashLimit(counter);
+    },
+  });
+  form.append(field);
+  let picker = null;
+  if (ratings) {
+    picker = createRatingPicker({
+      initial: draft.ratings,
+      onChange: () => {
+        persist();
+        validation.validate();
+      },
+    });
+    form.append(picker.element);
+  }
+  fields.push({
+    field,
+    check: (value) =>
+      picker?.value()
+        ? checkTextLength(value, 0, 2000)
+        : checkTextLength(value, 1, topic ? 5000 : 2000),
+  });
+  if (picker) {
+    text.required = false;
+    const hint = element('p', 'review-text-optional', 'Текст можно не писать — достаточно оценки.');
+    field.append(hint);
+  }
+  const spoilerLabel = element('label', 'thread-spoiler-toggle');
+  const spoiler = element('input');
+  spoiler.type = 'checkbox';
+  spoiler.checked = Boolean(draft.spoiler);
+  spoilerLabel.append(spoiler, element('span', '', 'Есть спойлеры'));
+  if (chat) {
+    const toggle = element('button', 'chat-spoiler-toggle');
+    toggle.type = 'button';
+    toggle.title = 'Спойлер';
+    toggle.setAttribute('aria-label', 'Спойлер');
+    const sync = () => toggle.setAttribute('aria-pressed', String(spoiler.checked));
+    toggle.append(filmIcon('eye'));
+    toggle.addEventListener('click', () => {
+      spoiler.checked = !spoiler.checked;
+      sync();
+      persist();
+    });
+    spoiler.addEventListener('change', sync);
+    sync();
+    spoilerLabel.hidden = true;
+    form.append(toggle);
+  }
+  form.append(spoilerLabel);
+  const error = createErrorBox(`${prefix}-error`);
+  error.setAttribute('role', 'alert');
+  showError(error, '');
+  const retry = createButton({ text: 'Повторить', variant: 'secondary' });
+  retry.hidden = true;
+  const login = element('a', 'film-text-link', 'Войти и вернуться к теме');
+  login.dataset.link = '';
+  login.hidden = true;
+  const actions = element('div', 'thread-composer__actions');
+  const submit = createButton({ text: submitLabel, type: 'submit' });
+  if (chat) {
+    submit.textContent = '';
+    submit.append(filmIcon('send'));
+    submit.title = 'Отправить';
+    submit.setAttribute('aria-label', 'Отправить');
+  }
+  const cancel = createButton({ text: 'Отмена', variant: 'secondary' });
+  if (onCancel) actions.append(cancel);
+  actions.append(submit);
+  form.append(error, retry, login, actions);
+  const values = () => ({
+    text: text.value,
+    spoiler: spoiler.checked,
+    ...(picker ? { ratings: picker.value() } : {}),
+    ...(topic ? { title: title.value, type: type.value } : {}),
+    ...(chat ? { parent_id: replyTo() } : {}),
+  });
+  const persist = () => saveFandomDraft(draftKey, values());
+  const update = () => {
+    persist();
+    if (titleCounter) titleCounter.textContent = `${textLength(title.value)} / 120`;
+    for (const button of typeControls)
+      button.setAttribute('aria-pressed', String(button.dataset.type === type.value));
+    counter.textContent = `${textLength(text.value)} / ${topic ? 5000 : 2000}`;
+    if (chat) {
+      counter.hidden = textLength(text.value) < 1800;
+      text.style.height = 'auto';
+      text.style.height = Math.min(176, Math.max(48, text.scrollHeight)) + 'px';
+      form
+        .querySelector('.chat-spoiler-toggle')
+        ?.setAttribute('aria-pressed', String(spoiler.checked));
+    }
+    text.setAttribute('aria-describedby', `${text.id}-hint ${counter.id}`);
+    showError(error, '');
+    retry.hidden = true;
+  };
+  const validation = setupLiveValidation(form, submit, fields, update);
+  update();
+  spoiler.addEventListener('change', persist);
+  cancel.addEventListener('click', () => {
+    if (!validation.isSubmitting()) {
+      persist();
+      onCancel?.();
+    }
+  });
+  retry.addEventListener('click', () => form.requestSubmit());
+  if (compact) {
+    form.classList.toggle('is-expanded', Boolean(text.value));
+    text.addEventListener('focus', () => form.classList.add('is-expanded'));
+  }
+  form.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && !validation.isSubmitting()) {
+      event.preventDefault();
+      persist();
+      if (onCancel) onCancel();
+      else if (compact) {
+        form.classList.remove('is-expanded');
+        text.blur();
+      }
+    }
+    if (
+      event.key === 'Enter' &&
+      !event.isComposing &&
+      ((chat && event.target === text && !event.shiftKey) || event.ctrlKey || event.metaKey)
+    ) {
+      event.preventDefault();
+      form.requestSubmit();
+    }
+  });
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    if (validation.isSubmitting() || !validation.validate(true)) return;
+    persist();
+    const payload = values();
+    payload.text = payload.text.trim();
+    if (topic) payload.title = payload.title.trim();
+    validation.setSubmitting(true);
+    for (const control of form.querySelectorAll('input,textarea,select,button'))
+      control.disabled = true;
+    showError(error, '');
+    retry.hidden = true;
+    try {
+      const result = await onSubmit(payload);
+      clearFandomDraft(draftKey);
+      if (!form.isConnected) return;
+      if (onCancel) onDone(result);
+      else {
+        text.value = '';
+        spoiler.checked = false;
+        picker?.set(null);
+        validation.validate();
+        form.querySelector('.chat-spoiler-toggle')?.setAttribute('aria-pressed', 'false');
+        onDone(result);
+      }
+    } catch (failure) {
+      if (!form.isConnected) return;
+      let message = fandomErrorMessage(failure);
+      if (failure.status === 400)
+        message = picker
+          ? 'Напишите текст или поставьте оценку (от 1 до 10).'
+          : `Проверьте поля: текст — от 1 до ${topic ? 5000 : 2000} символов${topic ? ', заголовок — от 3 до 120' : ''}.`;
+      if (failure.status === 404)
+        message = 'Тему или сообщение удалили. Ваш текст сохранён в черновике.';
+      showFandomError(failure, { message, retry: () => form.requestSubmit() });
+      if (failure.status === 401) {
+        login.hidden = false;
+        login.href = loginForCurrentPage();
+      }
+      if (failure.status === 401 || failure.status === 403) onAccessError?.(failure);
+      retry.hidden = Boolean(failure.status && failure.status < 500);
+    } finally {
+      for (const control of form.querySelectorAll('input,textarea,select,button'))
+        control.disabled = false;
+      validation.setSubmitting(false);
+      counter.textContent = `${textLength(text.value)} / ${topic ? 5000 : 2000}`;
+      if (chat) {
+        counter.hidden = textLength(text.value) < 1800;
+        text.style.height = 'auto';
+        text.style.height = Math.min(176, Math.max(48, text.scrollHeight)) + 'px';
+        form
+          .querySelector('.chat-spoiler-toggle')
+          ?.setAttribute('aria-pressed', String(spoiler.checked));
+      }
+    }
+  });
+  return { element: form, focus: () => text.focus(), persist };
+};
+
+export const confirmContentDelete = ({ page, title, onDelete, onAccessError }) => {
+  if (page.querySelector('.content-delete-confirm')) return;
+  const trigger = document.activeElement;
+  const dialog = element('dialog', 'personal-library-dialog content-delete-confirm');
+  const heading = element('h2', '', title);
+  heading.id = 'content-delete-title';
+  dialog.setAttribute('aria-labelledby', heading.id);
+  const error = createErrorBox('content-delete-error');
+  showError(error, '');
+  const login = element('a', 'film-text-link', 'Войти и вернуться к теме');
+  login.dataset.link = '';
+  login.hidden = true;
+  const cancel = createButton({ text: 'Отмена', variant: 'secondary' });
+  const confirm = createButton({ text: 'Удалить' });
+  const actions = element('div', 'thread-composer__actions');
+  actions.append(cancel, confirm);
+  dialog.append(
+    heading,
+    element(
+      'p',
+      'film-muted',
+      'Это действие нельзя отменить. Ответы на удалённое сообщение сохранятся.',
+    ),
+    error,
+    login,
+    actions,
+  );
+  let busy = false;
+  cancel.addEventListener('click', () => dialog.close());
+  dialog.addEventListener('cancel', (event) => {
+    if (busy) event.preventDefault();
+  });
+  confirm.addEventListener('click', async () => {
+    if (busy) return;
+    busy = true;
+    cancel.disabled = true;
+    confirm.disabled = true;
+    try {
+      await onDelete();
+      dialog.close();
+    } catch (failure) {
+      showFandomError(failure, {
+        message: fandomErrorMessage(failure),
+        retry: () => confirm.click(),
+      });
+      if (failure.status === 401) {
+        login.hidden = false;
+        login.href = loginForCurrentPage();
+      }
+      if (!failure.status || failure.status >= 500) confirm.textContent = 'Повторить';
+      onAccessError?.(failure);
+    } finally {
+      busy = false;
+      cancel.disabled = false;
+      confirm.disabled = false;
+    }
+  });
+  dialog.addEventListener(
+    'close',
+    () => {
+      dialog.remove();
+      if (trigger?.isConnected) trigger.focus();
+      else page.querySelector('.thread-detail__heading')?.focus({ preventScroll: true });
+    },
+    { once: true },
+  );
+  page.append(dialog);
+  dialog.showModal();
+  cancel.focus();
+};

@@ -1,5 +1,6 @@
 import { ActorPage } from './pages/people/actor.js';
 import { PersonPage } from './pages/people/person.js';
+import { MyFandomsPage } from './pages/film/my-fandoms.js';
 import { FilmPage } from './pages/film/film.js';
 import { DiscoverPage } from './pages/discover/discover.js';
 import { CatalogPage } from './pages/catalog/catalog.js';
@@ -29,12 +30,17 @@ const router = new Router(
     '/director/:name': PersonPage,
     '/producer/:name': PersonPage,
     '/film/:id': FilmPage,
+    '/film/:id/fandom': FilmPage,
+    '/film/:id/discussion': FilmPage,
+    '/film/:id/comments': FilmPage,
     '/film/:id/merch': FilmPage,
+    '/film/:id/thread/:threadId': FilmPage,
     '/series': CatalogPage,
     '/watch-later': CatalogPage,
     '/favorites': CatalogPage,
     '/watched': CatalogPage,
     '/my-collections': PersonalCollectionsPage,
+    '/me/discussions': MyFandomsPage,
     '/login': LoginPage,
     '/register': RegisterPage,
     '404': NotFoundPage,
