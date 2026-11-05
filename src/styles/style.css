@@ -11,11 +11,15 @@
 
 @import url('../components/ui/site-header/site-header.css');
 @import url('../components/ui/site-logo/site-logo.css');
-@import url('../components/ui/movie-card/movie-card.css');
 @import url('../pages/discover/discover.css');
 @import url('../pages/discover/catalog.css');
+@import url('../pages/discover/spotlight.css');
+@import url('../pages/discover/home-club.css');
+@import url('../pages/discover/home-motion.css');
 @import url('../components/ui/sidebar/sidebar.css');
 @import url('./catalog-transition.css');
+@import url('../components/ui/catalog-view/catalog-view.css');
+@import url('../pages/discover/spotlight-navigation.css');
 @import url('./surface-depth.css');
 @import url('../components/ui/site-header/header-layout.css');
 @import url('./theme-transition.css');

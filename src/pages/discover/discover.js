@@ -1,69 +1,154 @@
-import { renderTemplate } from '../../components/ui/render-template.js';
-import { createCatalogPage } from './catalog-ui.js';
-import { createMovieCard } from '../../components/ui/movie-card/movie-card.js';
 import { getMovies } from '../../api/movies.js';
+import { getCollections } from '../../api/collections.js';
+import {
+  createCatalogPage,
+  sectionHeading,
+  createStatus,
+  showLoadError,
+  createCollectionCard,
+  createMovieTile,
+} from './catalog-ui.js';
+import { createFeaturedMovie } from './hero.js';
+import { observeHomeEntrances } from './home-motion.js';
+import { createCatalogViewToggle } from '../../components/ui/catalog-view/catalog-view.js';
+import { createPaginationMotion } from './pagination-motion.js';
+import {
+  renderPagination,
+  pageFromLocation,
+  pageHref,
+} from '../../components/ui/pagination/pagination.js';
 
-const template = window.Handlebars.compile(`
-  <div class="discover-page">
-    <main class="movie-feed" aria-labelledby="discover-title">
-      <div class="movie-feed__heading"><h1 id="discover-title">Лента фильмов и сериалов</h1><p class="movie-feed__count"></p></div>
-      <nav class="pagination" data-position="top" aria-label="Страницы ленты в начале" hidden></nav>
-      <div class="movie-feed__list"></div>
-      <p class="movie-feed__status" role="status">Загружаем каталог…</p>
-      <nav class="pagination" data-position="bottom" aria-label="Страницы ленты в конце" hidden></nav>
-    </main>
-  </div>
-`);
-const PAGE_SIZE = 10;
-
+import { CATALOG_PAGE_SIZE } from '../../components/ui/catalog-view/page-size.js';
+import { element } from '../../utils/dom.js';
 export class DiscoverPage {
   constructor({ navigate }) {
     this.navigate = navigate;
-    const requested = Number(new URLSearchParams(window.location.search).get('page'));
-    this.currentPage = Number.isSafeInteger(requested) && requested > 0 ? requested : 1;
+    this.currentPage = pageFromLocation();
+    const params = new URLSearchParams(location.search);
+    if (params.has('q') || params.has('genre') || location.hash === '#genres') this.updateUrl();
   }
   render() {
-    document.title = 'Лента — Frame';
+    document.title = 'Главная — Frame';
     const { page, main } = createCatalogPage(this.navigate);
-    main.replaceWith(renderTemplate(template, {}).querySelector('main'));
     this.page = page;
-    getMovies().then((movies) => {
-      if (!this.page.isConnected) return;
-      const totalPages = Math.max(1, Math.ceil(movies.length / PAGE_SIZE));
-      this.currentPage = Math.min(this.currentPage, totalPages);
-      const start = (this.currentPage - 1) * PAGE_SIZE;
-      const visible = movies.slice(start, start + PAGE_SIZE);
-      this.page.querySelector('.movie-feed__list').replaceChildren(...visible.map(createMovieCard));
-      this.page.querySelector('.movie-feed__count').textContent = movies.length ? `${start + 1}–${start + visible.length} из ${movies.length}` : '';
-      this.page.querySelector('.movie-feed__status').textContent = movies.length ? '' : 'Каталог пока пуст.';
-      this.page.querySelectorAll('.pagination').forEach((nav) => this.renderPagination(nav, totalPages));
-      document.title = `Лента · Страница ${this.currentPage} — Frame`;
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }).catch(() => {
-      if (this.page.isConnected) this.page.querySelector('.movie-feed__status').textContent = 'Не удалось загрузить каталог. Обновите страницу.';
-    });
-    return this.page;
-  }
-  renderPagination(nav, totalPages) {
-    nav.hidden = totalPages <= 1;
-    if (nav.hidden) return;
-    const createItem = (text, page, disabled = false) => {
-      const current = page === this.currentPage && /^\d+$/.test(text);
-      const item = document.createElement(disabled || current ? 'span' : 'a');
-      item.className = 'pagination__item';
-      item.textContent = text;
-      if (current) item.setAttribute('aria-current', 'page');
-      else if (disabled) item.setAttribute('aria-disabled', 'true');
-      else {
-        item.href = '/discover?page=' + page;
-        item.setAttribute('data-link', '');
-        item.setAttribute('aria-label', /^\d+$/.test(text) ? 'Страница ' + page : text);
-      }
-      return item;
+    main.className = 'home-page';
+    page.classList.add('home-club');
+    const featured = element('div', 'featured-slot');
+    featured.append(createStatus('Загружаем фильм недели…'));
+    const collections = element('section', 'home-collections');
+    collections.append(
+      sectionHeading('Подборки', { link: 'Все подборки →', href: '/collections' }),
+    );
+    const collectionsStatus = createStatus('Загружаем подборки…');
+    const collectionGrid = element('div', 'collection-grid');
+    collections.append(collectionsStatus, collectionGrid);
+    const collectionNote = element('p', 'home-section-note', 'Истории под ваше настроение.');
+    collections.querySelector('.catalog-heading').after(collectionNote);
+    const feed = element('section');
+    feed.id = 'feed';
+    feed.className = 'catalog-feed';
+    feed.append(sectionHeading('Лента', { count: '' }));
+    const feedNote = element('p', 'home-section-note', 'Знакомые истории и новые открытия.');
+    const moviesGrid = element('div', 'movie-grid');
+    feed.querySelector('.catalog-heading').append(createCatalogViewToggle(moviesGrid));
+    const status = createStatus('Загружаем каталог…');
+    const pagination = element('nav', 'pagination');
+    pagination.setAttribute('aria-label', 'Страницы ленты');
+    const feedURL = () => {
+      const url = new URL(location.href);
+      url.hash = '#feed';
+      return url.href;
     };
-    const items = [createItem('← Назад', this.currentPage - 1, this.currentPage === 1)];
-    for (let page = 1; page <= totalPages; page++) items.push(createItem(String(page), page));
-    items.push(createItem('Вперёд →', this.currentPage + 1, this.currentPage === totalPages));
-    nav.replaceChildren(...items);
+    feed.append(feedNote, status, moviesGrid, pagination);
+    main.append(featured, collections, feed);
+    const loadCollections = async () => {
+      collectionsStatus.textContent = 'Загружаем подборки…';
+      collectionGrid.replaceChildren();
+      try {
+        const items = await getCollections();
+        if (!page.isConnected) return;
+        collectionGrid.replaceChildren(...items.slice(0, 3).map(createCollectionCard));
+        collectionsStatus.textContent = items.length ? '' : 'Подборок пока нет.';
+      } catch {
+        if (page.isConnected)
+          showLoadError(collectionsStatus, loadCollections, 'Не удалось загрузить подборки.');
+      }
+    };
+    const loadMovies = async () => {
+      status.textContent = 'Загружаем каталог…';
+      moviesGrid.replaceChildren();
+      pagination.replaceChildren();
+      try {
+        const movies = await getMovies();
+        if (!page.isConnected) return;
+        featured.replaceChildren(
+          movies.length ? createFeaturedMovie(movies, page) : createStatus('Каталог пока пуст.'),
+        );
+        const pageSize = CATALOG_PAGE_SIZE;
+        const renderFeed = () => {
+          const filtered = movies;
+          const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+          this.currentPage = Math.min(this.currentPage, totalPages);
+          const start = (this.currentPage - 1) * pageSize;
+          moviesGrid.replaceChildren(
+            ...filtered.slice(start, start + pageSize).map((movie) => createMovieTile(movie)),
+          );
+          feed.querySelector('.catalog-count').textContent =
+            `${filtered.length} фильмов и сериалов`;
+          status.textContent = filtered.length ? '' : 'Каталог пока пуст.';
+          pagination.hidden = totalPages <= 1;
+          renderPagination(pagination, {
+            current: this.currentPage,
+            total: totalPages,
+            hrefFor: (number) => pageHref(number, feedURL()),
+            onSelect: (number, link) => {
+              void changePage(number, link);
+            },
+          });
+        };
+        const changePage = createPaginationMotion({
+          page,
+          feed,
+          grid: moviesGrid,
+          pagination,
+          getCurrentPage: () => this.currentPage,
+          render: (target) => {
+            this.currentPage = target;
+            renderFeed();
+            this.updateUrl({ push: true });
+          },
+        });
+        renderFeed();
+        if (
+          new URLSearchParams(location.search).get('page') !==
+          (this.currentPage > 1 ? String(this.currentPage) : null)
+        )
+          this.updateUrl();
+        if (location.hash === '#feed') feed.scrollIntoView({ block: 'start' });
+      } catch {
+        if (page.isConnected) {
+          featured.replaceChildren(createStatus('Фильм недели недоступен.'));
+          showLoadError(status, loadMovies, 'Не удалось загрузить каталог.');
+        }
+      }
+    };
+    requestAnimationFrame(() => {
+      if (page.isConnected) observeHomeEntrances(page);
+    });
+    void loadMovies();
+    void loadCollections();
+    return page;
+  }
+  updateUrl({ push = false } = {}) {
+    const url = new URL(location.href);
+    url.searchParams.delete('page');
+    url.searchParams.delete('genre');
+    url.searchParams.delete('q');
+    if (this.currentPage > 1) url.searchParams.set('page', this.currentPage);
+    // Смена страницы ленты — всегда «#feed»: «Назад»/«Вперёд» и ссылка в новой вкладке ведут сразу к ленте.
+    if (url.hash === '#genres' || push) url.hash = '#feed';
+    const path = `${url.pathname}${url.search}${url.hash}`;
+    if (push) this.navigate(path, { render: false });
+    else history.replaceState(history.state, '', path);
   }
 }
