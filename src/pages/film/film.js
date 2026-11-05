@@ -1,12 +1,17 @@
 import { createMerchPanel } from './merch-panel.js';
 import { createSequelStrip } from './sequel-strip.js';
 import { enhanceFilmHero, createFilmProfile } from './film-profile.js';
+import { createSpoilerContext } from '../../services/spoiler-context.js';
+import { createCommentsPanel } from './comments-panel.js';
+import { getFandom } from '../../api/fandom.js';
+import { ThreadPage } from './thread-page.js';
 import { getMovie } from '../../api/movies.js';
 import { createCatalogPage } from '../discover/catalog-ui.js';
 import { createMovieListButton } from '../../components/ui/movie-actions/movie-actions.js';
 import { createPersonalLibraryButton } from '../../components/ui/movie-actions/personal-library.js';
 import { getMoviePoster } from '../../services/posters.js';
 import { NotFoundPage } from '../not-found/not-found.js';
+import { createFandomPanel } from './fandom-panel.js';
 import { skeletons, showRetry } from './film-ui.js';
 import { element } from '../../utils/dom.js';
 
@@ -16,11 +21,15 @@ export class FilmPage {
     this.params = params;
   }
   render() {
-    const { id } = this.params;
+    const { id, threadId } = this.params;
     const validID = (value) => /^[1-9]\d*$/.test(value) && Number.isSafeInteger(Number(value));
-    if (!validID(id)) return new NotFoundPage({ navigate: this.navigate }).render();
+    if (!validID(id) || (threadId && !validID(threadId)))
+      return new NotFoundPage({ navigate: this.navigate }).render();
+    if (threadId) return new ThreadPage({ params: this.params, navigate: this.navigate }).render();
+    const comments = location.pathname.endsWith('/comments');
     const merch = location.pathname.endsWith('/merch');
     const filmId = Number(id);
+    const fandom = location.pathname.endsWith('/discussion') || Boolean(threadId);
     document.title = 'Фильм — Frame';
     const { page, main } = createCatalogPage(this.navigate);
     main.className = 'film-page';
@@ -28,12 +37,21 @@ export class FilmPage {
     const tabs = element('nav', 'film-tabs');
     tabs.setAttribute('aria-label', 'Разделы фильма');
     for (const [label, href, active] of [
-      ['О фильме', `/film/${id}`, !merch],
+      ['О фильме', `/film/${id}`, !fandom && !comments && !merch],
+      ['Отзывы', `/film/${id}/comments`, comments],
+      ['Обсуждение', `/film/${id}/discussion`, fandom],
       ['Аутфиты и мерч', `/film/${id}/merch`, merch],
     ]) {
       const link = element('a', '', label);
       link.href = href;
       link.dataset.link = '';
+      if (label === 'Отзывы' || label === 'Обсуждение') {
+        const badge = element('span', 'discussion-tab-count', '—');
+        if (label === 'Обсуждение') badge.dataset.discussionCount = '';
+        else badge.dataset.commentsCount = '';
+        badge.setAttribute('aria-label', 'Темы загружаются');
+        link.append(badge);
+      }
       if (active) link.setAttribute('aria-current', 'page');
       tabs.append(link);
     }
@@ -42,13 +60,36 @@ export class FilmPage {
     tabs.hidden = true;
     skeletons(hero, 1);
     const controller = new AbortController();
+    const refreshSummary = async (data) => {
+      try {
+        const summary = data || (await getFandom(filmId, { signal: controller.signal }));
+        if (!page.isConnected) return;
+        for (const [selector, count, name] of [
+          ['[data-discussion-count]', summary.threads_count, 'Тем'],
+          ['[data-comments-count]', summary.comments_count, 'Отзывов и ответов'],
+        ]) {
+          const badge = tabs.querySelector(selector);
+          badge.textContent = String(count);
+          badge.setAttribute('aria-label', `${name}: ${count}`);
+        }
+      } catch (error) {
+        if (error.name !== 'AbortError' && page.isConnected) {
+          for (const badge of tabs.querySelectorAll('.discussion-tab-count'))
+            badge.setAttribute('aria-label', 'Счётчик временно недоступен');
+        }
+      }
+    };
     const load = async () => {
       skeletons(hero, 1);
       try {
         const movie = await getMovie(filmId, { signal: controller.signal });
         if (!page.isConnected) return;
+        const spoilers = fandom || comments ? createSpoilerContext() : null;
+        if (!page.isConnected) return;
         let section = '';
         if (merch) section = ' · Аутфиты и мерч';
+        if (comments) section = ' · Отзывы';
+        if (fandom) section = ' · Обсуждение';
         document.title = `${movie.title}${section} — Frame`;
         hero.replaceChildren();
         hero.removeAttribute('aria-busy');
@@ -103,13 +144,19 @@ export class FilmPage {
         if (sequel) meta.after(sequel);
         hero.append(poster, info);
         tabs.hidden = false;
-        if (!merch) {
+        if (!fandom && !comments && !merch) {
           main.classList.add('film-page--profile');
           enhanceFilmHero(hero, movie);
         }
-        // «О фильме» собирается асинхронно, мерч — сразу
-        if (merch) {
-          content.replaceChildren(createMerchPanel(movie));
+        void refreshSummary();
+        // «О фильме» собирается асинхронно, остальные вкладки — сразу
+        const panelOptions = { filmId, page, navigate: this.navigate, refreshSummary, spoilers };
+        let tabPanel = null;
+        if (fandom) tabPanel = createFandomPanel(panelOptions);
+        else if (merch) tabPanel = createMerchPanel(movie);
+        else if (comments) tabPanel = createCommentsPanel(panelOptions);
+        if (tabPanel) {
+          content.replaceChildren(tabPanel);
         } else {
           const profile = await createFilmProfile({ movie, page, signal: controller.signal, hero });
           if (profile && !controller.signal.aborted && page.isConnected)

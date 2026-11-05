@@ -48,6 +48,7 @@ export class Router {
       '/favorites',
       '/watched',
       '/my-collections',
+      '/me/discussions',
     ]);
 
     window.addEventListener('popstate', () => {
@@ -118,6 +119,12 @@ export class Router {
    */
   async route() {
     const navigationId = ++this.navigationId;
+    if (/^\/film\/[^/]+\/fandom\/?$/.test(location.pathname))
+      history.replaceState(
+        history.state,
+        '',
+        `${location.pathname.replace(/\/fandom\/?$/, '/discussion')}${location.search}${location.hash}`,
+      );
     stopViewTransition();
     this.transition?.skipTransition();
     this.rootElement
