@@ -163,7 +163,10 @@ export class Router {
       }
 
       const currentCatalog = this.rootElement.querySelector('.catalog-page');
-      const catalogTransition = currentCatalog && this.catalogRoutes.has(activePath);
+      const catalogTransition =
+        currentCatalog &&
+        (this.catalogRoutes.has(activePath) ||
+          /^\/(film|actor|director|producer)\//.test(activePath));
       const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
       const animateNavigation =
         Boolean(this.rootElement.firstElementChild) && !preserveAuthShell && !reducedMotion;

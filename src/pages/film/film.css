@@ -1,0 +1,1486 @@
+.film-page {
+  padding-top: 32px;
+  min-width: 0;
+}
+.film-page *,
+.thread-composer * {
+  box-sizing: border-box;
+}
+.film-page [hidden],
+.thread-composer [hidden] {
+  display: none;
+}
+.film-eyebrow {
+  margin: 0 0 10px;
+  color: var(--euphoria-amber);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  line-height: 18px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+.film-hero {
+  display: grid;
+  grid-template-columns: 170px minmax(0, 1fr);
+  align-items: center;
+  gap: 32px;
+  min-height: 312px;
+  padding: 28px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  background: linear-gradient(115deg, rgba(230, 161, 92, 0.065), transparent 65%), var(--bg-card);
+}
+.film-hero__poster {
+  position: relative;
+  width: 170px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--bg-input);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.25);
+}
+.film-hero__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.film-poster-fallback {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 15px;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+.film-hero h1 {
+  margin: 0;
+  color: var(--text-main);
+  font-size: clamp(25px, 3vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+  overflow-wrap: anywhere;
+}
+.film-hero__original {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-small);
+  line-height: 22px;
+}
+.film-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 18px;
+  margin-top: 20px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 20px;
+}
+.film-hero__actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 22px;
+}
+.film-hero__actions .movie-list-button {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  box-shadow: var(--control-raised);
+}
+.film-tabs {
+  display: flex;
+  gap: 28px;
+  margin: 24px 0 32px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+.film-tabs a {
+  position: relative;
+  padding: 14px 0;
+  color: var(--text-muted);
+  font-size: var(--text-small);
+  line-height: 22px;
+  transition: color 180ms ease;
+}
+.film-tabs a[aria-current] {
+  color: var(--text-main);
+  font-weight: 700;
+}
+.film-tabs a[aria-current]::after {
+  position: absolute;
+  content: '';
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--euphoria-amber);
+}
+.film-tabs a:hover {
+  color: var(--euphoria-amber);
+}
+.film-panel {
+  padding: 28px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  background: var(--bg-card);
+}
+.film-panel h2 {
+  margin: 0 0 16px;
+  font-size: var(--text-large);
+  line-height: 32px;
+}
+.film-about__description {
+  max-width: 800px;
+  margin: 0;
+  font-size: var(--text-small);
+  line-height: 27px;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+.film-muted {
+  color: var(--text-muted);
+  font-size: var(--text-small);
+  line-height: 24px;
+}
+.film-button,
+.film-page .button,
+.thread-composer .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: auto;
+  min-height: 42px;
+  margin: 0;
+  padding: 10px 16px;
+  border: 1px solid var(--border-active);
+  border-radius: 10px;
+  background: linear-gradient(145deg, #e6a15c, #ba7a40);
+  color: #14100b;
+  font: inherit;
+  font-size: var(--text-meta);
+  font-weight: 700;
+  line-height: 20px;
+  text-transform: none;
+  letter-spacing: 0;
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: var(--control-raised);
+  transition:
+    border-color 180ms ease,
+    background-color 180ms ease,
+    opacity 180ms ease;
+}
+.film-button--quiet,
+.film-page .button--secondary,
+.thread-composer .button--secondary {
+  color: var(--text-main);
+  border-color: var(--border-subtle);
+  background: var(--bg-input);
+}
+.film-button:hover {
+  border-color: var(--euphoria-amber);
+}
+.film-page :is(button, a, input, select, textarea):focus-visible,
+.thread-composer :is(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+}
+.film-page button:disabled,
+.thread-composer button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  filter: none;
+}
+.film-skeleton {
+  display: grid;
+  align-content: center;
+  gap: 16px;
+  min-height: 145px;
+  padding: 24px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+.film-skeleton span {
+  display: block;
+  height: 12px;
+  border-radius: 4px;
+  background: var(--bg-input);
+  animation: film-loading 1.6s ease-in-out infinite alternate;
+}
+.film-skeleton span:first-child {
+  width: 28%;
+}
+.film-skeleton span:last-child {
+  width: 65%;
+}
+.film-hero > .film-skeleton {
+  grid-column: 1 / -1;
+  min-height: 254px;
+}
+@keyframes film-loading {
+  from {
+    opacity: 0.35;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.fandom-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.fandom-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.fandom-filter {
+  min-height: 38px;
+  padding: 8px 12px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: var(--text-meta);
+  cursor: pointer;
+}
+.fandom-filter:hover {
+  color: var(--text-main);
+  background: var(--bg-input);
+}
+.fandom-filter[aria-pressed='true'] {
+  border-color: var(--border-active);
+  color: var(--euphoria-amber);
+  background: rgba(230, 161, 92, 0.1);
+}
+.fandom-sort {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+.fandom-sort select {
+  max-width: 100%;
+  min-height: 38px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  color: var(--text-main);
+  background: var(--bg-dark);
+  font: inherit;
+  font-size: var(--text-meta);
+  cursor: pointer;
+}
+.fandom-threads {
+  display: grid;
+  gap: 12px;
+}
+.fandom-thread {
+  display: block;
+  min-width: 0;
+  padding: 22px 24px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-card);
+  color: var(--text-main);
+  transition:
+    border-color 180ms ease,
+    transform 180ms ease;
+}
+.fandom-thread:hover {
+  border-color: var(--border-active);
+  transform: translateY(-2px);
+}
+
+.fandom-thread__badges {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 11px;
+}
+.fandom-type {
+  padding: 3px 8px;
+  border-radius: 5px;
+  background: var(--bg-input);
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 16px;
+}
+.fandom-type[data-type='theory'] {
+  color: #c1b1ee;
+  background: rgba(154, 125, 218, 0.12);
+}
+.fandom-type[data-type='discussion'] {
+  color: var(--euphoria-amber);
+  background: rgba(230, 161, 92, 0.1);
+}
+.fandom-type[data-type='question'] {
+  color: #83c6b9;
+  background: rgba(75, 160, 142, 0.12);
+}
+[data-theme='light'] .fandom-type[data-type='theory'] {
+  color: #7152a1;
+}
+[data-theme='light'] .fandom-type[data-type='question'] {
+  color: #306d61;
+}
+.fandom-thread__spoiler {
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 16px;
+}
+
+.fandom-thread h3 {
+  margin: 0;
+  font-size: var(--text-lead);
+  line-height: 27px;
+  letter-spacing: -0.2px;
+  overflow-wrap: anywhere;
+}
+.fandom-thread__preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  margin: 9px 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 22px;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.fandom-thread__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+  margin-top: 18px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 18px;
+}
+.fandom-thread__author {
+  max-width: 240px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-main);
+}
+.fandom-thread__posts {
+  margin-left: auto;
+}
+.fandom-thread__reactions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.fandom-thread__reactions:empty {
+  display: none;
+}
+.fandom-empty {
+  padding: 44px 24px;
+  border: 1px dashed var(--border-active);
+  border-radius: 14px;
+  text-align: center;
+}
+.fandom-empty h3 {
+  margin: 0 0 10px;
+  font-size: var(--text-section-small);
+  line-height: 29px;
+}
+.fandom-status:not(:empty) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 18px;
+  padding: 14px 18px;
+  border: 1px solid var(--border-active);
+  border-radius: 12px;
+  background: var(--bg-card);
+  font-size: var(--text-meta);
+  line-height: 21px;
+}
+.fandom-status p {
+  margin: 0;
+}
+
+.thread-composer {
+  box-sizing: border-box;
+  width: min(600px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 28px;
+  border-radius: 18px;
+  overscroll-behavior: contain;
+}
+.thread-composer .personal-library-dialog__header {
+  margin-bottom: 24px;
+}
+.thread-composer .film-eyebrow {
+  margin-bottom: 5px;
+}
+.thread-composer__form .field {
+  position: relative;
+  display: grid;
+  margin-bottom: 18px;
+}
+.thread-composer__form :is(input, textarea, select) {
+  box-sizing: border-box;
+  width: 100%;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  padding: 11px 12px;
+  background: var(--bg-input);
+  color: var(--text-main);
+  font: inherit;
+  font-size: var(--text-meta);
+  line-height: 21px;
+}
+.thread-composer__form select {
+  background: var(--bg-dark);
+}
+.thread-composer__form textarea {
+  min-height: 148px;
+  max-height: 320px;
+  resize: vertical;
+}
+.thread-composer__form :is(input, textarea)::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+}
+.thread-composer__form .field label {
+  margin-bottom: 8px;
+  font-size: var(--text-small);
+  text-transform: none;
+  letter-spacing: 0.2px;
+}
+.thread-composer__form .field--invalid :is(input, textarea, select) {
+  border-color: #d16c67;
+}
+.thread-character-count {
+  justify-self: end;
+  margin-top: 5px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 16px;
+}
+.thread-composer .field__hint {
+  color: #d16c67;
+  font-size: var(--text-meta);
+  line-height: 18px;
+}
+.thread-spoiler-toggle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 36px;
+  font-size: var(--text-meta);
+}
+.thread-composer__form .thread-spoiler-toggle input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: var(--euphoria-amber);
+}
+.thread-composer__actions {
+  display: flex;
+  justify-content: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+.thread-composer .error-box {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(209, 108, 103, 0.4);
+  border-radius: 10px;
+  background: rgba(209, 108, 103, 0.08);
+  color: var(--text-main);
+  font-size: var(--text-meta);
+  line-height: 21px;
+}
+.film-text-link {
+  display: block;
+  margin-top: 16px;
+  color: var(--euphoria-amber);
+  font-size: var(--text-small);
+}
+.film-thread-placeholder .film-button {
+  margin-top: 18px;
+}
+@media (max-width: 640px) {
+  .film-page {
+    padding-top: 20px;
+  }
+  .film-hero {
+    grid-template-columns: 104px minmax(0, 1fr);
+    gap: 18px;
+    padding: 18px;
+    min-height: 200px;
+    border-radius: 14px;
+  }
+  .film-hero__poster {
+    width: 104px;
+  }
+  .film-hero h1 {
+    font-size: var(--text-size-23);
+    line-height: 1.25;
+  }
+  .film-hero .film-eyebrow {
+    display: none;
+  }
+  .film-hero__original {
+    margin-top: 8px;
+    font-size: var(--text-small);
+    line-height: 20px;
+  }
+  .film-hero__meta {
+    gap: 5px 10px;
+    margin-top: 12px;
+    font-size: var(--text-meta);
+    line-height: 18px;
+  }
+  .film-hero__actions {
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .film-hero__actions .movie-list-button {
+    width: 30px;
+    height: 30px;
+  }
+  .film-hero__actions svg {
+    width: 17px;
+    height: 17px;
+  }
+  .film-tabs {
+    margin: 16px 0 24px;
+  }
+  .film-panel {
+    padding: 20px;
+  }
+
+  .fandom-controls {
+    align-items: stretch;
+    gap: 12px;
+  }
+  .fandom-filters {
+    width: 100%;
+    gap: 3px;
+  }
+  .fandom-filter {
+    padding: 7px 9px;
+    font-size: var(--text-meta);
+  }
+  .fandom-sort {
+    justify-content: space-between;
+    width: 100%;
+  }
+  .fandom-sort select {
+    min-width: 140px;
+  }
+  .fandom-thread {
+    padding: 18px;
+  }
+
+  .fandom-thread h3 {
+    font-size: var(--text-body);
+    line-height: 24px;
+  }
+  .fandom-thread__meta {
+    gap: 7px 12px;
+    margin-top: 14px;
+  }
+  .fandom-thread__author {
+    max-width: 160px;
+  }
+  .thread-composer {
+    padding: 20px;
+  }
+  .thread-composer__actions .button {
+    flex: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .film-skeleton span {
+    animation: none;
+  }
+  .film-page *,
+  .thread-composer * {
+    transition: none;
+  }
+  .fandom-thread:hover {
+    transform: none;
+  }
+}
+
+.catalog-page .film-page [hidden] {
+  display: none;
+}
+
+.thread-page {
+  padding-bottom: 64px;
+}
+.thread-back {
+  margin: 0 0 24px;
+  width: fit-content;
+  overflow-wrap: anywhere;
+}
+.thread-detail__heading {
+  margin: 0;
+  font-size: clamp(25px, 3vw, 36px);
+  line-height: 1.3;
+  letter-spacing: -0.6px;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.thread-body {
+  margin: 24px 0;
+  font-size: var(--text-small);
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.thread-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+.thread-page .thread-actions .button {
+  min-height: 32px;
+  padding: 5px 10px;
+  font-size: var(--text-meta);
+  box-shadow: none;
+}
+.thread-detail > .fandom-thread__reactions {
+  margin-top: 20px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+.thread-detail .fandom-thread__meta {
+  margin-top: 14px;
+}
+
+.thread-posts {
+  display: grid;
+  gap: 18px;
+}
+.thread-post-group {
+  min-width: 0;
+}
+.thread-post {
+  position: relative;
+  padding: 20px 24px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-card);
+  scroll-margin-top: 110px;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+.thread-post .fandom-thread__meta {
+  margin-top: 0;
+  padding-right: 65px;
+}
+.thread-post .thread-body {
+  margin: 18px 0;
+}
+.post-permalink {
+  position: absolute;
+  right: 20px;
+  top: 20px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+.post-permalink:hover {
+  color: var(--euphoria-amber);
+}
+.thread-replies {
+  display: grid;
+  gap: 10px;
+  margin-left: 28px;
+  padding-left: 18px;
+  border-left: 1px solid var(--border-active);
+}
+.thread-replies:empty {
+  display: none;
+}
+.thread-replies > .thread-post:first-child {
+  margin-top: 10px;
+}
+.thread-deleted {
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  font-style: italic;
+}
+.thread-post.post-highlight {
+  border-color: var(--euphoria-amber);
+  box-shadow: 0 0 0 3px rgba(230, 161, 92, 0.16);
+}
+.thread-write {
+  margin-top: 28px;
+}
+.content-editor {
+  min-width: 0;
+  margin: 18px 0 0;
+  padding: 24px;
+  border: 1px solid var(--border-active);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+.thread-detail > .content-editor {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.content-editor h3 {
+  margin: 0 0 20px;
+  font-size: var(--text-lead);
+  overflow-wrap: anywhere;
+}
+.content-editor .field__hint {
+  color: #d16c67;
+  font-size: var(--text-meta);
+  line-height: 18px;
+}
+.content-editor .error-box {
+  margin-top: 16px;
+  padding: 12px;
+  border: 1px solid rgba(209, 108, 103, 0.4);
+  border-radius: 10px;
+  color: var(--text-main);
+  font-size: var(--text-meta);
+  line-height: 21px;
+}
+.content-editor textarea {
+  overflow-wrap: anywhere;
+}
+.thread-page .content-editor .thread-spoiler-toggle {
+  width: fit-content;
+}
+.content-editor > .button {
+  margin-top: 12px;
+}
+@media (max-width: 640px) {
+  .thread-detail {
+    padding: 20px;
+  }
+  .thread-post {
+    padding: 18px 16px;
+  }
+  .thread-replies {
+    margin-left: 10px;
+    padding-left: 10px;
+  }
+  .thread-post .fandom-thread__meta {
+    gap: 5px 10px;
+  }
+  .post-permalink {
+    top: 18px;
+    right: 16px;
+  }
+  .thread-body {
+    font-size: var(--text-meta);
+  }
+  .content-editor {
+    padding: 16px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thread-post {
+    transition: none;
+  }
+}
+
+/* обсуждение */
+.film-page .film-hero {
+  grid-template-columns: 96px minmax(0, 1fr);
+  min-height: 0;
+  padding: 22px 24px;
+  gap: 24px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+}
+.film-page .film-hero__poster {
+  width: 96px;
+  border-radius: var(--radius-sm);
+}
+.film-page .film-hero h1 {
+  margin-top: 8px;
+  font-size: clamp(25px, 2.5vw, 34px);
+}
+.film-catalog-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  color: var(--text-muted);
+  font-size: var(--text-small);
+}
+.film-catalog-link:hover {
+  color: var(--euphoria-amber);
+}
+.film-page .film-hero__original {
+  margin-top: 5px;
+  font-size: var(--text-meta);
+}
+.film-page .film-hero__meta {
+  margin-top: 10px;
+}
+.film-page .film-hero__actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+}
+.film-hero__info {
+  position: relative;
+  min-width: 0;
+  padding-right: 148px;
+}
+.film-tabs {
+  margin-bottom: 24px;
+}
+.film-tabs a {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  min-height: 48px;
+}
+.discussion-tab-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 22px;
+  min-height: 20px;
+  padding: 1px 6px;
+  border-radius: 20px;
+  color: var(--text-main);
+  background: var(--bg-input);
+  font-size: var(--text-meta);
+  font-weight: 700;
+}
+.spoiler-notice {
+  display: flex;
+  align-items: start;
+  gap: 14px;
+  margin: 0 0 24px;
+  padding: 18px 20px;
+  border: 1px solid color-mix(in srgb, var(--euphoria-magenta) 38%, var(--border-subtle));
+  border-radius: var(--radius-md);
+  background: color-mix(in srgb, var(--euphoria-wine) 9%, var(--bg-card));
+}
+.spoiler-notice:empty {
+  display: none;
+}
+.spoiler-notice > svg {
+  flex: 0 0 21px;
+  width: 21px;
+  height: 21px;
+  margin-top: 2px;
+  color: color-mix(in srgb, var(--euphoria-magenta) 55%, var(--text-main));
+}
+.spoiler-notice__copy {
+  flex: 1;
+}
+.spoiler-notice h2 {
+  margin: 0 0 5px;
+  font-size: var(--text-meta);
+  line-height: 21px;
+}
+.spoiler-notice p {
+  margin: 0;
+  max-width: 690px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 21px;
+}
+.spoiler-notice__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  justify-content: end;
+}
+.spoiler-notice button {
+  min-height: 40px;
+  padding: 6px 8px;
+  border: 0;
+  background: transparent;
+  color: var(--text-main);
+  font: inherit;
+  font-size: var(--text-meta);
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.spoiler-notice button:last-child {
+  color: var(--text-muted);
+}
+
+.film-fandom .fandom-controls {
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.film-fandom .fandom-filters {
+  gap: 5px;
+  width: auto;
+}
+.film-fandom .fandom-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border-radius: 24px;
+  border-color: var(--border-subtle);
+  background: var(--bg-input);
+}
+.film-fandom .fandom-filter[aria-pressed='true'] {
+  background: var(--euphoria-amber);
+  color: var(--bg-dark);
+  border-color: var(--euphoria-amber);
+}
+
+.discussion-tools {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.film-fandom .fandom-sort {
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 11px;
+  background: var(--bg-input);
+}
+.fandom-sort button {
+  min-height: 40px;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text-muted);
+  font: inherit;
+  font-size: var(--text-meta);
+  cursor: pointer;
+}
+.fandom-sort button[aria-pressed='true'] {
+  color: var(--text-main);
+  background: var(--bg-card);
+  border-color: var(--border-subtle);
+  box-shadow: var(--control-raised);
+}
+
+.fandom-thread {
+  position: relative;
+  padding: 20px 22px;
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+}
+.fandom-thread:hover {
+  transform: none;
+}
+.fandom-thread--hot {
+  border-color: color-mix(in srgb, var(--euphoria-amber) 65%, var(--border-subtle));
+}
+.fandom-thread:focus-within {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+}
+.fandom-thread__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.fandom-thread__top time {
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+.fandom-thread .fandom-thread__badges {
+  margin: 0;
+}
+.fandom-thread h3 {
+  font-size: var(--text-lead);
+  font-weight: 800;
+  line-height: 27px;
+}
+.fandom-thread__link {
+  color: inherit;
+}
+.fandom-thread__link::after {
+  position: absolute;
+  content: '';
+  inset: 0;
+  z-index: 1;
+  border-radius: inherit;
+}
+.fandom-thread button {
+  position: relative;
+  z-index: 2;
+}
+.fandom-thread .fandom-thread__preview {
+  margin: 10px 0 0;
+  min-height: 44px;
+  font-size: var(--text-meta);
+  line-height: 22px;
+  white-space: pre-wrap;
+}
+.fandom-type {
+  font-weight: 700;
+  padding: 4px 8px;
+}
+.film-page .fandom-type[data-type='theory'] {
+  color: color-mix(in srgb, var(--euphoria-magenta) 35%, var(--text-main));
+  background: color-mix(in srgb, var(--euphoria-magenta) 13%, var(--bg-dark));
+}
+.film-page .fandom-type[data-type='discussion'] {
+  color: color-mix(in srgb, var(--euphoria-amber) 80%, var(--text-main));
+  background: color-mix(in srgb, var(--euphoria-amber) 13%, var(--bg-dark));
+}
+.film-page .fandom-type[data-type='question'] {
+  color: color-mix(in srgb, var(--discussion-blue) 80%, var(--text-main));
+  background: color-mix(in srgb, var(--discussion-blue) 13%, var(--bg-dark));
+}
+.fandom-thread__hot {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  color: var(--euphoria-amber);
+  font-size: var(--text-meta);
+}
+.fandom-thread__hot svg {
+  width: 13px;
+  height: 13px;
+}
+.fandom-thread .fandom-thread__meta {
+  gap: 10px 12px;
+  padding-top: 14px;
+  margin-top: 16px;
+  border-top: 1px solid var(--border-subtle);
+}
+.fandom-thread__identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.fandom-thread .fandom-thread__author {
+  max-width: 130px;
+}
+.fandom-avatar {
+  --avatar-color: var(--euphoria-amber);
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 28px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--avatar-color) 18%, var(--bg-dark));
+  color: color-mix(in srgb, var(--avatar-color) 60%, var(--text-main));
+  font-size: var(--text-meta);
+  font-weight: 800;
+}
+.fandom-avatar[data-tone='1'] {
+  --avatar-color: var(--discussion-blue);
+}
+.fandom-avatar[data-tone='2'] {
+  --avatar-color: var(--euphoria-magenta);
+}
+.fandom-avatar[data-tone='3'] {
+  --avatar-color: var(--text-muted);
+}
+.fandom-avatar[data-tone='4'] {
+  --avatar-color: var(--euphoria-wine);
+}
+.fandom-avatar[data-tone='5'] {
+  --avatar-color: var(--text-main);
+}
+.fandom-thread__reactions {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.reaction-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 20px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 16px;
+}
+.reaction-pill svg {
+  width: 13px;
+  height: 13px;
+}
+.fandom-thread .fandom-thread__posts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 4px;
+  margin-left: auto;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  text-align: right;
+}
+.fandom-thread__posts strong {
+  color: var(--text-main);
+  font-weight: 600;
+}
+.fandom-thread__posts > span::before {
+  content: ' В· ';
+}
+.spoiler-shield,
+.fandom-thread__preview.spoiler-shield {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  color: var(--text-muted);
+  background:
+    repeating-linear-gradient(135deg, transparent 0 5px, var(--bg-input) 5px 7px), var(--bg-input);
+  font-size: var(--text-meta);
+  line-height: 20px;
+}
+.spoiler-shield .film-button {
+  min-height: 40px;
+  padding: 7px 12px;
+  font-size: var(--text-meta);
+}
+.thread-page > .thread-back {
+  min-height: 40px;
+  margin-bottom: 14px;
+}
+.thread-page .thread-detail {
+  padding: 24px;
+}
+.thread-page .thread-detail__heading {
+  font-size: clamp(24px, 2.7vw, 34px);
+}
+.thread-page .thread-actions .button {
+  min-height: 40px;
+}
+@media (max-width: 1023px) {
+  .spoiler-notice {
+    flex-wrap: wrap;
+  }
+  .spoiler-notice__actions {
+    width: 100%;
+    padding-left: 30px;
+    justify-content: start;
+  }
+}
+@media (max-width: 640px) {
+  .film-page .film-hero {
+    gap: 16px;
+    padding: 16px;
+    grid-template-columns: 72px minmax(0, 1fr);
+  }
+  .film-page .film-hero__poster {
+    width: 72px;
+  }
+  .film-page .film-hero h1 {
+    font-size: var(--text-size-23);
+    margin-top: 3px;
+  }
+  .film-hero__info {
+    padding-right: 0;
+  }
+  .film-page .film-hero__actions {
+    position: static;
+    margin-top: 12px;
+  }
+  .film-catalog-link {
+    font-size: var(--text-small);
+  }
+  .film-fandom .fandom-controls,
+  .discussion-tools {
+    width: 100%;
+  }
+  .film-fandom .fandom-filters {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .film-fandom .fandom-filter {
+    padding: 8px 11px;
+    font-size: var(--text-meta);
+  }
+  .film-fandom .fandom-sort {
+    width: auto;
+    flex: 1;
+    justify-content: space-between;
+  }
+  .fandom-sort button {
+    padding: 7px 8px;
+    font-size: var(--text-meta);
+  }
+
+  .fandom-thread {
+    padding: 18px 16px;
+  }
+  .fandom-thread h3 {
+    font-size: var(--text-lead);
+  }
+  .fandom-thread .fandom-thread__posts {
+    width: 100%;
+    justify-content: start;
+    margin-left: 36px;
+  }
+  .spoiler-notice {
+    padding: 16px;
+    gap: 10px;
+  }
+  .spoiler-notice__copy {
+    min-width: 0;
+  }
+  .spoiler-notice__actions {
+    padding-left: 0;
+    gap: 4px;
+  }
+  .spoiler-shield,
+  .fandom-thread__preview.spoiler-shield {
+    flex-wrap: wrap;
+  }
+
+  .thread-page .thread-detail {
+    padding: 20px;
+  }
+}
+
+.film-page .film-hero__actions .movie-list-button {
+  width: 40px;
+  height: 40px;
+}
+.thread-composer .personal-library-close {
+  width: 40px;
+  height: 40px;
+}
+.thread-spoiler-toggle {
+  min-height: 44px;
+}
+
+.my-fandoms-heading {
+  margin-bottom: 28px;
+}
+.my-fandoms-heading h1 {
+  margin: 0;
+  font-size: clamp(28px, 3vw, 40px);
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+}
+.my-fandoms-heading .film-muted {
+  margin: 12px 0 0;
+}
+.my-fandoms-films-section,
+.my-fandoms-feed-section {
+  min-width: 0;
+  margin-top: 30px;
+}
+.my-fandoms-page h2 {
+  margin: 0 0 18px;
+  font-size: var(--text-section);
+  line-height: 1.4;
+}
+.my-fandoms-page .spoiler-notice h2 {
+  margin: 0 0 5px;
+  font-size: var(--text-meta);
+}
+.my-fandoms-films--rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 234px;
+  gap: 12px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 3px 3px 14px;
+  overscroll-behavior-inline: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--euphoria-amber) var(--bg-input);
+  scroll-snap-type: x proximity;
+}
+.my-fandoms-film {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  color: var(--text-main);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  line-height: 22px;
+  scroll-snap-align: start;
+}
+.my-fandoms-film:hover {
+  border-color: var(--border-active);
+}
+.my-fandoms-film > span:last-child {
+  overflow-wrap: anywhere;
+}
+.my-fandoms-poster {
+  display: block;
+  flex: 0 0 64px;
+  width: 64px;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 6px;
+  background: var(--bg-input);
+}
+.my-fandoms-poster img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.my-fandoms-feed {
+  display: grid;
+  gap: 22px;
+}
+.my-fandoms-feed-item {
+  min-width: 0;
+}
+.my-fandoms-film-context {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 100%;
+  min-height: 48px;
+  margin-bottom: 10px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  font-weight: 600;
+}
+.my-fandoms-film-context:hover {
+  color: var(--euphoria-amber);
+}
+.my-fandoms-film-context .my-fandoms-poster {
+  flex-basis: 28px;
+  width: 28px;
+}
+.my-fandoms-film-context > span:last-child {
+  overflow-wrap: anywhere;
+}
+.my-fandoms-page {
+  padding-bottom: 60px;
+}
+@media (max-width: 1200px) {
+  .catalog-page .catalog-topbar:has(a[href='/me/discussions']) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: 46px auto;
+    column-gap: 14px;
+    row-gap: 14px;
+  }
+  .catalog-page .catalog-topbar:has(a[href='/me/discussions']) .site-header__brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+  .catalog-page .catalog-topbar:has(a[href='/me/discussions']) .site-header__actions {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+@media (max-width: 640px) {
+  .my-fandoms-films--rail {
+    grid-auto-columns: 218px;
+  }
+}
+
+/* меню действий и модерация */
+.content-actions-menu {
+  display: inline-flex;
+}
+.content-actions-trigger {
+  display: inline-grid;
+  place-items: center;
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--bg-input);
+  color: var(--text-muted);
+  font: inherit;
+  font-size: var(--text-large);
+  line-height: 1;
+  cursor: pointer;
+}
+.content-actions-popover {
+  position: fixed;
+  inset: auto;
+  margin: 0;
+  width: min(240px, calc(100vw - 24px));
+  max-height: min(400px, calc(100dvh - 24px));
+  overflow-y: auto;
+  padding: 6px;
+  border: 1px solid var(--border-active);
+  border-radius: 12px;
+  background: var(--bg-dark);
+  color: var(--text-main);
+  box-shadow: var(--control-raised);
+}
+.content-actions-popover:popover-open {
+  display: grid;
+}
+.content-actions-popover button {
+  display: block;
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--text-main);
+  font: inherit;
+  font-size: var(--text-meta);
+  text-align: left;
+  cursor: pointer;
+}
+.content-actions-popover button:hover,
+.content-actions-popover button:focus-visible {
+  background: var(--bg-input);
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: -2px;
+}
+.content-actions-popover button:disabled {
+  color: var(--text-muted);
+  opacity: 0.55;
+  cursor: default;
+}
+.thread-detail > .thread-actions {
+  justify-content: end;
+}
+.thread-post .thread-actions {
+  align-items: center;
+  justify-content: space-between;
+}
+.content-delete-confirm h2 {
+  overflow-wrap: anywhere;
+}
