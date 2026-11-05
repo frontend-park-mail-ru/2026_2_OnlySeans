@@ -3,6 +3,9 @@ import { element } from '../../../utils/dom.js';
 
 const icons = {
   home: '<path d="m3 10 9-7 9 7"/><path d="M5 9v12h14V9M9 21v-7h6v7"/>',
+  films:
+    '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 4v16M17 4v16M3 9h4m-4 6h4m10-6h4m-4 6h4"/>',
+  series: '<rect x="3" y="6" width="18" height="14" rx="2"/><path d="m8 2 4 4 4-4m-6 9 5 3-5 3z"/>',
   collections:
     '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/>',
   menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
@@ -41,6 +44,8 @@ export const createSidebar = (page, container, navigate) => {
       'Каталог',
       [
         ['/', 'Главная', 'home'],
+        ['/films', 'Фильмы', 'films'],
+        ['/series', 'Сериалы', 'series'],
         ['/collections', 'Подборки', 'collections'],
       ],
     ],

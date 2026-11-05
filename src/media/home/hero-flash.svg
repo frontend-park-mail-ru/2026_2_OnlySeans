@@ -1,0 +1,15 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="380" height="380" viewBox="0 0 380 380" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="&#208;&#146;&#209;&#129;&#208;&#191;&#209;&#139;&#209;&#136;&#208;&#186;&#208;&#176;">
+<path id="Vector" opacity="0.5" d="M190 370.5C289.687 370.5 370.5 289.687 370.5 190C370.5 90.3126 289.687 9.5 190 9.5C90.3126 9.5 9.5 90.3126 9.5 190C9.5 289.687 90.3126 370.5 190 370.5Z" fill="url(#paint0_radial_0_711)"/>
+<path id="Vector_2" opacity="0.9" d="M190 5.7L197.6 182.4L374.3 190L197.6 197.6L190 374.3L182.4 197.6L5.7 190L182.4 182.4L190 5.7Z" fill="#f2e7d6"/>
+<path id="Vector_3" opacity="0.55" d="M255.16 124.84L195.374 190L255.16 255.16L190 195.374L124.84 255.16L184.626 190L124.84 124.84L190 184.626L255.16 124.84Z" fill="#f2e7d6"/>
+<path id="Vector_4" d="M190 198.55C194.722 198.55 198.55 194.722 198.55 190C198.55 185.278 194.722 181.45 190 181.45C185.278 181.45 181.45 185.278 181.45 190C181.45 194.722 185.278 198.55 190 198.55Z" fill="white"/>
+</g>
+<defs>
+<radialGradient id="paint0_radial_0_711" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(190 190) scale(180.5)">
+<stop stop-color="#f7f1e7" stop-opacity="0.95"/>
+<stop offset="0.22" stop-color="#e6a15c" stop-opacity="0.55"/>
+<stop offset="1" stop-color="#e6a15c" stop-opacity="0"/>
+</radialGradient>
+</defs>
+</svg>
