@@ -1,3 +1,6 @@
+import { ActorPage } from './pages/people/actor.js';
+import { PersonPage } from './pages/people/person.js';
+import { FilmPage } from './pages/film/film.js';
 import { DiscoverPage } from './pages/discover/discover.js';
 import { CatalogPage } from './pages/catalog/catalog.js';
 import { PersonalCollectionsPage } from './pages/catalog/personal-collections.js';
@@ -22,6 +25,11 @@ const router = new Router(
     '/discover': DiscoverPage,
     '/collections': CollectionsPage,
     '/films': CatalogPage,
+    '/actor/:name': ActorPage,
+    '/director/:name': PersonPage,
+    '/producer/:name': PersonPage,
+    '/film/:id': FilmPage,
+    '/film/:id/merch': FilmPage,
     '/series': CatalogPage,
     '/watch-later': CatalogPage,
     '/favorites': CatalogPage,
