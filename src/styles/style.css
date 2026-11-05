@@ -1,6 +1,5 @@
 @import url('./globals.css');
 
-@import url('../components/ui/card/card.css');
 @import url('../components/ui/field/field.css');
 @import url('../components/ui/button/button.css');
 @import url('../components/ui/logout-button/logout-button.css');
@@ -12,6 +11,7 @@
 @import url('../components/ui/site-header/site-header.css');
 @import url('../components/ui/site-logo/site-logo.css');
 @import url('../pages/discover/discover.css');
+@import url('../pages/login/login.css');
 @import url('../pages/discover/catalog.css');
 @import url('../pages/discover/spotlight.css');
 @import url('../pages/discover/home-club.css');
