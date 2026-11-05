@@ -4,7 +4,7 @@
 
 .field label {
   display: block;
-  font-size: 11px;
+  font-size: var(--text-meta);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
@@ -19,7 +19,7 @@
   border: 1px solid var(--border-subtle);
   background: var(--bg-input);
   color: var(--text-main);
-  font-size: 14px;
+  font-size: var(--text-small);
   font-family: inherit;
   transition: var(--transition);
 }
@@ -45,6 +45,6 @@
 .field__hint {
   display: block;
   margin-top: 6px;
-  font-size: 12px;
+  font-size: var(--text-meta);
   color: #e8a0ae;
 }

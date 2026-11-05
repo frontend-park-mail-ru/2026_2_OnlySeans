@@ -1,4 +1,5 @@
 import { BaseComponent } from '../base-component.js';
+import { element } from '../../../utils/dom.js';
 
 const fieldTemplate = window.Handlebars.compile(`
   <div class="field">
@@ -25,7 +26,7 @@ export const setFieldError = (fieldEl, message) => {
 
   let hint = fieldEl.querySelector('.field__hint');
   if (!hint) {
-    hint = document.createElement('span');
+    hint = element('span');
     hint.className = 'field__hint';
     fieldEl.appendChild(hint);
   }

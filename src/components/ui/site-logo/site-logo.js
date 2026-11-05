@@ -5,7 +5,9 @@ const template = window.Handlebars.compile(`
 `);
 
 export class SiteLogo extends BaseComponent {
-  constructor({ className = '' } = {}) { super(template, { className }); }
+  constructor({ className = '' } = {}) {
+    super(template, { className });
+  }
 }
 
 export const createSiteLogo = (props) => new SiteLogo(props).render();

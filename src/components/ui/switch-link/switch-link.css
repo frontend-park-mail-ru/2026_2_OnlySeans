@@ -1,7 +1,7 @@
 .switch-link {
   text-align: center;
   margin-top: 20px;
-  font-size: 13px;
+  font-size: var(--text-meta);
   color: var(--text-muted);
 }
 

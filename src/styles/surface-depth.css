@@ -1,0 +1,171 @@
+/* у страницы своё зерно, у боковой панели — своё, потемнее */
+.catalog-page {
+  isolation: isolate;
+  position: relative;
+  background:
+    radial-gradient(ellipse 1000px 600px at 55% 0, rgba(230, 161, 92, 0.045), transparent 75%),
+    #171a21;
+}
+.catalog-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('../media/home/grain.svg') repeat;
+  opacity: 0.15;
+  pointer-events: none;
+}
+[data-theme='light'] .catalog-page {
+  background:
+    radial-gradient(ellipse 1000px 600px at 55% 0, rgba(230, 161, 92, 0.045), transparent 75%),
+    #f8f7f4;
+}
+[data-theme='light'] .catalog-page::before {
+  opacity: 0.32;
+  mix-blend-mode: multiply;
+}
+
+.site-sidebar {
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.018), transparent 48%), #030508;
+  border-right-color: rgba(255, 255, 255, 0.07);
+  box-shadow:
+    12px 0 36px -18px rgba(0, 0, 0, 0.8),
+    inset -1px 0 rgba(255, 255, 255, 0.025);
+}
+.site-sidebar::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('../media/home/grain.svg') repeat;
+  opacity: 0.075;
+  pointer-events: none;
+}
+.site-sidebar .sidebar-nav__link[aria-current='page'] {
+  box-shadow:
+    inset 0 1px rgba(255, 255, 255, 0.045),
+    inset 0 -1px rgba(0, 0, 0, 0.22);
+}
+[data-theme='light'] .site-sidebar {
+  --text-muted: #625a53;
+  background: linear-gradient(155deg, rgba(255, 255, 255, 0.24), transparent 60%), #e1ddd7;
+  border-right-color: rgba(80, 69, 56, 0.16);
+  box-shadow:
+    12px 0 36px -20px rgba(58, 47, 37, 0.35),
+    inset -1px 0 rgba(255, 255, 255, 0.5);
+}
+[data-theme='light'] .site-sidebar::before {
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+}
+
+.catalog-page {
+  --control-light: rgba(255, 255, 255, 0.09);
+  --control-bottom: rgba(0, 0, 0, 0.4);
+  --control-shadow: rgba(0, 0, 0, 0.25);
+  --control-raised:
+    inset 0 1px 0 var(--control-light), inset 0 -1px 0 var(--control-bottom),
+    0 2px 6px var(--control-shadow);
+  --control-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14), inset 0 -1px 0 var(--control-bottom),
+    0 4px 10px var(--control-shadow);
+  --control-pressed:
+    inset 0 2px 4px rgba(0, 0, 0, 0.22), inset 0 -1px 0 rgba(255, 255, 255, 0.035),
+    0 1px 2px var(--control-shadow);
+}
+[data-theme='light'] .catalog-page {
+  --control-light: rgba(255, 255, 255, 0.85);
+  --control-bottom: rgba(73, 61, 48, 0.12);
+  --control-shadow: rgba(73, 61, 48, 0.1);
+  --control-raised:
+    inset 0 1px 0 var(--control-light), inset 0 -1px 0 var(--control-bottom),
+    0 2px 6px var(--control-shadow);
+  --control-hover:
+    inset 0 1px 0 white, inset 0 -1px 0 var(--control-bottom), 0 4px 10px var(--control-shadow);
+  --control-pressed:
+    inset 0 2px 4px rgba(73, 61, 48, 0.13), inset 0 -1px 0 rgba(255, 255, 255, 0.6),
+    0 1px 2px var(--control-shadow);
+}
+
+.catalog-page
+  :is(
+    .sidebar-toggle,
+    .theme-toggle,
+    .site-header__login,
+    .button,
+    .spotlight-about,
+    .movie-list-button,
+    .watch-later__controls button,
+    .pagination__item
+  ) {
+  box-shadow: var(--control-raised);
+  transition:
+    box-shadow 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease,
+    background-color 160ms ease,
+    translate 120ms ease;
+}
+.catalog-page :is(.catalog-view-toggle button)[aria-pressed='true'] {
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.12),
+    inset 0 -1px rgba(255, 255, 255, 0.05);
+}
+@media (hover: hover) and (pointer: fine) {
+  .catalog-page
+    :is(
+      .sidebar-toggle,
+      .theme-toggle,
+      .site-header__login,
+      .button,
+      .spotlight-about,
+      .movie-list-button,
+      .watch-later__controls button,
+      .pagination__item
+    ):not(:disabled):hover {
+    box-shadow: var(--control-hover);
+    translate: 0 -1px;
+  }
+}
+.catalog-page
+  :is(
+    .sidebar-toggle,
+    .theme-toggle,
+    .site-header__login,
+    .button,
+    .spotlight-about,
+    .movie-list-button,
+    .watch-later__controls button,
+    .pagination__item
+  ):not(:disabled):active {
+  box-shadow: var(--control-pressed);
+  translate: 0 1px;
+}
+.catalog-page
+  :is(
+    .sidebar-toggle,
+    .theme-toggle,
+    .button,
+    .movie-list-button,
+    .watch-later__controls button,
+    .pagination__item
+  ):disabled {
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.025);
+  translate: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .catalog-page
+    :is(
+      .sidebar-toggle,
+      .theme-toggle,
+      .site-header__login,
+      .button,
+      .spotlight-about,
+      .movie-list-button,
+      .watch-later__controls button,
+      .pagination__item
+    ) {
+    transition: none;
+    translate: none !important;
+  }
+}

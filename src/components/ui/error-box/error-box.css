@@ -5,6 +5,6 @@
   color: #e8a0ae;
   padding: 12px 16px;
   border-radius: var(--radius-sm);
-  font-size: 13px;
+  font-size: var(--text-meta);
   margin-bottom: 18px;
 }
