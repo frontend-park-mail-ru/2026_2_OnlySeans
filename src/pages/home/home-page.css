@@ -1,0 +1,25 @@
+.home-page__spotlight {
+  margin: 28px 0 36px;
+}
+
+.home-page__collections {
+  margin: 56px 0 48px;
+}
+
+.home-page__note {
+  margin: -10px 0 22px;
+  color: var(--text-muted);
+  font-size: var(--text-small);
+  line-height: 22px;
+}
+
+.home-page__collection-grid {
+  display: grid;
+  grid-auto-rows: 1fr;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.home-page__collection-grid > .status-message {
+  grid-column: 1 / -1;
+}

@@ -1,0 +1,13 @@
+<header class="site-header">
+  <div data-slot="logo"></div>
+  <div class="site-header__actions">
+    {{#if user}}
+      <a class="site-header__account" href="/profile" data-link title="Мой профиль" {{#if onProfile}}aria-current="page"{{/if}}>
+        <span class="site-header__avatar" aria-hidden="true">{{initials name}}</span>
+        <span class="site-header__name">{{name}}</span>
+      </a>
+    {{else}}
+      <a class="site-header__login" href="{{loginHref}}" data-link>Войти</a>
+    {{/if}}
+  </div>
+</header>

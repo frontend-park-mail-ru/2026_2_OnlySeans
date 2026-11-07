@@ -1,0 +1,8 @@
+<dialog class="modal confirm-dialog" aria-labelledby="confirm-dialog-title">
+  <h2 class="modal__title" id="confirm-dialog-title">{{title}}</h2>
+  {{#if text}}<p class="modal__text">{{text}}</p>{{/if}}
+  <div class="modal__actions">
+    <button class="modal__button" type="button" data-answer="no">{{cancelText}}</button>
+    <button class="modal__button {{#if danger}}modal__button--danger{{else}}modal__button--primary{{/if}}" type="button" data-answer="yes">{{confirmText}}</button>
+  </div>
+</dialog>

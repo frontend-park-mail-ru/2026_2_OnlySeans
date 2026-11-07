@@ -1,0 +1,111 @@
+.modal {
+  --control-raised:
+    inset 0 1px 0 rgba(255, 255, 255, 0.09), inset 0 -1px 0 rgba(0, 0, 0, 0.4),
+    0 2px 6px rgba(0, 0, 0, 0.25);
+
+  width: min(520px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 26px;
+  overflow-y: auto;
+  border: 1px solid var(--border-active);
+  border-radius: 18px;
+  color: var(--text-main);
+  background: var(--bg-dark);
+}
+
+.modal::backdrop {
+  background: rgba(0, 0, 0, 0.72);
+  backdrop-filter: blur(5px);
+}
+
+.modal__header {
+  display: flex;
+  align-items: start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.modal__eyebrow {
+  margin: 0 0 3px;
+  color: var(--euphoria-amber);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.modal__title {
+  margin: 0;
+  font-size: var(--text-size-23);
+  line-height: 31px;
+  overflow-wrap: anywhere;
+}
+
+.modal__text {
+  margin: 14px 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+
+.modal__close {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  color: var(--text-muted);
+  background: var(--bg-input);
+  cursor: pointer;
+}
+
+.modal__close .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.modal__button {
+  min-height: 44px;
+  padding: 10px 18px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  color: var(--text-main);
+  background: var(--bg-input);
+  font: inherit;
+  font-size: var(--text-meta);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modal__button--primary {
+  border-color: var(--border-active);
+  color: var(--on-accent);
+  background: linear-gradient(160deg, var(--euphoria-amber), var(--accent-deep));
+  box-shadow: var(--control-raised);
+}
+
+.modal__button--danger {
+  border-color: var(--danger-border);
+  color: var(--on-danger);
+  background: var(--danger-solid);
+}
+
+.modal :focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+}
+
+.modal :disabled {
+  opacity: 0.5;
+  cursor: wait;
+}

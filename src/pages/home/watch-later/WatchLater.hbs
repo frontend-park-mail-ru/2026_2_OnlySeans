@@ -1,0 +1,15 @@
+<section class="watch-later" aria-label="Смотреть позже">
+  <div data-slot="heading"></div>
+  {{#if films.length}}
+    <div class="watch-later__row" aria-label="Сохранённые фильмы"></div>
+  {{else}}
+    <div class="watch-later__empty">
+      <span class="watch-later__empty-icon">{{icon "clock"}}</span>
+      <div>
+        <strong class="watch-later__empty-title">Соберите свой киновечер</strong>
+        <p class="watch-later__empty-text">Нажимайте на часы у фильма, и он появится здесь.</p>
+      </div>
+      <a class="watch-later__empty-link" href="#feed">Выбрать фильм {{icon "arrow-right"}}</a>
+    </div>
+  {{/if}}
+</section>

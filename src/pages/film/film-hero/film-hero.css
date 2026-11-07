@@ -1,0 +1,116 @@
+.film-hero {
+  --film-hero-surface: var(--surface-solid);
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  align-items: center;
+  gap: 36px;
+  min-height: 360px;
+  padding: 32px;
+  overflow: hidden;
+  border: 1px solid var(--border-active);
+  border-radius: 16px;
+  background: var(--film-hero-surface);
+}
+
+.film-hero__backdrop {
+  position: absolute;
+  z-index: -2;
+  inset: -40px -40px -40px 30%;
+  width: calc(70% + 80px);
+  height: calc(100% + 80px);
+  object-fit: cover;
+  filter: blur(28px) saturate(1.2);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.film-hero::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(90deg, var(--film-hero-surface) 25%, transparent 100%);
+  pointer-events: none;
+}
+
+.film-hero__cover {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  background: var(--bg-input);
+  box-shadow: 0 14px 30px var(--shadow-soft);
+}
+
+.film-hero__poster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.film-hero__no-poster,
+.film-hero__cover:has([data-broken])::after {
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+
+.film-hero__cover:has([data-broken])::after {
+  content: 'Нет постера';
+}
+
+.film-hero__info {
+  min-width: 0;
+}
+
+.film-hero__title {
+  margin: 14px 0 0;
+  font-size: clamp(30px, 3.4vw, 46px);
+  font-weight: 650;
+  line-height: 1.16;
+  letter-spacing: -1px;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+
+.film-hero__original {
+  margin: 10px 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-body);
+}
+
+.film-hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 10px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--text-small);
+}
+
+.film-hero__meta-item + .film-hero__meta-item::before {
+  content: '·';
+  margin-right: 10px;
+  color: var(--text-muted);
+}
+
+.film-hero__description {
+  display: -webkit-box;
+  max-width: 620px;
+  margin: 18px 0 0;
+  overflow: hidden;
+  color: var(--text-muted);
+  line-height: 1.6;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.film-hero .movie-actions {
+  margin-top: 24px;
+}

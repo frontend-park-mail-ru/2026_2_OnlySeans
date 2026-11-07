@@ -1,0 +1,16 @@
+<div class="text-field {{#if password}}text-field--password{{/if}}">
+  <label class="text-field__label" for="{{id}}">{{label}}</label>
+  <div class="text-field__control">
+    <input class="text-field__input" id="{{id}}" name="{{name}}" type="{{type}}" autocomplete="{{autocomplete}}"
+      aria-describedby="{{id}}-hint" aria-invalid="false" {{#if disabled}}disabled{{/if}} />
+    {{#if password}}
+      <span class="text-field__caps" role="status" hidden title="Caps Lock включён">
+        {{icon "caps-lock"}}<span class="visually-hidden">Caps Lock включён</span>
+      </span>
+      <button class="text-field__toggle" type="button" aria-controls="{{id}}" aria-pressed="false" aria-label="Показать пароль">
+        {{icon "eye" class="text-field__eye"}}{{icon "eye-off" class="text-field__eye-off"}}
+      </button>
+    {{/if}}
+  </div>
+  <span class="text-field__hint" id="{{id}}-hint" aria-live="polite"></span>
+</div>

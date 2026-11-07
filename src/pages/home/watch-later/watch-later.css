@@ -1,0 +1,118 @@
+.watch-later {
+  margin-top: 56px;
+}
+
+.watch-later__row {
+  display: grid;
+  grid-auto-columns: minmax(260px, 1fr);
+  grid-auto-flow: column;
+  gap: 16px;
+  padding-bottom: 8px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.watch-later .movie-card {
+  position: relative;
+  padding: 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  background: var(--bg-card);
+  scroll-snap-align: start;
+}
+
+.watch-later .movie-card__link {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  grid-template-rows: 1fr 1fr;
+  column-gap: 16px;
+  height: 120px;
+}
+
+.watch-later .movie-card__cover {
+  grid-row: 1 / 3;
+  width: 80px;
+  height: 120px;
+  border-radius: 5px;
+}
+
+.watch-later .movie-card__title {
+  align-self: end;
+  margin: 0 28px 6px 0;
+}
+
+.watch-later .movie-card__meta {
+  align-self: start;
+  margin: 0 28px 0 0;
+  line-height: 18px;
+}
+
+.watch-later .movie-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  flex-direction: column;
+  padding: 0;
+}
+
+.watch-later__empty {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 22px 24px;
+  border: 1px dashed var(--border-active);
+  border-radius: 14px;
+  background: var(--bg-card);
+}
+
+.watch-later__empty-icon {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: var(--euphoria-amber);
+  background: color-mix(in srgb, var(--euphoria-amber) 12%, transparent);
+}
+
+.watch-later__empty-icon .icon {
+  width: 24px;
+  height: 24px;
+}
+
+.watch-later__empty-title {
+  font-size: var(--text-body);
+}
+
+.watch-later__empty-text {
+  margin: 2px 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+
+.watch-later__empty-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 8px 16px;
+  border: 1px solid var(--border-active);
+  border-radius: 8px;
+  color: var(--text-main);
+  box-shadow: var(--control-raised);
+  font-size: var(--text-small);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.watch-later__empty-link .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.watch-later__empty-link:hover {
+  border-color: var(--euphoria-amber);
+  background: var(--bg-input);
+}

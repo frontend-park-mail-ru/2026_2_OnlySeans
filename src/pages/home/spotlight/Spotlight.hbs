@@ -1,0 +1,11 @@
+<section class="spotlight" aria-label="Рекомендуем посмотреть" aria-roledescription="карусель">
+  <div class="spotlight__atmosphere" aria-hidden="true"></div>
+  <div data-slot="slide"></div>
+  <div class="spotlight__rubrics" role="group" aria-label="Выберите рубрику рекомендации">
+    {{#each slides}}
+      <button class="spotlight__rubric" type="button" data-index="{{@index}}" aria-pressed="false" aria-label="Показать: {{label}}">
+        {{label}}<span class="spotlight__progress" aria-hidden="true"></span>
+      </button>
+    {{/each}}
+  </div>
+</section>
