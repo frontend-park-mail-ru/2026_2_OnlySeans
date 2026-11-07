@@ -1,25 +1,29 @@
-import { DiscoverPage } from './pages/discover/discover.js';
-import { Router } from './modules/router.js';
-import { LoginPage } from './pages/login/login.js';
-import { RegisterPage } from './pages/register/register.js';
-import { CollectionsPage } from './pages/collections/collections.js';
-import { applyTheme, getPreferredTheme } from './services/theme.js';
-import { NotFoundPage } from './pages/not-found/not-found.js';
+import './core/helpers.js';
+import { Router } from './app/router.js';
+import { routes, notFound } from './app/routes.js';
+import { AppLayout } from './components/app-layout/AppLayout.js';
+import { BareLayout } from './components/bare-layout/BareLayout.js';
+import { ToastStack } from './components/toast/ToastStack.js';
+import { refreshSession, restoreSession, watchSessionOnReturn } from './services/session.js';
+import { fontsReady, stylesReady } from './core/assets.js';
 
-const app = document.getElementById('app');
-
-if (!app) {
-  throw new Error('Application root element #app was not found');
-}
-
-applyTheme(getPreferredTheme());
+document.addEventListener(
+  'error',
+  (event) => {
+    if (event.target instanceof HTMLImageElement) event.target.dataset.broken = '';
+  },
+  true,
+);
+document.body.append(new ToastStack().render());
 
 const router = new Router({
-  '/': DiscoverPage,
-  '/discover': DiscoverPage,
-  '/login': LoginPage,
-  '/register': RegisterPage,
-  '404': NotFoundPage,
-}, app);
+  routes,
+  notFound,
+  layouts: { app: AppLayout, bare: BareLayout },
+  root: document.getElementById('app'),
+  checkSession: () => refreshSession({ maxAge: 5000 }),
+});
 
-router.start();
+watchSessionOnReturn(() => router.refresh());
+
+Promise.all([restoreSession(), stylesReady(), fontsReady()]).then(() => router.start());

@@ -1,0 +1,14 @@
+<section class="toast toast--{{type}}" role="{{#if (eq type "error")}}alert{{else}}status{{/if}}" aria-atomic="true">
+  <span class="toast__icon">{{icon iconName}}</span>
+  <div class="toast__body">
+    <p class="toast__text">{{message}}</p>
+    {{#if action}}
+      {{#if action.href}}
+        <a class="toast__action" href="{{action.href}}" data-link>{{action.label}}</a>
+      {{else}}
+        <button class="toast__action" type="button">{{action.label}}</button>
+      {{/if}}
+    {{/if}}
+  </div>
+  <button class="toast__close" type="button" aria-label="Закрыть уведомление">{{icon "close"}}</button>
+</section>

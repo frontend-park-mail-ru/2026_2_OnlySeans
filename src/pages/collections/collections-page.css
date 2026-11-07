@@ -1,0 +1,24 @@
+.collections-page {
+  padding-top: 32px;
+}
+
+.collections-page .section-heading {
+  margin-bottom: 8px;
+}
+
+.collections-page__note {
+  margin: 0 0 28px;
+  color: var(--text-muted);
+  font-size: var(--text-small);
+}
+
+.collections-page__grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+.collections-page__grid > .status-message {
+  grid-column: 1 / -1;
+}

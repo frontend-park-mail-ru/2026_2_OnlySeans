@@ -1,0 +1,23 @@
+<aside class="sidebar" aria-label="Навигация по сайту">
+  <div class="sidebar__head">
+    <button class="sidebar__toggle" type="button" aria-expanded="{{not collapsed}}"
+      aria-label="{{#if collapsed}}Развернуть панель навигации{{else}}Свернуть панель навигации{{/if}}">
+      {{icon "sidebar"}}
+    </button>
+    <span class="sidebar__title">Навигация</span>
+  </div>
+  <nav class="sidebar__nav" aria-label="Разделы сайта">
+    {{#each groups}}
+      <div class="sidebar__group">
+        <p class="sidebar__caption">{{caption}}</p>
+        {{#each links}}
+          <a class="sidebar__link" href="{{href}}" data-link title="{{text}}" {{#if active}}aria-current="page"{{/if}}>
+            {{icon icon}}
+            <span class="sidebar__text">{{text}}</span>
+            {{#if count}}<span class="sidebar__count">{{count}}</span>{{/if}}
+          </a>
+        {{/each}}
+      </div>
+    {{/each}}
+  </nav>
+</aside>

@@ -1,0 +1,13 @@
+<main class="auth-page">
+  <section class="auth-page__panel" aria-labelledby="auth-title">
+    <div class="auth-page__content">
+      <div class="auth-page__brand"><div data-slot="logo"></div></div>
+      <nav class="auth-page__tabs" aria-label="Авторизация" data-active="{{mode}}">
+        <a class="auth-page__tab" href="{{loginHref}}" data-link data-mode="login">Вход</a>
+        <a class="auth-page__tab" href="{{registerHref}}" data-link data-mode="register">Регистрация</a>
+      </nav>
+      <div data-slot="form"></div>
+    </div>
+  </section>
+  <div data-slot="scene"></div>
+</main>

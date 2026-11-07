@@ -1,0 +1,13 @@
+<dialog class="modal name-dialog" aria-labelledby="name-dialog-title">
+  <h2 class="modal__title" id="name-dialog-title">{{title}}</h2>
+  <form class="name-dialog__form" novalidate>
+    <label class="name-dialog__label" for="name-dialog-input">Название</label>
+    <input class="name-dialog__input" id="name-dialog-input" name="name" value="{{value}}" maxlength="80"
+      placeholder="{{placeholder}}" autocomplete="off" aria-describedby="name-dialog-error" />
+    <p class="name-dialog__error" id="name-dialog-error" role="alert"></p>
+    <div class="modal__actions">
+      <button class="modal__button" type="button" data-cancel>Отмена</button>
+      <button class="modal__button modal__button--primary" type="submit">{{submitText}}</button>
+    </div>
+  </form>
+</dialog>

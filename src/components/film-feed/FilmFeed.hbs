@@ -1,0 +1,10 @@
+<section class="film-feed" id="{{anchor}}">
+  <div data-slot="heading"></div>
+  {{#if note}}<p class="film-feed__note">{{note}}</p>{{/if}}
+  {{#if empty}}
+    <div data-slot="empty"></div>
+  {{else}}
+    <div data-slot="grid"></div>
+    <div data-slot="pagination"></div>
+  {{/if}}
+</section>

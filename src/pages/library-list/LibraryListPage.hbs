@@ -1,0 +1,9 @@
+<div class="library-list-page">
+  {{#if user}}
+    <div data-slot="feed"></div>
+  {{else}}
+    <div data-slot="heading"></div>
+    <p class="library-list-page__note">{{guestText}}</p>
+    <a class="library-list-page__login" href="{{loginHref}}" data-link>Войти {{icon "arrow-right"}}</a>
+  {{/if}}
+</div>

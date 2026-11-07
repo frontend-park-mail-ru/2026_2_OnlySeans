@@ -1,0 +1,43 @@
+<dialog class="modal library-dialog" aria-labelledby="library-dialog-title">
+  <header class="modal__header">
+    <div>
+      <p class="modal__eyebrow">Моё кино</p>
+      <h2 class="modal__title" id="library-dialog-title">{{film.title}}</h2>
+    </div>
+    <button class="modal__close" type="button" aria-label="Закрыть окно">{{icon "close"}}</button>
+  </header>
+
+  <label class="library-dialog__watched" title="Фильм уйдёт из «Смотреть позже», а в коллекциях останется.">
+    <input class="library-dialog__checkbox" type="checkbox" name="watched" {{#if watched}}checked{{/if}} />
+    {{icon "eye"}}
+    <strong>Просмотрено</strong>
+  </label>
+
+  <h3 class="library-dialog__subtitle">В коллекциях</h3>
+  {{#if collections.length}}
+    <div class="library-dialog__options">
+      {{#each collections}}
+        <label class="library-dialog__option">
+          <input class="library-dialog__checkbox" type="checkbox" name="collection" value="{{id}}" {{#if included}}checked{{/if}} />
+          <span class="library-dialog__option-name">{{name}}</span>
+          <small class="library-dialog__option-count">{{count}}</small>
+        </label>
+      {{/each}}
+    </div>
+  {{else}}
+    <p class="library-dialog__hint">Коллекций пока нет. Создайте первую.</p>
+  {{/if}}
+
+  <details class="library-dialog__new" {{#unless collections.length}}open{{/unless}}>
+    <summary class="library-dialog__new-toggle">Новая коллекция</summary>
+    <form class="library-dialog__form">
+      <label class="library-dialog__field">
+        Название коллекции
+        <input class="library-dialog__input" name="name" maxlength="80" placeholder="Например, на вечер" required autocomplete="off" />
+      </label>
+      <button class="modal__button modal__button--primary" type="submit">Создать и добавить</button>
+    </form>
+  </details>
+
+  <a class="library-dialog__link" href="/my-collections" data-link>Мои коллекции {{icon "arrow-right"}}</a>
+</dialog>

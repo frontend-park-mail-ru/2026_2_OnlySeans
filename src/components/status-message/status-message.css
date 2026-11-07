@@ -1,0 +1,16 @@
+.status-message {
+  margin: 24px 0;
+  color: var(--text-muted);
+  font-size: var(--text-small);
+  line-height: 23.4px;
+}
+
+.status-message__retry {
+  padding: 0;
+  border: 0;
+  color: var(--euphoria-amber);
+  background: none;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}

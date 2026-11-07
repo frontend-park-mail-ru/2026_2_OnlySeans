@@ -1,0 +1,6 @@
+.film-page {
+  display: grid;
+  gap: 24px;
+  min-width: 0;
+  padding-top: 32px;
+}

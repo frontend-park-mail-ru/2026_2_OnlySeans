@@ -1,0 +1,38 @@
+.name-dialog__form {
+  display: grid;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.name-dialog__label {
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  font-weight: 700;
+}
+
+.name-dialog__input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 9px;
+  color: var(--text-main);
+  background: var(--bg-input);
+  font: inherit;
+}
+
+.name-dialog__input:focus {
+  outline: none;
+  border-color: var(--euphoria-amber);
+}
+
+.name-dialog__error {
+  min-height: 20px;
+  margin: 0;
+  color: var(--color-danger);
+  font-size: var(--text-meta);
+}
+
+.name-dialog .modal__actions {
+  margin-top: 8px;
+}
