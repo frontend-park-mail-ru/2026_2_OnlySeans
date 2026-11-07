@@ -16,12 +16,13 @@ export async function request(path, { method = 'GET', params, body, signal } = {
     if (value !== undefined && value !== null && value !== '') url.searchParams.set(key, value);
   });
 
+  const multipart = body instanceof FormData;
   const response = await fetch(url, {
     method,
     signal,
     credentials: 'include',
-    headers: body === undefined ? {} : { 'Content-Type': 'application/json' },
-    body: body === undefined ? undefined : JSON.stringify(body),
+    headers: body === undefined || multipart ? {} : { 'Content-Type': 'application/json' },
+    body: multipart || body === undefined ? body : JSON.stringify(body),
   });
 
   const text = response.status === 204 ? '' : await response.text();
