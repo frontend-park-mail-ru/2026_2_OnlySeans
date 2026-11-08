@@ -1,0 +1,78 @@
+:root {
+  --font-main: 'Manrope', system-ui, -apple-system, sans-serif;
+  --font-tv: 'VT323', 'Courier New', monospace;
+}
+
+:root {
+  --bg-dark: #080a0f;
+  --bg-card: rgba(16, 18, 26, 0.72);
+  --bg-input: rgba(255, 255, 255, 0.05);
+  --euphoria-amber: #e6a15c;
+  --euphoria-amber-glow: rgba(230, 161, 92, 0.3);
+  --euphoria-wine: #80162b;
+  --euphoria-wine-glow: rgba(128, 22, 43, 0.45);
+  --border-subtle: rgba(230, 161, 92, 0.16);
+  --border-active: rgba(230, 161, 92, 0.5);
+  --text-main: #f5f3ef;
+  --text-muted: #8e899b;
+  --tv-text: #f2f2f2;
+  --tv-glow: rgba(255, 255, 255, 0.45);
+  --tv-glow-soft: rgba(255, 255, 255, 0.3);
+  --radius-sm: 6px;
+  --radius-md: 14px;
+  --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --bg-gradient-radial:
+    radial-gradient(circle at 10% 85%, rgba(144, 113, 66, 0.28) 0%, rgba(8, 10, 15, 0) 55%),
+    radial-gradient(circle at 90% 15%, rgba(20, 55, 95, 0.4) 0%, rgba(8, 10, 15, 0) 60%),
+    radial-gradient(circle at 50% 50%, rgba(230, 161, 92, 0.03) 0%, transparent 75%);
+}
+
+:root {
+  --accent-deep: #bd763d;
+  --on-accent: #21160d;
+  --color-danger: #e8a0ae;
+  --color-danger-strong: #d66e78;
+  --danger-surface: #6b2026;
+  --danger-border: #d64a50;
+  --danger-text: #ffe8e8;
+  --danger-icon: #ff9a9f;
+  --success-surface: #235e45;
+  --success-border: #428363;
+  --success-text: #f0fff6;
+  --surface-solid: #171a21;
+  --surface-poster: #151925;
+  --surface-hero: linear-gradient(139deg, #31261d, #10121a 65%, #101b2b);
+  --shadow-soft: rgba(0, 0, 0, 0.3);
+  --color-favorite: #e38994;
+  --danger-solid: #a7343b;
+  --on-danger: #fff;
+  --neutral-from: #5a5d66;
+  --neutral-to: #3d4047;
+  --on-neutral: #f5f3ef;
+  --surface-sidebar: #030508;
+}
+
+:root {
+  --control-light: rgba(255, 255, 255, 0.09);
+  --control-bottom: rgba(0, 0, 0, 0.4);
+  --control-shadow: rgba(0, 0, 0, 0.25);
+  --control-raised:
+    inset 0 1px 0 var(--control-light), inset 0 -1px 0 var(--control-bottom),
+    0 2px 6px var(--control-shadow);
+  --shadow-surface-hover: 0 6px 18px rgba(0, 0, 0, 0.18);
+}
+
+:root {
+  --text-meta: 15px;
+  --text-small: 16px;
+  --text-control: 16px;
+  --text-body: 17px;
+  --text-title: 20px;
+  --text-large: 24px;
+  --text-heading: 28px;
+  --text-size-23: 23px;
+  --text-size-26: 26px;
+  --text-size-30: 30px;
+  --text-size-36: 36px;
+  --text-size-48: 48px;
+}

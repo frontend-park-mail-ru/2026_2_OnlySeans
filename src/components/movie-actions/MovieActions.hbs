@@ -1,0 +1,15 @@
+<div class="movie-actions movie-actions--{{variant}}" role="group" aria-label="Действия с фильмом «{{title}}»">
+  <button class="movie-actions__button movie-actions__button--favorite" type="button" data-list="favorite"
+    aria-pressed="{{favorite}}" aria-label="{{favoriteLabel}}: {{title}}" title="{{favoriteLabel}}">
+    {{icon "heart"}}
+  </button>
+  <button class="movie-actions__button movie-actions__button--watchlater" type="button" data-list="watchlater"
+    aria-pressed="{{watchlater}}" aria-label="{{watchlaterLabel}}: {{title}}" title="{{watchlaterLabel}}">
+    {{icon "clock"}}
+    {{#if wide}}<span class="movie-actions__label">{{watchlaterLabel}}</span>{{/if}}
+  </button>
+  <button class="movie-actions__button movie-actions__button--watched" type="button" data-list="watched"
+    aria-pressed="{{watched}}" aria-label="{{watchedLabel}}: {{title}}" title="{{watchedLabel}}">
+    {{icon "eye"}}
+  </button>
+</div>

@@ -1,0 +1,43 @@
+.app-layout {
+  --sidebar-width: 192px;
+  --sidebar-ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  padding: 0 0 100px var(--sidebar-width);
+  color: var(--text-main);
+  background:
+    radial-gradient(
+      ellipse 1000px 600px at 55% 0,
+      color-mix(in srgb, var(--euphoria-amber) 4.5%, transparent),
+      transparent 75%
+    ),
+    var(--surface-solid);
+  transition: padding-left 340ms var(--sidebar-ease);
+}
+
+.app-layout[data-sidebar-collapsed='true'] {
+  --sidebar-width: 64px;
+}
+
+.app-layout::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('../../assets/images/grain.svg') repeat;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.app-layout__column {
+  width: min(1120px, calc(100% - 48px));
+  margin: 0 auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-layout {
+    transition: none;
+  }
+}

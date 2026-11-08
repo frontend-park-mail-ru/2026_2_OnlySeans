@@ -1,0 +1,9 @@
+<div class="section-heading">
+  <{{tag}} class="section-heading__title">
+    <img class="section-heading__star" src="{{star}}" alt="" />
+    {{title}}
+  </{{tag}}>
+  {{#if count}}<span class="section-heading__count">{{count}}</span>{{/if}}
+  {{#if link}}<a class="section-heading__link" href="{{link.href}}" data-link>{{link.text}}</a>{{/if}}
+  <div data-slot="tools"></div>
+</div>

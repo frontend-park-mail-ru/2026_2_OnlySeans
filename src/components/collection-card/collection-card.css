@@ -1,0 +1,130 @@
+.collection-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  min-height: 174px;
+  padding: 22px 24px;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  color: var(--text-main);
+  background: var(--bg-card);
+  text-decoration: none;
+  transition:
+    transform 280ms ease,
+    border-color 280ms ease,
+    box-shadow 280ms ease;
+}
+
+.collection-card::before {
+  content: '';
+  position: absolute;
+  top: -90px;
+  right: -90px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--euphoria-amber) 16%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 280ms ease;
+  pointer-events: none;
+}
+
+.collection-card:hover {
+  border-color: var(--border-active);
+  box-shadow: var(--shadow-surface-hover);
+  transform: translateY(-4px);
+}
+
+.collection-card:hover::before {
+  opacity: 1;
+}
+
+.collection-card:focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+}
+
+.collection-card__text {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  min-width: 0;
+}
+
+.collection-card__count {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  line-height: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.collection-card__title {
+  margin: 0 0 6px;
+  font-size: var(--text-title);
+  font-weight: 700;
+  line-height: 28px;
+}
+
+.collection-card__description {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 23.4px;
+}
+
+.collection-card .poster-stack {
+  position: relative;
+  z-index: 1;
+}
+
+.collection-card:hover .poster-stack__frame:first-child {
+  transform: rotate(-11deg) translate(-6px, 0);
+}
+
+.collection-card:hover .poster-stack__frame:nth-child(2) {
+  transform: translateY(-5px);
+}
+
+.collection-card:hover .poster-stack__frame:last-child {
+  transform: rotate(11deg) translate(5px, 0);
+}
+
+.collection-card__arrow {
+  position: absolute;
+  right: 15px;
+  bottom: 10px;
+  color: var(--euphoria-amber);
+  opacity: 0;
+  transform: translate(-5px, 5px) rotate(-45deg);
+  transition:
+    opacity 240ms ease,
+    transform 240ms ease;
+}
+
+.collection-card__arrow .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.collection-card:hover .collection-card__arrow,
+.collection-card:focus-visible .collection-card__arrow {
+  opacity: 1;
+  transform: rotate(-45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collection-card,
+  .collection-card:hover .poster-stack__frame {
+    transform: none;
+  }
+}

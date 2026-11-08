@@ -1,0 +1,33 @@
+.text-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 32px;
+  padding: 0;
+  border: 0;
+  color: var(--text-muted);
+  background: none;
+  font: inherit;
+  font-size: var(--text-meta);
+  font-weight: 700;
+  cursor: pointer;
+  transition: color 160ms ease;
+}
+
+.text-action:hover {
+  color: var(--euphoria-amber);
+}
+
+.text-action--danger:hover {
+  color: var(--color-danger);
+}
+
+.text-action:focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+}
+
+.text-action .icon {
+  width: 15px;
+  height: 15px;
+}

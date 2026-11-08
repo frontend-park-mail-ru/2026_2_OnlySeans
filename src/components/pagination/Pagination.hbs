@@ -1,0 +1,22 @@
+<nav class="pagination" aria-label="{{label}}">
+  {{#if previous}}
+    <a class="pagination__item pagination__step" href="{{previous}}" data-link aria-label="Предыдущая страница">
+      {{icon "arrow-left"}}<span>Назад</span>
+    </a>
+  {{/if}}
+  <div class="pagination__pages">
+    {{#each items}}
+      {{#if gap}}
+        <span class="pagination__gap" aria-hidden="true">...</span>
+      {{else}}
+        <a class="pagination__item" href="{{href}}" data-link {{#if current}}aria-current="page"{{/if}}
+          aria-label="Страница {{number}}{{#if current}}, текущая{{/if}}">{{number}}</a>
+      {{/if}}
+    {{/each}}
+  </div>
+  {{#if next}}
+    <a class="pagination__item pagination__step" href="{{next}}" data-link aria-label="Следующая страница">
+      <span>Вперёд</span>{{icon "arrow-right"}}
+    </a>
+  {{/if}}
+</nav>

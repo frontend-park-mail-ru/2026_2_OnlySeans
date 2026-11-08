@@ -1,0 +1,22 @@
+<section class="film-hero">
+  {{#if film.poster}}
+    <img class="film-hero__backdrop" src="{{film.poster}}" alt="" />
+  {{/if}}
+  <div class="film-hero__cover">
+    {{#if film.poster}}
+      <img class="film-hero__poster" src="{{film.poster}}" alt="Постер: {{film.title}}" />
+    {{else}}
+      <span class="film-hero__no-poster">Нет постера</span>
+    {{/if}}
+  </div>
+  <div class="film-hero__info">
+    <div data-slot="back"></div>
+    <h1 class="film-hero__title">{{film.title}}</h1>
+    {{#if film.originalTitle}}<p class="film-hero__original">{{film.originalTitle}}</p>{{/if}}
+    <ul class="film-hero__meta">
+      {{#each meta}}<li class="film-hero__meta-item">{{this}}</li>{{/each}}
+    </ul>
+    {{#if film.description}}<p class="film-hero__description">{{film.description}}</p>{{/if}}
+    <div data-slot="actions"></div>
+  </div>
+</section>

@@ -1,0 +1,19 @@
+<div class="auth-form">
+  <div class="auth-form__heading">
+    <h1 class="auth-form__title" id="auth-title">{{title}}</h1>
+    <p class="auth-form__subtitle">{{subtitle}}</p>
+  </div>
+  <p class="auth-form__error" role="alert"></p>
+  <form class="auth-form__form" novalidate>
+    <div data-slot="email"></div>
+    <div class="auth-form__username" data-open="{{registering}}" {{#unless registering}}inert{{/unless}}>
+      <div class="auth-form__username-inner"><div data-slot="username"></div></div>
+    </div>
+    <div data-slot="password"></div>
+    <button class="auth-form__submit" type="submit" disabled>{{button}}</button>
+  </form>
+  <p class="auth-form__switch">
+    <span class="auth-form__switch-text">{{switchText}}</span>
+    <a class="auth-form__switch-link" href="{{switchHref}}" data-link>{{switchLink}}</a>
+  </p>
+</div>
