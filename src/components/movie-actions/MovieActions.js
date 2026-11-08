@@ -47,7 +47,7 @@ export class MovieActions extends Component {
     this.watch(store.watch('user', () => this.#refresh()));
   }
 
-  async #toggle(list) {
+  #toggle(list) {
     if (!store.get('user')) {
       notify(GUEST_MESSAGE[list], {
         type: 'error',
@@ -56,7 +56,7 @@ export class MovieActions extends Component {
       return;
     }
     try {
-      await toggleSaved(list, this.props.film.id);
+      toggleSaved(list, this.props.film.id);
     } catch (error) {
       notify(error.message, { type: 'error' });
     }

@@ -24,7 +24,7 @@ export class AppLayout extends Component {
       'sidebar',
       new Sidebar({ collapsed: this.context().collapsed, onToggle: () => this.#toggleSidebar() }),
     );
-    this.header = this.insert('header', new SiteHeader({ navigate: this.props.navigate }));
+    this.header = this.insert('header', new SiteHeader());
   }
 
   show(page, { toTop = false } = {}) {

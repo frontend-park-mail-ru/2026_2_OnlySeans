@@ -2,29 +2,10 @@
   <div data-slot="logo"></div>
   <div class="site-header__actions">
     {{#if user}}
-      <details class="site-header__account-menu">
-        <summary class="site-header__account" aria-label="Меню аккаунта">
-          <span class="site-header__avatar" aria-hidden="true">
-            <span>{{initials name}}</span>
-            {{#if avatarUrl}}<img src="{{avatarUrl}}" alt="" hidden>{{/if}}
-          </span>
-          <span class="site-header__name">{{name}}</span>
-        </summary>
-        <div class="site-header__menu">
-          <div class="site-header__identity">
-            <span class="site-header__avatar" aria-hidden="true">
-              <span>{{initials name}}</span>
-              {{#if avatarUrl}}<img src="{{avatarUrl}}" alt="" hidden>{{/if}}
-            </span>
-            <div><strong>{{name}}</strong><small>{{user.email}}</small></div>
-          </div>
-          <a href="/profile" data-link {{#if onProfile}}aria-current="page"{{/if}}>{{icon "user"}}Профиль</a>
-          <a href="/profile?edit=1" data-link>{{icon "list"}}Настройки</a>
-          <button type="button" data-account-switch>{{icon "arrow-right"}}Войти в другой аккаунт</button>
-          <button type="button" class="site-header__menu-logout" data-account-logout>{{icon "logout"}}Выйти</button>
-        </div>
-      </details>
-      <button type="button" class="site-header__login" data-account-logout>Выйти</button>
+      <a class="site-header__account" href="/profile" data-link title="Мой профиль" {{#if onProfile}}aria-current="page"{{/if}}>
+        <span class="site-header__avatar" aria-hidden="true">{{initials name}}</span>
+        <span class="site-header__name">{{name}}</span>
+      </a>
     {{else}}
       <a class="site-header__login" href="{{loginHref}}" data-link>Войти</a>
     {{/if}}

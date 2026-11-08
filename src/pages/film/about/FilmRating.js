@@ -62,7 +62,7 @@ export class FilmRating extends Component {
     try {
       [this.#audience, this.#mine] = await Promise.all([
         getAudienceRating(filmId),
-        user ? getMyRating(filmId) : null,
+        user ? getMyRating(filmId, user.id) : null,
       ]);
     } catch {
       this.#audience = { average: 0, count: 0 };
@@ -73,17 +73,18 @@ export class FilmRating extends Component {
 
   async #rate(value) {
     if (this.#busy || value === this.#mine?.value) return;
-    await this.#save(() => saveRating(this.props.film.id, value));
-    this.element?.querySelector(`[data-score="${this.#mine?.value}"]`)?.focus();
+    await this.#save(() => saveRating(this.props.film.id, value, this.#mine?.id));
+    this.find(`[data-score="${this.#mine?.value}"]`)?.focus();
   }
 
   async #reset() {
     if (this.#busy || !this.#mine) return;
+    const ratingId = this.#mine.id;
     await this.#save(async () => {
-      await deleteRating(this.props.film.id);
+      await deleteRating(ratingId);
       return null;
     });
-    this.element?.querySelector('.film-rating__score')?.focus();
+    this.find('.film-rating__score')?.focus();
   }
 
   async #save(action) {
