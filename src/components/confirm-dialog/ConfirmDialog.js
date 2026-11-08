@@ -1,7 +1,8 @@
+import templateSource from './ConfirmDialog.hbs';
 import { Modal } from '../modal/Modal.js';
-import { loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-const template = await loadTemplate(new URL('./ConfirmDialog.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class ConfirmDialog extends Modal {
   static template = template;

@@ -1,0 +1,11 @@
+<div class="review-list">
+  <ul class="review-list__items" data-items></ul>
+  {{#if empty}}
+    <p class="review-list__empty">{{#if onlyMine}}Других отзывов пока нет.{{else}}Отзывов пока нет. Станьте первым!{{/if}}</p>
+  {{/if}}
+  {{#if hasMore}}
+    <button class="review-list__more" type="button" data-more {{#if busy}}disabled{{/if}}>
+      {{#if busy}}Загружаем...{{else}}Показать ещё{{/if}}
+    </button>
+  {{/if}}
+</div>

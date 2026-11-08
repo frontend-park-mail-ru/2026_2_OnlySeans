@@ -21,3 +21,4 @@ Handlebars.registerHelper('date', (value) => relativeDate(value));
 Handlebars.registerHelper('initials', (name) =>
   initials(typeof name === 'string' && name ? name : '?'),
 );
+Handlebars.registerHelper('encode', (value) => encodeURIComponent(String(value ?? '')));

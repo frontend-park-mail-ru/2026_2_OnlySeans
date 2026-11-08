@@ -2,26 +2,16 @@
   <h2 class="film-rating__title" id="film-rating-title">Оценка</h2>
   <div class="film-rating__columns">
     <div class="film-rating__audience">
-      {{#if average}}
-        <span class="film-rating__average">{{average}}</span>
-        <span class="film-rating__count">средняя оценка зрителей, {{count}}</span>
-      {{else}}
-        <span class="film-rating__count">Зрители ещё не оценили {{what}}.</span>
-      {{/if}}
+      <span class="film-rating__average" data-ref="average" {{#unless average}}hidden{{/unless}}>{{average}}</span>
+      <span class="film-rating__count" data-ref="count">{{audience}}</span>
     </div>
     <div class="film-rating__mine">
       {{#if user}}
         <span class="film-rating__label" id="film-rating-mine">
-          Ваша оценка{{#if mine}}: <span class="film-rating__value">{{mine}}, {{mineWord}}</span>{{/if}}
+          Ваша оценка<span data-ref="mineBox" {{#unless mine}}hidden{{/unless}}>: <span class="film-rating__value" data-ref="mine">{{mine}}</span></span>
         </span>
-        <div class="film-rating__scale" role="radiogroup" aria-labelledby="film-rating-mine">
-          {{#each scores}}
-            <button class="film-rating__score {{#if filled}}film-rating__score--filled{{/if}}" type="button"
-              role="radio" data-score="{{score}}" aria-checked="{{checked}}" tabindex="{{tabindex}}"
-              aria-label="{{score}} из 10, {{word}}" title="{{score}}, {{word}}" {{#if ../busy}}disabled{{/if}}>{{score}}</button>
-          {{/each}}
-        </div>
-        {{#if mine}}<button class="film-rating__reset" type="button" {{#if busy}}disabled{{/if}}>Убрать оценку</button>{{/if}}
+        <div data-slot="scale"></div>
+        <button class="film-rating__reset" type="button" data-ref="reset">Убрать оценку</button>
       {{else}}
         <p class="film-rating__guest">
           Чтобы поставить оценку, <a class="film-rating__login" href="{{loginHref}}" data-link>войдите в аккаунт</a>.

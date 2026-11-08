@@ -1,0 +1,67 @@
+.score-scale {
+  display: grid;
+  grid-template-columns: repeat(10, minmax(0, 1fr));
+  gap: 0;
+  max-width: 560px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.score-scale__score {
+  min-width: 0;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  border-right: 1px solid var(--border-subtle);
+  border-radius: 0;
+  color: var(--text-main);
+  background: var(--bg-input);
+  font: inherit;
+  font-size: var(--text-body);
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    background-color 240ms ease,
+    color 240ms ease,
+    border-color 240ms ease;
+}
+
+.score-scale__score:last-child {
+  border-right: 0;
+}
+
+.score-scale__score--filled {
+  border-color: transparent;
+  color: var(--bg-dark);
+  background: var(--euphoria-amber);
+}
+
+:where(.score-scale:has(.score-scale__score:not(:disabled):hover))
+  .score-scale__score:not(:disabled) {
+  border-color: var(--border-subtle);
+  color: var(--text-main);
+  background: var(--bg-input);
+}
+
+.score-scale__score:not(:disabled):hover,
+.score-scale__score:not(:disabled):has(~ .score-scale__score:not(:disabled):hover) {
+  border-color: transparent;
+  color: var(--bg-dark);
+  background: color-mix(in srgb, var(--euphoria-amber) 75%, var(--bg-dark));
+}
+
+.score-scale__score:disabled {
+  cursor: progress;
+}
+
+.score-scale__score:focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: -3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .score-scale__score {
+    transition: none;
+  }
+}

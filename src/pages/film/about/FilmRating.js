@@ -1,113 +1,139 @@
+import './film-rating.css';
+import templateSource from './FilmRating.hbs';
 import { Component } from '../../../core/component.js';
 import { store } from '../../../core/store.js';
 import { countLabel } from '../../../core/format.js';
-import { deleteRating, getAudienceRating, getMyRating, saveRating } from '../../../api/ratings.js';
+import { getAudienceRating } from '../../../api/reviews.js';
+import { clearScore, myScore, setScore } from '../../../services/my-review.js';
 import { errorMessage } from '../../../api/errors.js';
-import { SCORES, formatScore, scoreWord } from '../../../services/ratings.js';
+import { formatScore, scoreWord } from '../../../services/ratings.js';
+import { ScoreScale } from '../../../components/score-scale/ScoreScale.js';
 import { loginPathHere } from '../../../services/auth-return.js';
 import { notify } from '../../../services/notice.js';
-import { loadStyles, loadTemplate } from '../../../core/assets.js';
+import { loadAssets } from '../../../core/assets.js';
 
-loadStyles(new URL('./film-rating.css', import.meta.url));
-const template = await loadTemplate(new URL('./FilmRating.hbs', import.meta.url));
-
-const ARROW_STEPS = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 };
+const template = await loadAssets({ template: templateSource });
 
 export class FilmRating extends Component {
   static template = template;
 
   #audience = { average: 0, count: 0 };
-  #mine = null;
   #busy = false;
   #loaded = false;
+  #pending = null;
+  #refs = {};
+  #scale = null;
+
+  get #score() {
+    return myScore(this.props.film.id);
+  }
+
+  get #shown() {
+    return this.#pending ?? this.#score;
+  }
+
+  #texts() {
+    const { average, count } = this.#audience;
+    const value = this.#shown;
+    const what = this.props.film.isSeries ? 'сериал' : 'фильм';
+    return {
+      average: average ? formatScore(average) : '',
+      audience: average
+        ? `средняя оценка зрителей\n${countLabel(count, ['оценка', 'оценки', 'оценок'])}`
+        : `Зрители ещё не оценили ${what}.`,
+      mine: value ? `${value}, ${scoreWord(value)}` : '',
+    };
+  }
 
   context() {
-    const value = this.#mine?.value || 0;
     return {
+      ...this.#texts(),
       user: store.get('user'),
       loginHref: loginPathHere(),
-      what: this.props.film.isSeries ? 'сериал' : 'фильм',
-      average: this.#audience.average ? formatScore(this.#audience.average) : '',
-      count: countLabel(this.#audience.count, ['оценка', 'оценки', 'оценок']),
-      mine: value,
-      mineWord: value ? scoreWord(value) : '',
-      busy: this.#busy,
-      scores: SCORES.map((score) => ({
-        score,
-        word: scoreWord(score),
-        filled: value >= score,
-        checked: value === score,
-        tabindex: value === score || (!value && score === 1) ? 0 : -1,
-      })),
     };
   }
 
   onRender() {
-    this.delegate('click', '.film-rating__score', (event, button) =>
-      this.#rate(Number(button.dataset.score)),
-    );
+    this.#refs = this.refs();
+    this.#scale = store.get('user')
+      ? this.insert(
+          'scale',
+          new ScoreScale({
+            labelledBy: 'film-rating-mine',
+            onSelect: (value) => this.#rate(value),
+          }),
+        )
+      : null;
     this.delegate('click', '.film-rating__reset', () => this.#reset());
-    this.delegate('keydown', '.film-rating__scale', (event) => this.#onArrows(event));
 
-    this.watch(store.watch('user', () => this.#load()));
+    this.watch(store.watch('myReview', () => !this.#busy && this.#paint()));
+    this.#paint();
     if (!this.#loaded) {
       this.#loaded = true;
-      this.#load();
+      this.#loadAudience();
     }
   }
 
-  async #load() {
-    const user = store.get('user');
-    const filmId = this.props.film.id;
+  #paint() {
+    if (!this.element) return;
+    const value = this.#shown;
+    const texts = this.#texts();
+    const { average, count, mine, mineBox, reset } = this.#refs;
+
+    this.#setText(average, texts.average);
+    average.hidden = !texts.average;
+    count.textContent = texts.audience;
+    if (!mine) return;
+
+    this.#setText(mine, texts.mine);
+    mineBox.hidden = !value;
+    reset.hidden = !value;
+    reset.disabled = this.#busy;
+    this.#scale.paint(value, this.#busy);
+  }
+
+  #setText(element, text) {
+    if (element.textContent === text) return;
+    element.textContent = text;
+    element.classList.remove('film-rating__changed');
+    element.getBoundingClientRect();
+    element.classList.add('film-rating__changed');
+  }
+
+  async #loadAudience() {
     try {
-      [this.#audience, this.#mine] = await Promise.all([
-        getAudienceRating(filmId),
-        user ? getMyRating(filmId) : null,
-      ]);
+      this.#audience = await getAudienceRating(this.props.film.id);
     } catch {
       this.#audience = { average: 0, count: 0 };
-      this.#mine = null;
     }
-    if (this.element) this.update();
+    this.#paint();
   }
 
   async #rate(value) {
-    if (this.#busy || value === this.#mine?.value) return;
-    await this.#save(() => saveRating(this.props.film.id, value));
-    this.element?.querySelector(`[data-score="${this.#mine?.value}"]`)?.focus();
+    if (this.#busy || value === this.#score) return;
+    await this.#save(value, () => setScore(this.props.film.id, value));
+    this.#scale?.focus();
   }
 
   async #reset() {
-    if (this.#busy || !this.#mine) return;
-    await this.#save(async () => {
-      await deleteRating(this.props.film.id);
-      return null;
-    });
-    this.element?.querySelector('.film-rating__score')?.focus();
+    if (this.#busy || !this.#score) return;
+    await this.#save(0, () => clearScore(this.props.film.id));
+    this.#scale?.focus();
   }
 
-  async #save(action) {
+  async #save(value, action) {
     this.#busy = true;
-    this.update();
+    this.#pending = value;
+    this.#paint();
     try {
-      this.#mine = await action();
+      await action();
       this.#audience = await getAudienceRating(this.props.film.id);
     } catch (error) {
       notify(errorMessage(error), { type: 'error' });
     } finally {
       this.#busy = false;
-      if (this.element) this.update();
+      this.#pending = null;
+      this.#paint();
     }
-  }
-
-  #onArrows(event) {
-    const current = this.#mine?.value || 0;
-    let next = null;
-    if (ARROW_STEPS[event.key]) next = Math.min(10, Math.max(1, current + ARROW_STEPS[event.key]));
-    if (event.key === 'Home') next = 1;
-    if (event.key === 'End') next = 10;
-    if (next === null) return;
-    event.preventDefault();
-    this.#rate(next);
   }
 }

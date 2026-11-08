@@ -1,4 +1,6 @@
 import * as authApi from '../api/auth.js';
+import { loadLibrary } from './library.js';
+import { loadPreferences } from './storage.js';
 import { store } from '../core/store.js';
 
 const RETURN_CHECK_AGE = 60_000;
@@ -9,16 +11,15 @@ let pending = null;
 const sameUser = (a, b) =>
   (a?.id ?? null) === (b?.id ?? null) && a?.username === b?.username && a?.email === b?.email;
 
-function setUser(user) {
-  if (!sameUser(store.get('user'), user)) store.set({ user });
+async function setUser(user) {
+  if (sameUser(store.get('user'), user)) return;
+  store.set({ user, myReview: null });
+  await Promise.allSettled([loadLibrary(), loadPreferences()]);
 }
 
 export async function restoreSession() {
-  try {
-    setUser(await authApi.fetchCurrentUser());
-  } catch {
-    setUser(null);
-  }
+  const user = await authApi.fetchCurrentUser().catch(() => null);
+  await setUser(user);
   lastCheck = Date.now();
 }
 
@@ -29,7 +30,7 @@ export function refreshSession({ maxAge = 0 } = {}) {
     .fetchCurrentUser()
     .then((user) => {
       lastCheck = Date.now();
-      setUser(user);
+      return setUser(user);
     })
     .catch(() => {})
     .finally(() => {
@@ -48,18 +49,18 @@ export function watchSessionOnReturn(onChange) {
 }
 
 export async function login(credentials) {
-  setUser(await authApi.login(credentials));
+  await setUser(await authApi.login(credentials));
   lastCheck = Date.now();
 }
 
 export async function register(data) {
-  setUser(await authApi.register(data));
+  await setUser(await authApi.register(data));
   lastCheck = Date.now();
 }
 
 export async function logout() {
   await authApi.logout();
-  setUser(null);
+  await setUser(null);
   lastCheck = Date.now();
 }
 

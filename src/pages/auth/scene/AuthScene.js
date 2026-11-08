@@ -1,43 +1,24 @@
+import './auth-scene.css';
+import templateSource from './AuthScene.hbs';
 import { Component } from '../../../core/component.js';
-import { loadStyles, loadTemplate } from '../../../core/assets.js';
+import { getFilmPosters } from '../../../api/films.js';
+import { loadAssets } from '../../../core/assets.js';
 
-loadStyles(new URL('./auth-scene.css', import.meta.url));
-const template = await loadTemplate(new URL('./AuthScene.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
-const poster = (name) =>
-  new URL(`../../../assets/images/auth/posters/${name}.jpg`, import.meta.url).href;
-
-const REELS = [
-  [
-    ['shawshank', 'Побег из Шоушенка'],
-    ['interstellar', 'Интерстеллар'],
-    ['lion-king', 'Король Лев'],
-    ['gentlemen', 'Джентльмены'],
-  ],
-  [
-    ['inception', 'Начало'],
-    ['sherlock', 'Шерлок'],
-    ['green-mile', 'Зелёная миля'],
-    ['home-alone', 'Один дома'],
-  ],
-  [
-    ['breaking-bad', 'Во все тяжкие'],
-    ['forrest-gump', 'Форрест Гамп'],
-    ['shutter-island', 'Остров проклятых'],
-    ['ivan-vasilievich', 'Иван Васильевич меняет профессию'],
-  ],
-];
-
+const STRIPS = 3;
+const FRAMES = 4;
 const REPEATS = 3;
 
 export class AuthScene extends Component {
   static template = template;
 
   context() {
-    const reels = REELS.map((films, reel) => {
-      const frames = films.map(([name, title], frame) => ({
-        src: poster(name),
-        title,
+    const films = this.props.films || [];
+    const reels = Array.from({ length: STRIPS }, (_, reel) => {
+      const frames = films.slice(reel * FRAMES, (reel + 1) * FRAMES).map((film, frame) => ({
+        src: film.poster,
+        title: film.title,
         code: `50${reel + 1}3 ▷ 0${frame + 1}A`,
       }));
       return { number: reel + 1, tiles: Array.from({ length: REPEATS }, () => frames) };
@@ -48,5 +29,13 @@ export class AuthScene extends Component {
   onRender() {
     this.on('dragstart', (event) => event.preventDefault());
     this.on('selectstart', (event) => event.preventDefault());
+    if (this.props.films) return;
+    const controller = new AbortController();
+    this.watch(() => controller.abort());
+    getFilmPosters(STRIPS * FRAMES, { signal: controller.signal })
+      .then((films) => {
+        if (!controller.signal.aborted) this.update({ films });
+      })
+      .catch(() => {});
   }
 }

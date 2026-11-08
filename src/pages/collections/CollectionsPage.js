@@ -1,13 +1,14 @@
+import './collections-page.css';
+import templateSource from './CollectionsPage.hbs';
 import { Component } from '../../core/component.js';
 import { getCollections } from '../../api/collections.js';
 import { SectionHeading } from '../../components/section-heading/SectionHeading.js';
 import { StatusMessage } from '../../components/status-message/StatusMessage.js';
 import { loadInto } from '../../components/status-message/load-into.js';
 import { CollectionCard } from '../../components/collection-card/CollectionCard.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./collections-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./CollectionsPage.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class CollectionsPage extends Component {
   static template = template;

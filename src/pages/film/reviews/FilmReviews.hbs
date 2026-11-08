@@ -1,0 +1,11 @@
+<section class="film-reviews" aria-labelledby="film-reviews-title">
+  <h2 class="film-reviews__title" id="film-reviews-title">Отзывы зрителей</h2>
+  {{#if user}}
+    <div data-slot="mine"></div>
+  {{else}}
+    <p class="film-reviews__guest">
+      Чтобы написать отзыв, <a class="film-reviews__login" href="{{loginHref}}" data-link>войдите в аккаунт</a>.
+    </p>
+  {{/if}}
+  <div data-slot="list"></div>
+</section>

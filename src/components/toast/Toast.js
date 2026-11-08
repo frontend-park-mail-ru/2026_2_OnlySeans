@@ -1,7 +1,8 @@
+import templateSource from './Toast.hbs';
 import { Component } from '../../core/component.js';
-import { loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-const template = await loadTemplate(new URL('./Toast.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const ICONS = { error: 'alert', success: 'check', info: 'info' };
 

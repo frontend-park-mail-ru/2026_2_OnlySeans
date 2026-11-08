@@ -1,7 +1,7 @@
 import { eventBus } from './event-bus.js';
 
 class Store {
-  #state = { user: null };
+  #state = { user: null, myReview: null };
 
   get(key) {
     return this.#state[key];

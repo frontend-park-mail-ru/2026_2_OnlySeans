@@ -1,14 +1,13 @@
+import './app-layout.css';
+import templateSource from './AppLayout.hbs';
 import { Component } from '../../core/component.js';
-import { readJson, writeJson } from '../../services/storage.js';
+import { StorageKey, readJson, writeJson } from '../../services/storage.js';
 import { arrive } from '../../services/page-transition.js';
 import { Sidebar } from '../sidebar/Sidebar.js';
 import { SiteHeader } from '../site-header/SiteHeader.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./app-layout.css', import.meta.url));
-const template = await loadTemplate(new URL('./AppLayout.hbs', import.meta.url));
-
-const COLLAPSED_KEY = 'frame:sidebar-collapsed';
+const template = await loadAssets({ template: templateSource });
 
 export class AppLayout extends Component {
   static template = template;
@@ -16,7 +15,7 @@ export class AppLayout extends Component {
   #page = null;
 
   context() {
-    return { collapsed: readJson(COLLAPSED_KEY, false) === true };
+    return { collapsed: readJson(StorageKey.SIDEBAR_COLLAPSED, false) === true };
   }
 
   onRender() {
@@ -24,7 +23,7 @@ export class AppLayout extends Component {
       'sidebar',
       new Sidebar({ collapsed: this.context().collapsed, onToggle: () => this.#toggleSidebar() }),
     );
-    this.header = this.insert('header', new SiteHeader({ navigate: this.props.navigate }));
+    this.header = this.insert('header', new SiteHeader());
   }
 
   show(page, { toTop = false } = {}) {
@@ -47,7 +46,7 @@ export class AppLayout extends Component {
   #toggleSidebar() {
     const collapsed = this.element.dataset.sidebarCollapsed !== 'true';
     this.element.dataset.sidebarCollapsed = String(collapsed);
-    writeJson(COLLAPSED_KEY, collapsed);
+    writeJson(StorageKey.SIDEBAR_COLLAPSED, collapsed);
     this.sidebar.update({ collapsed });
   }
 }

@@ -1,11 +1,11 @@
+import './film-hero.css';
+import templateSource from './FilmHero.hbs';
 import { Component } from '../../../core/component.js';
 import { countLabel } from '../../../core/format.js';
-import { BackLink } from '../../../components/back-link/BackLink.js';
 import { MovieActions } from '../../../components/movie-actions/MovieActions.js';
-import { loadStyles, loadTemplate } from '../../../core/assets.js';
+import { loadAssets } from '../../../core/assets.js';
 
-loadStyles(new URL('./film-hero.css', import.meta.url));
-const template = await loadTemplate(new URL('./FilmHero.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class FilmHero extends Component {
   static template = template;
@@ -25,12 +25,6 @@ export class FilmHero extends Component {
 
   onRender() {
     const { film } = this.props;
-    this.insert(
-      'back',
-      new BackLink(
-        film.isSeries ? { href: '/series', text: 'Сериалы' } : { href: '/films', text: 'Фильмы' },
-      ),
-    );
     this.insert('actions', new MovieActions({ film, variant: 'hero' }));
   }
 }

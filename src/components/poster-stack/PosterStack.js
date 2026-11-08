@@ -1,8 +1,9 @@
+import './poster-stack.css';
+import templateSource from './PosterStack.hbs';
 import { Component } from '../../core/component.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./poster-stack.css', import.meta.url));
-const template = await loadTemplate(new URL('./PosterStack.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class PosterStack extends Component {
   static template = template;

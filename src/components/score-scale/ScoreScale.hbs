@@ -1,0 +1,6 @@
+<div class="score-scale" role="radiogroup" aria-labelledby="{{labelledBy}}">
+  {{#each scores}}
+    <button class="score-scale__score" type="button" role="radio" data-score="{{score}}"
+      aria-label="{{score}} из 10, {{word}}" title="{{score}}, {{word}}">{{score}}</button>
+  {{/each}}
+</div>

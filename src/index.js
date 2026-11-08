@@ -10,16 +10,6 @@ import { ToastStack } from './components/toast/ToastStack.js';
 import { refreshSession, restoreSession, watchSessionOnReturn } from './services/session.js';
 import { fontsReady, stylesReady } from './core/assets.js';
 
-if (__ENABLE_SERVICE_WORKER__ && 'serviceWorker' in navigator) {
-  const registerServiceWorker = () => {
-    navigator.serviceWorker.register('/service-worker.js').catch((error) => {
-      console.error('Failed to register service worker:', error);
-    });
-  };
-  if (document.readyState === 'complete') registerServiceWorker();
-  else window.addEventListener('load', registerServiceWorker, { once: true });
-}
-
 document.addEventListener(
   'error',
   (event) => {

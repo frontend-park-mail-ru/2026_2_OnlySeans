@@ -1,11 +1,13 @@
+import './pagination.css';
+import templateSource from './Pagination.hbs';
 import { Component } from '../../core/component.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./pagination.css', import.meta.url));
-const template = await loadTemplate(new URL('./Pagination.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 function paginationItems(current, total) {
-  const pages = [...new Set([1, current - 1, current, current + 1, total])]
+  const nearby = Array.from({ length: 5 }, (_, offset) => current + offset - 2);
+  const pages = [...new Set([1, ...nearby, total])]
     .filter((page) => page >= 1 && page <= total)
     .sort((a, b) => a - b);
   const items = [];

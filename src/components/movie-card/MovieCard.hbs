@@ -8,7 +8,7 @@
       {{/if}}
     </span>
     <span class="movie-card__title" title="{{film.title}}">{{film.title}}</span>
-    <span class="movie-card__meta">{{film.year}} · {{#if film.isSeries}}Сериал{{else}}Фильм{{/if}}</span>
+    <span class="movie-card__meta">{{film.year}} · {{#if film.isSeries}}Сериал{{else}}Фильм{{/if}}{{#unless (eq film.ageLimit null)}} · {{film.ageLimit}}+{{else}} · Возраст не указан{{/unless}}</span>
     <span class="movie-card__description">{{film.description}}</span>
   </a>
   <div data-slot="actions"></div>

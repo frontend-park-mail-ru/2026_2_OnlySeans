@@ -1,15 +1,15 @@
+import './status-message.css';
+import templateSource from './StatusMessage.hbs';
 import { Component } from '../../core/component.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./status-message.css', import.meta.url));
-const template = await loadTemplate(new URL('./StatusMessage.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class StatusMessage extends Component {
   static template = template;
 
   context() {
-    // Handlebars invokes functions used in #if; expose only a boolean to the template.
-    return { ...this.props, retry: Boolean(this.props.retry) };
+    return { text: this.props.text, canRetry: Boolean(this.props.retry) };
   }
 
   onRender() {

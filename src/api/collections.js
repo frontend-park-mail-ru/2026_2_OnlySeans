@@ -1,41 +1,42 @@
-import { request } from './http.js';
-import { toFilm } from './films.js';
+import { requestPages } from './http.js';
+import { getFilm, toFilm } from './films.js';
 
 const toCollection = (collection) => ({
   id: collection.id,
   title: collection.title,
   description: collection.description || '',
-  films: (collection.films || []).map(toFilm),
 });
 
 export async function getCollections({ signal } = {}) {
-  const collections = [];
-  let total = Infinity;
-  while (collections.length < total) {
-    const data = await request('/collections', {
-      params: { limit: 100, offset: collections.length },
-      signal,
-    });
-    if (!data.collections.length) break;
-    collections.push(...data.collections.map(toCollection));
-    total = data.total;
-  }
-  return collections;
+  const pages = await requestPages('/collections', {
+    signal,
+    count: (data) => data.collections.length,
+  });
+  const ids = pages.flatMap((page) => page.collections.map((item) => item.id));
+  return Promise.all(ids.map((id) => getCollection(id, { signal })));
 }
 
 export async function getCollection(id, { signal } = {}) {
-  let collection = null;
-  const films = [];
-  let total = Infinity;
-  while (films.length < total) {
-    const data = await request(`/collections/${encodeURIComponent(id)}`, {
-      params: { limit: 100, offset: films.length },
-      signal,
-    });
-    collection = toCollection(data.collection);
-    if (!collection.films.length) break;
-    films.push(...collection.films);
-    total = data.total;
+  const pages = await requestPages(`/collections/${encodeURIComponent(id)}`, {
+    params: { details: true },
+    signal,
+    count: (data) => data.collection.films?.length || 0,
+  });
+  const films = pages.flatMap((page) => (page.collection.films || []).map(toFilm));
+  const missing = [...new Set(films.filter((film) => !film.description || !film.type || film.ageLimit === null).map((film) => film.id))];
+  const details = new Map();
+  for (let index = 0; index < missing.length; index += 6) {
+    const batch = await Promise.all(missing.slice(index, index + 6).map(async (filmId) => {
+      try {
+        return [filmId, await getFilm(filmId, { signal })];
+      } catch {
+        return [filmId, null];
+      }
+    }));
+    batch.forEach(([filmId, film]) => details.set(filmId, film));
   }
-  return { ...collection, films };
+  return {
+    ...toCollection(pages[0].collection),
+    films: films.map((film) => ({ ...film, ...(details.get(film.id) || {}) })),
+  };
 }

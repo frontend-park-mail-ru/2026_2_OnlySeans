@@ -46,6 +46,12 @@ export class Component {
     return [...this.element.querySelectorAll(selector)];
   }
 
+  refs() {
+    return Object.fromEntries(
+      this.findAll('[data-ref]').map((element) => [element.dataset.ref, element]),
+    );
+  }
+
   insert(target, child) {
     const node = child.render();
     if (typeof target === 'string') {

@@ -1,12 +1,14 @@
+import './view-toggle.css';
+import templateSource from './ViewToggle.hbs';
 import { Component } from '../../core/component.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
+import { Icon } from '../../core/icons.js';
 
-loadStyles(new URL('./view-toggle.css', import.meta.url));
-const template = await loadTemplate(new URL('./ViewToggle.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const OPTIONS = [
-  { value: 'grid', label: 'Сетка', icon: 'grid' },
-  { value: 'list', label: 'Список', icon: 'list' },
+  { value: 'grid', label: 'Сетка', icon: Icon.GRID },
+  { value: 'list', label: 'Список', icon: Icon.LIST },
 ];
 
 export class ViewToggle extends Component {

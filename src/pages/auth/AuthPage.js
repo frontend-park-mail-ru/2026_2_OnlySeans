@@ -1,12 +1,13 @@
+import './auth-page.css';
+import templateSource from './AuthPage.hbs';
 import { Component } from '../../core/component.js';
 import { authPath } from '../../services/auth-return.js';
 import { Logo } from '../../components/logo/Logo.js';
 import { AuthForm } from './form/AuthForm.js';
 import { AuthScene } from './scene/AuthScene.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./auth-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./AuthPage.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const TITLES = { login: 'Вход | Frame', register: 'Регистрация | Frame' };
 

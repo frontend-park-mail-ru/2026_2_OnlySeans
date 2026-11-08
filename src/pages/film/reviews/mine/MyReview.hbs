@@ -1,0 +1,11 @@
+<div class="my-review">
+  {{#if showCard}}
+    <div class="my-review__head">
+      <span class="my-review__label">Ваш отзыв</span>
+      <button class="my-review__edit" type="button" data-edit>Изменить</button>
+    </div>
+    <div data-slot="card"></div>
+  {{else}}
+    <div data-slot="form"></div>
+  {{/if}}
+</div>

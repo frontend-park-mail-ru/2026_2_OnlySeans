@@ -1,9 +1,10 @@
+import './section-heading.css';
+import templateSource from './SectionHeading.hbs';
 import { Component } from '../../core/component.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
 const star = new URL('../../assets/images/section-star.svg', import.meta.url).href;
-loadStyles(new URL('./section-heading.css', import.meta.url));
-const template = await loadTemplate(new URL('./SectionHeading.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class SectionHeading extends Component {
   static template = template;

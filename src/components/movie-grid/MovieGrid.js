@@ -1,9 +1,10 @@
+import './movie-grid.css';
+import templateSource from './MovieGrid.hbs';
 import { Component } from '../../core/component.js';
 import { MovieCard } from '../movie-card/MovieCard.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./movie-grid.css', import.meta.url));
-const template = await loadTemplate(new URL('./MovieGrid.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class MovieGrid extends Component {
   static template = template;

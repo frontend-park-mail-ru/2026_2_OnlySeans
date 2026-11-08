@@ -1,8 +1,9 @@
+import templateSource from './SpotlightSlide.hbs';
 import { Component } from '../../../core/component.js';
 import { MovieActions } from '../../../components/movie-actions/MovieActions.js';
-import { loadTemplate } from '../../../core/assets.js';
+import { loadAssets } from '../../../core/assets.js';
 
-const template = await loadTemplate(new URL('./SpotlightSlide.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class SpotlightSlide extends Component {
   static template = template;
