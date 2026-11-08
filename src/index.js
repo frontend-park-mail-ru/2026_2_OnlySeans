@@ -1,3 +1,6 @@
+import './styles/tokens.css';
+import './styles/base.css';
+import './styles/transitions.css';
 import './core/helpers.js';
 import { Router } from './app/router.js';
 import { routes, notFound } from './app/routes.js';
@@ -6,6 +9,16 @@ import { BareLayout } from './components/bare-layout/BareLayout.js';
 import { ToastStack } from './components/toast/ToastStack.js';
 import { refreshSession, restoreSession, watchSessionOnReturn } from './services/session.js';
 import { fontsReady, stylesReady } from './core/assets.js';
+
+if (__ENABLE_SERVICE_WORKER__ && 'serviceWorker' in navigator) {
+  const registerServiceWorker = () => {
+    navigator.serviceWorker.register('/service-worker.js').catch((error) => {
+      console.error('Failed to register service worker:', error);
+    });
+  };
+  if (document.readyState === 'complete') registerServiceWorker();
+  else window.addEventListener('load', registerServiceWorker, { once: true });
+}
 
 document.addEventListener(
   'error',

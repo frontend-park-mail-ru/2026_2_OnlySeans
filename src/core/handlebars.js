@@ -1,1 +1,1 @@
-export const Handlebars = window.Handlebars;
+export { default as Handlebars } from 'handlebars';

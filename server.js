@@ -1,9 +1,10 @@
-const http = require('node:http');
-const fs = require('node:fs');
-const path = require('node:path');
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const PORT = Number(process.env.PORT) || 8000;
-const ROOT = __dirname;
+const ROOT = fileURLToPath(new URL('./dist/', import.meta.url));
 const TYPES = {
   '.html': 'text/html; charset=utf-8',
   '.js': 'text/javascript; charset=utf-8',
