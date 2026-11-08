@@ -87,3 +87,94 @@
   outline: 2px solid var(--euphoria-amber);
   outline-offset: 5px;
 }
+
+.site-header__account-menu {
+  position: relative;
+}
+
+.site-header__account {
+  cursor: pointer;
+  list-style: none;
+}
+
+.site-header__account::-webkit-details-marker {
+  display: none;
+}
+
+.site-header__avatar img {
+  width: 100%;
+  height: 100%;
+  border-radius: inherit;
+  object-fit: cover;
+}
+
+.site-header__menu {
+  position: absolute;
+  z-index: 10;
+  top: calc(100% + 10px);
+  right: 0;
+  width: min(264px, calc(100vw - 48px));
+  padding: 8px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-solid);
+  box-shadow: 0 16px 32px rgb(0 0 0 / 35%);
+}
+
+.site-header__identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-subtle);
+  overflow-wrap: anywhere;
+  font-size: 14px;
+}
+
+.site-header__identity small {
+  display: block;
+  color: var(--text-muted);
+}
+
+.site-header__menu :is(a, button) {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--text-main);
+  font: inherit;
+  font-size: 14px;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.site-header__menu :is(a, button):is(:hover, :focus-visible, [aria-current='page']) {
+  background: var(--bg-input);
+}
+
+.site-header__menu .icon {
+  flex: 0 0 16px;
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+}
+
+.site-header__menu .site-header__menu-logout {
+  border-top: 1px solid var(--border-subtle);
+  color: #eda5ad;
+}
+
+button.site-header__login {
+  cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  button.site-header__login {
+    display: none;
+  }
+}

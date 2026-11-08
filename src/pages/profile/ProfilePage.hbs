@@ -1,28 +1,130 @@
 <div class="profile-page">
-  <section class="profile-page__hero">
-    <span class="profile-page__avatar" aria-hidden="true">{{initials name}}</span>
-    <div class="profile-page__who">
-      <p class="profile-page__eyebrow">Моё кино</p>
-      <h1 class="profile-page__name">{{name}}</h1>
-      {{#if email}}<p class="profile-page__email">{{email}}</p>{{/if}}
+    <div class="profile-page__content">
+        <div class="profile-page__avatar">
+            <span data-profile-avatar-placeholder aria-hidden="true">—</span>
+            <img data-profile-avatar-image alt="Фото профиля" width="144" height="144" hidden>
+        </div>
+
+        <div data-profile-view>
+            <section class="profile-page__hero" aria-labelledby="profile-title">
+                <div class="profile-page__intro">
+                    <p class="profile-page__eyebrow" data-profile-since>Профиль · Frame</p>
+                    <h1 id="profile-title" data-profile-username>—</h1>
+                    <p class="profile-page__email" data-profile-email>—</p>
+                    <div class="profile-page__buttons">
+                        <button class="button profile-page__button" type="button" data-profile-edit>Редактировать</button>
+                        <button class="button button--secondary profile-page__button" type="button" data-profile-logout>Выйти</button>
+                    </div>
+                </div>
+
+                <div class="profile-page__slate">
+                    <div class="profile-page__slate-arm profile-page__slate-arm--top" aria-hidden="true"></div>
+                    <div class="profile-page__slate-arm profile-page__slate-arm--bottom" aria-hidden="true"></div>
+                    <dl class="profile-page__slate-board">
+                        <div class="profile-page__slate-row profile-page__slate-row--wide">
+                            <dt>Режиссёр</dt>
+                            <dd data-profile-director>—</dd>
+                        </div>
+                        <div class="profile-page__slate-row"><dt>Оценок</dt><dd data-profile-rating-total>—</dd></div>
+                        <div class="profile-page__slate-row"><dt>Отзывов</dt><dd data-profile-review-total>—</dd></div>
+                        <div class="profile-page__slate-row"><dt>Избранное</dt><dd data-profile-favorite-total>—</dd></div>
+                        <div class="profile-page__slate-row profile-page__slate-row--wide">
+                            <dt>Дата</dt>
+                            <dd data-profile-date>—</dd>
+                        </div>
+                    </dl>
+                </div>
+            </section>
+
+            <section class="profile-page__favorites" aria-labelledby="profile-favorites-title">
+                <div class="profile-page__section-heading">
+                    <h2 id="profile-favorites-title">Избранное</h2>
+                    <span data-profile-favorite-count></span>
+                </div>
+                <p data-profile-library-status role="status">Загружаем списки…</p>
+                <div class="profile-page__film-grid" data-profile-favorites-list></div>
+                <div class="profile-page__empty" data-profile-favorites-empty hidden>
+                    <img src="/src/assets/profile/spark-empty.svg" alt="" width="36" height="36">
+                    <h3>В избранном пока пусто</h3>
+                    <p>Нажмите «В избранное» у фильма в каталоге — он появится здесь.</p>
+                    <a class="button button--secondary profile-page__button" href="/films" data-link>К каталогу</a>
+                </div>
+            </section>
+            <section class="profile-page__ratings" data-profile-ratings hidden aria-labelledby="profile-ratings-title">
+                <div class="profile-page__section-heading"><h2 id="profile-ratings-title">Мои оценки</h2><span data-profile-rating-count></span></div>
+                <div data-profile-ratings-list></div>
+            </section>
+        </div>
+
+        <section class="profile-page__settings" aria-labelledby="profile-settings-title">
+            <div class="profile-page__section-heading">
+                <h1 id="profile-settings-title">Настройки профиля</h1>
+                <a href="/profile" data-profile-back data-link>← К профилю</a>
+            </div>
+            <div class="profile-page__settings-grid">
+                <form class="profile-page__card profile-page__form" data-profile-form novalidate hidden>
+                    <h2>Данные профиля</h2>
+                    <div class="profile-page__form-grid">
+                        <div class="profile-page__photo">
+                            <label class="profile-page__photo-control" for="profile-avatar">
+                                <span>Сменить фото</span>
+                                <input id="profile-avatar" name="avatar" type="file" accept="image/jpeg,image/png" aria-describedby="profile-avatar-hint">
+                            </label>
+                            <p id="profile-avatar-hint" aria-live="polite">PNG или JPEG до 5 МБ</p>
+                        </div>
+                        <div class="profile-page__fields">
+                            <div class="profile-page__field">
+                                <label for="profile-username">Имя пользователя</label>
+                                <input id="profile-username" name="username" type="text" autocomplete="username" maxlength="32" aria-describedby="profile-username-error" required>
+                                <p class="profile-page__field-error" id="profile-username-error" aria-live="polite"></p>
+                            </div>
+                            <div class="profile-page__field">
+                                <label for="profile-email">Email</label>
+                                <input id="profile-email" name="email" type="email" autocomplete="email" maxlength="254" aria-describedby="profile-email-error" required>
+                                <p class="profile-page__field-error" id="profile-email-error" aria-live="polite"></p>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="profile-page__status" data-profile-status role="status"></p>
+                    <div class="profile-page__buttons">
+                        <button class="button profile-page__button" type="submit" disabled>Сохранить</button>
+                        <button class="button button--secondary profile-page__button" type="button" data-profile-cancel>Отмена</button>
+                    </div>
+                </form>
+
+                <form class="profile-page__card profile-page__password" data-profile-password aria-labelledby="profile-password-title" novalidate>
+                    <h2 id="profile-password-title">Смена пароля</h2>
+                    <div class="profile-page__fields">
+                        <div class="profile-page__field profile-page__field--password">
+                            <label for="profile-current-password">Текущий пароль</label>
+                            <input id="profile-current-password" type="password" autocomplete="current-password" aria-describedby="profile-current-password-error" required>
+                            <button class="profile-page__password-toggle" type="button" data-password-toggle="profile-current-password" aria-label="Показать пароль" aria-pressed="false"></button>
+                            <p class="profile-page__field-error" id="profile-current-password-error" aria-live="polite"></p>
+                        </div>
+                        <div>
+                            <div class="profile-page__field profile-page__field--password">
+                                <label for="profile-new-password">Новый пароль</label>
+                                <input id="profile-new-password" type="password" autocomplete="new-password" aria-describedby="profile-new-password-error" required>
+                            <button class="profile-page__password-toggle" type="button" data-password-toggle="profile-new-password" aria-label="Показать пароль" aria-pressed="false"></button>
+                            <p class="profile-page__field-error" id="profile-new-password-error" aria-live="polite"></p>
+                            </div>
+                            <ul class="profile-page__password-rules" aria-label="Требования к паролю">
+                                <li>8–32 символа</li><li>Заглавная буква</li><li>Цифра</li>
+                            </ul>
+                        </div>
+                        <div class="profile-page__field profile-page__field--password">
+                            <label for="profile-repeat-password">Повторите пароль</label>
+                            <input id="profile-repeat-password" type="password" autocomplete="new-password" aria-describedby="profile-repeat-password-error" required>
+                            <button class="profile-page__password-toggle" type="button" data-password-toggle="profile-repeat-password" aria-label="Показать пароль" aria-pressed="false"></button>
+                            <p class="profile-page__field-error" id="profile-repeat-password-error" aria-live="polite"></p>
+                        </div>
+                    </div>
+                    <div class="profile-page__buttons">
+                        <button class="button button--secondary profile-page__button" type="submit" disabled>Обновить пароль</button>
+                    </div>
+                    <p class="profile-page__status" data-profile-password-status role="status"></p>
+                </form>
+            </div>
+        </section>
     </div>
-  </section>
-
-  <ul class="profile-page__stats">
-    {{#each stats}}
-      <li class="profile-page__stat">
-        <a class="profile-page__stat-link" href="{{href}}" data-link>
-          <span class="profile-page__stat-value">{{value}}</span>
-          <span class="profile-page__stat-label">{{label}}</span>
-        </a>
-      </li>
-    {{/each}}
-  </ul>
-
-  <div class="profile-page__shelves"></div>
-
-  <section class="profile-page__account" aria-label="Аккаунт">
-    <h2 class="profile-page__account-title">Аккаунт</h2>
-    <button class="profile-page__logout" type="button">{{icon "logout"}}Выйти из аккаунта</button>
-  </section>
 </div>
