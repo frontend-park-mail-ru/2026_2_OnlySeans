@@ -1,9 +1,10 @@
+import './bare-layout.css';
+import templateSource from './BareLayout.hbs';
 import { Component } from '../../core/component.js';
 import { arrive } from '../../services/page-transition.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./bare-layout.css', import.meta.url));
-const template = await loadTemplate(new URL('./BareLayout.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class BareLayout extends Component {
   static template = template;

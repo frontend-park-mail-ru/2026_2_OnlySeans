@@ -27,6 +27,9 @@ export class Router {
   }
 
   navigate(path, { replace = false } = {}) {
+    const target = new URL(path, location.href);
+    const isAuth = (pathname) => pathname === '/login' || pathname === '/register';
+    if (isAuth(location.pathname) && isAuth(target.pathname)) replace = true;
     if (replace) history.replaceState(null, '', path);
     else history.pushState(null, '', path);
 

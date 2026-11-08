@@ -1,3 +1,5 @@
+import './home-page.css';
+import templateSource from './HomePage.hbs';
 import { Component } from '../../core/component.js';
 import { countLabel } from '../../core/format.js';
 import { store } from '../../core/store.js';
@@ -10,10 +12,9 @@ import { CollectionCard } from '../../components/collection-card/CollectionCard.
 import { FilmFeed } from '../../components/film-feed/FilmFeed.js';
 import { Spotlight } from './spotlight/Spotlight.js';
 import { WatchLater } from './watch-later/WatchLater.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./home-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./HomePage.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class HomePage extends Component {
   static template = template;

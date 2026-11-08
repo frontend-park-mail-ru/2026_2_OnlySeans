@@ -1,3 +1,5 @@
+import './library-list-page.css';
+import templateSource from './LibraryListPage.hbs';
 import { Component } from '../../core/component.js';
 import { store } from '../../core/store.js';
 import { countLabel } from '../../core/format.js';
@@ -7,10 +9,9 @@ import { filmsByIds } from '../../services/catalog.js';
 import { SectionHeading } from '../../components/section-heading/SectionHeading.js';
 import { loadInto } from '../../components/status-message/load-into.js';
 import { FilmFeed } from '../../components/film-feed/FilmFeed.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./library-list-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./LibraryListPage.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const LISTS = {
   watchlater: {

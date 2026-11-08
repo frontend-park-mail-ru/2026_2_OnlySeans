@@ -1,3 +1,5 @@
+import './auth-form.css';
+import templateSource from './AuthForm.hbs';
 import { Component } from '../../../core/component.js';
 import { FormValidator } from '../../../core/form-validator.js';
 import { ApiError } from '../../../api/http.js';
@@ -11,10 +13,10 @@ import {
   checkUsername,
 } from '../../../services/validation.js';
 import { TextField } from '../../../components/text-field/TextField.js';
-import { loadStyles, loadTemplate } from '../../../core/assets.js';
+import { loadAssets } from '../../../core/assets.js';
+import { HttpStatus } from '../../../api/errors.js';
 
-loadStyles(new URL('./auth-form.css', import.meta.url));
-const template = await loadTemplate(new URL('./AuthForm.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const TEXTS = {
   login: {
@@ -35,10 +37,13 @@ const TEXTS = {
   },
 };
 
+const TEXT_REFS = ['title', 'subtitle', 'button', 'switchText', 'switchLink'];
+
 export class AuthForm extends Component {
   static template = template;
 
   #sending = false;
+  #refs = {};
 
   get #registering() {
     return this.props.mode === 'register';
@@ -49,6 +54,7 @@ export class AuthForm extends Component {
   }
 
   onRender() {
+    this.#refs = this.refs();
     this.email = this.insert(
       'email',
       new TextField({
@@ -92,7 +98,7 @@ export class AuthForm extends Component {
       this.on('input', () => this.#onEdit(field), field.input);
       this.on('blur', () => this.#onEdit(field), field.input);
     });
-    this.on('submit', (event) => this.#submit(event), this.find('.auth-form__form'));
+    this.on('submit', (event) => this.#submit(event), this.#refs.form);
     this.#refreshSubmit();
   }
 
@@ -100,20 +106,16 @@ export class AuthForm extends Component {
     if (mode === this.props.mode) return;
     this.props = { ...this.props, mode };
     const texts = this.#texts();
-    this.find('.auth-form__title').textContent = texts.title;
-    this.find('.auth-form__subtitle').textContent = texts.subtitle;
-    this.find('.auth-form__submit').textContent = texts.button;
-    this.find('.auth-form__switch-text').textContent = texts.switchText;
-    const link = this.find('.auth-form__switch-link');
-    link.textContent = texts.switchLink;
-    link.href = texts.switchHref;
+    TEXT_REFS.forEach((name) => {
+      this.#refs[name].textContent = texts[name];
+    });
+    this.#refs.switchLink.href = texts.switchHref;
 
-    const heading = this.find('.auth-form__heading');
+    const { heading, username } = this.#refs;
     heading.classList.remove('auth-form__heading--changed');
     heading.getBoundingClientRect();
     heading.classList.add('auth-form__heading--changed');
 
-    const username = this.find('.auth-form__username');
     username.dataset.open = String(this.#registering);
     username.inert = !this.#registering;
     this.password.input.autocomplete = this.#registering ? 'new-password' : 'current-password';
@@ -135,13 +137,13 @@ export class AuthForm extends Component {
 
   #refreshSubmit() {
     const valid = this.validator.validate();
-    const button = this.find('.auth-form__submit');
+    const { button } = this.#refs;
     button.disabled = !valid || this.#sending;
     button.classList.toggle('auth-form__submit--ready', valid && !this.#sending);
   }
 
   #showError(message) {
-    this.find('.auth-form__error').textContent = message;
+    this.#refs.error.textContent = message;
   }
 
   async #submit(event) {
@@ -167,8 +169,10 @@ export class AuthForm extends Component {
 
   #errorText(error, registering) {
     if (!(error instanceof ApiError)) return 'Не удалось связаться с сервером. Он точно запущен?';
-    if (registering && error.status === 409) return 'Пользователь с таким email уже существует';
-    if (!registering && error.status === 401) return 'Неверный email или пароль';
+    if (registering && error.status === HttpStatus.CONFLICT)
+      return 'Пользователь с таким email уже существует';
+    if (!registering && error.status === HttpStatus.UNAUTHORIZED)
+      return 'Неверный email или пароль';
     return TEXTS[this.props.mode].failed;
   }
 }

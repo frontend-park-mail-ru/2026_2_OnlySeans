@@ -1,13 +1,17 @@
+import './film-page.css';
+import templateSource from './FilmPage.hbs';
 import { Component } from '../../core/component.js';
 import { getFilm } from '../../api/films.js';
+import { getFilmPeople } from '../../api/people.js';
 import { loadCatalog } from '../../services/catalog.js';
 import { loadInto } from '../../components/status-message/load-into.js';
+import { BackLink } from '../../components/back-link/BackLink.js';
 import { FilmHero } from './film-hero/FilmHero.js';
 import { FilmAbout } from './about/FilmAbout.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
+import { HttpStatus } from '../../api/errors.js';
 
-loadStyles(new URL('./film-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./FilmPage.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class FilmPage extends Component {
   static template = template;
@@ -15,9 +19,13 @@ export class FilmPage extends Component {
   #request = null;
 
   prepare() {
-    this.#request = getFilm(this.props.params.id);
-
+    this.#request = this.#fetch();
     return Promise.allSettled([this.#request, loadCatalog()]);
+  }
+
+  #fetch() {
+    const { id } = this.props.params;
+    return Promise.all([getFilm(id), getFilmPeople(id).catch(() => [])]);
   }
 
   onRender() {
@@ -28,19 +36,26 @@ export class FilmPage extends Component {
   #load() {
     loadInto(this, 'hero', {
       loading: 'Загружаем фильм...',
-
       load: () => {
-        const request = this.#request ?? getFilm(this.props.params.id);
+        const request = this.#request ?? this.#fetch();
         this.#request = null;
         return request;
       },
-      render: (film) => {
+      render: ([film, people]) => {
         document.title = `${film.title} | Frame`;
-        this.insert('about', new FilmAbout({ film }));
+        this.insert(
+          'back',
+          new BackLink(
+            film.isSeries
+              ? { href: '/series', text: 'Сериалы' }
+              : { href: '/films', text: 'Фильмы' },
+          ),
+        );
+        this.insert('about', new FilmAbout({ film, people }));
         return new FilmHero({ film });
       },
       failure: (error) =>
-        error.status === 404
+        error.status === HttpStatus.NOT_FOUND
           ? { text: 'Такого фильма нет в каталоге.', retry: false }
           : 'Не удалось загрузить фильм.',
     });

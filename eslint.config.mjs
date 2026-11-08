@@ -7,16 +7,15 @@ import css from '@eslint/css';
 import { defineConfig } from 'eslint/config';
 
 export default defineConfig([
-  { ignores: ['node_modules/**', 'dist/**', 'package-lock.json'] },
+  { ignores: ['node_modules/**'] },
   {
     files: ['**/*.{js,mjs,cjs,ts,mts,cts}'],
     plugins: { js },
     extends: ['js/recommended'],
-    languageOptions: { globals: { ...globals.browser, __ENABLE_SERVICE_WORKER__: 'readonly' } },
+    languageOptions: { globals: globals.browser },
   },
   tseslint.configs.recommended,
-  { files: ['server.js', 'webpack.config.js'], languageOptions: { globals: globals.node } },
-  { files: ['src/service-worker.js'], languageOptions: { globals: globals.serviceworker } },
+  { files: ['server.js'], languageOptions: { globals: globals.node, sourceType: 'commonjs' } },
   { files: ['**/*.json'], plugins: { json }, language: 'json/json', extends: ['json/recommended'] },
   {
     files: ['**/*.jsonc'],
@@ -36,15 +35,5 @@ export default defineConfig([
     language: 'markdown/gfm',
     extends: ['markdown/recommended'],
   },
-  {
-    files: ['**/*.css'],
-    plugins: { css },
-    language: 'css/css',
-    extends: ['css/recommended'],
-    rules: {
-      'css/no-invalid-properties': 'off',
-      'css/use-baseline': 'warn',
-      'css/no-important': 'warn',
-    },
-  },
+  { files: ['**/*.css'], plugins: { css }, language: 'css/css', extends: ['css/recommended'] },
 ]);

@@ -1,18 +1,18 @@
+import './film-feed.css';
+import templateSource from './FilmFeed.hbs';
 import { Component } from '../../core/component.js';
-import { readJson, writeJson } from '../../services/storage.js';
+import { StorageKey, readJson, writeJson } from '../../services/storage.js';
 import { arrive } from '../../services/page-transition.js';
 import { SectionHeading } from '../section-heading/SectionHeading.js';
 import { StatusMessage } from '../status-message/StatusMessage.js';
 import { MovieGrid } from '../movie-grid/MovieGrid.js';
 import { ViewToggle } from '../view-toggle/ViewToggle.js';
 import { Pagination, currentPageNumber } from '../pagination/Pagination.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./film-feed.css', import.meta.url));
-const template = await loadTemplate(new URL('./FilmFeed.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
-const PAGE_SIZE = 42;
-const VIEW_KEY = 'frame:catalog-view';
+const PAGE_SIZE = 40;
 
 export class FilmFeed extends Component {
   static template = template;
@@ -23,7 +23,7 @@ export class FilmFeed extends Component {
 
   onRender() {
     const { films, query, title, level, count, empty, anchor } = this.props;
-    const view = readJson(VIEW_KEY, 'grid') === 'list' ? 'list' : 'grid';
+    const view = readJson(StorageKey.CATALOG_VIEW, 'grid') === 'list' ? 'list' : 'grid';
     const tools = films.length
       ? new ViewToggle({ view, onChange: (next) => this.#setView(next) })
       : null;
@@ -51,7 +51,7 @@ export class FilmFeed extends Component {
   }
 
   #setView(view) {
-    writeJson(VIEW_KEY, view);
+    writeJson(StorageKey.CATALOG_VIEW, view);
     this.grid.setView(view);
     arrive(this.grid.element, { duration: 280 });
   }

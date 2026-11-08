@@ -1,10 +1,11 @@
+import './spotlight.css';
+import templateSource from './Spotlight.hbs';
 import { Component } from '../../../core/component.js';
 import { buildSlides } from './spotlight-slides.js';
 import { SpotlightSlide } from './SpotlightSlide.js';
-import { loadStyles, loadTemplate } from '../../../core/assets.js';
+import { loadAssets } from '../../../core/assets.js';
 
-loadStyles(new URL('./spotlight.css', import.meta.url));
-const template = await loadTemplate(new URL('./Spotlight.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const INTERVAL = 8000;
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;

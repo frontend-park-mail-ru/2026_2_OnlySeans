@@ -1,8 +1,10 @@
+import './name-dialog.css';
+import templateSource from './NameDialog.hbs';
 import { Modal } from '../modal/Modal.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadTemplate } from '../../core/assets.js';
 
-loadStyles(new URL('./name-dialog.css', import.meta.url));
-const template = await loadTemplate(new URL('./NameDialog.hbs', import.meta.url));
+
+const template = await loadTemplate(templateSource);
 
 export class NameDialog extends Modal {
   static template = template;
@@ -12,10 +14,10 @@ export class NameDialog extends Modal {
     const error = this.find('.name-dialog__error');
     this.on('input', () => (error.textContent = ''), input);
     this.delegate('click', '[data-cancel]', () => this.close());
-    this.delegate('submit', '.name-dialog__form', (event) => {
+    this.delegate('submit', '.name-dialog__form', async (event) => {
       event.preventDefault();
       try {
-        this.props.save(input.value);
+        await this.props.save(input.value);
         this.close();
       } catch (problem) {
         error.textContent = problem.message;

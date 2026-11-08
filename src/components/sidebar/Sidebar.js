@@ -1,34 +1,36 @@
+import './sidebar.css';
+import templateSource from './Sidebar.hbs';
 import { Component } from '../../core/component.js';
 import { store } from '../../core/store.js';
 import { readLibrary, watchLibrary } from '../../services/library.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
+import { Icon } from '../../core/icons.js';
 
-loadStyles(new URL('./sidebar.css', import.meta.url));
-const template = await loadTemplate(new URL('./Sidebar.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const GROUPS = [
   {
     caption: 'Каталог',
     links: [
-      { href: '/', text: 'Главная', icon: 'home' },
-      { href: '/films', text: 'Фильмы', icon: 'films' },
-      { href: '/series', text: 'Сериалы', icon: 'series' },
-      { href: '/collections', text: 'Подборки', icon: 'grid' },
+      { href: '/', text: 'Главная', icon: Icon.HOME },
+      { href: '/films', text: 'Фильмы', icon: Icon.FILMS },
+      { href: '/series', text: 'Сериалы', icon: Icon.SERIES },
+      { href: '/collections', text: 'Подборки', icon: Icon.GRID },
     ],
   },
   {
     caption: 'Моё кино',
     forUser: true,
     links: [
-      { href: '/profile', text: 'Мой профиль', icon: 'user' },
-      { href: '/watch-later', text: 'Смотреть позже', icon: 'clock', count: 'watchlater' },
-      { href: '/watched', text: 'Просмотрено', icon: 'eye' },
-      { href: '/favorites', text: 'Избранное', icon: 'heart', count: 'favorite' },
+      { href: '/profile', text: 'Мой профиль', icon: Icon.USER },
+      { href: '/watch-later', text: 'Смотреть позже', icon: Icon.CLOCK, count: 'watchlater' },
+      { href: '/watched', text: 'Просмотрено', icon: Icon.EYE },
+      { href: '/favorites', text: 'Избранное', icon: Icon.HEART, count: 'favorite' },
     ],
   },
 ];
 
-const countLabel = (count) => (count > 99 ? '99+' : count || '');
+const countLabel = (count) => (count >= 99 ? '99+' : count || '');
 
 export class Sidebar extends Component {
   static template = template;

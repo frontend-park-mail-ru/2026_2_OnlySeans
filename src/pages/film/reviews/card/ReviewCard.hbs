@@ -1,0 +1,20 @@
+<article class="review-card">
+  <header class="review-card__head">
+    <span class="review-card__avatar" aria-hidden="true">{{initials review.author.name}}</span>
+    <div class="review-card__who">
+      <span class="review-card__author">{{review.author.name}}</span>
+      <span class="review-card__date">{{date review.createdAt}}{{#if review.edited}} · изменён{{/if}}{{#if own}}{{#if review.spoiler}} · со спойлерами{{/if}}{{/if}}</span>
+    </div>
+    {{#if review.score}}<span class="review-card__score" aria-label="Оценка автора">{{review.score}} / 10</span>{{/if}}
+  </header>
+  <h3 class="review-card__title">{{review.title}}</h3>
+  {{#if hidden}}
+    <div class="review-card__spoiler">
+      <p class="review-card__text review-card__text--hidden review-card__text--collapsed" aria-hidden="true">{{review.text}}</p>
+      <button class="review-card__reveal" type="button" data-reveal>Показать спойлер</button>
+    </div>
+  {{else}}
+    <p class="review-card__text {{#unless expanded}}review-card__text--collapsed{{/unless}}" data-review-text>{{review.text}}</p>
+    <button class="review-card__toggle" type="button" data-expand aria-expanded="{{#if expanded}}true{{else}}false{{/if}}" {{#unless expanded}}hidden{{/unless}}>{{#if expanded}}Свернуть{{else}}Развернуть{{/if}}</button>
+  {{/if}}
+</article>

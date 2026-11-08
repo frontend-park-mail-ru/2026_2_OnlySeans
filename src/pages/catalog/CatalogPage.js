@@ -1,12 +1,13 @@
+import './catalog-page.css';
+import templateSource from './CatalogPage.hbs';
 import { Component } from '../../core/component.js';
 import { countLabel } from '../../core/format.js';
 import { loadCatalog } from '../../services/catalog.js';
 import { loadInto } from '../../components/status-message/load-into.js';
 import { FilmFeed } from '../../components/film-feed/FilmFeed.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./catalog-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./CatalogPage.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const SECTIONS = {
   movie: {

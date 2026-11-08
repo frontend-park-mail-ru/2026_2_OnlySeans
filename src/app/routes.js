@@ -5,6 +5,7 @@ import { CollectionPage } from '../pages/collection/CollectionPage.js';
 import { LibraryListPage } from '../pages/library-list/LibraryListPage.js';
 import { AuthPage } from '../pages/auth/AuthPage.js';
 import { FilmPage } from '../pages/film/FilmPage.js';
+import { PersonPage } from '../pages/person/PersonPage.js';
 import { ProfilePage } from '../pages/profile/ProfilePage.js';
 import { NotFoundPage } from '../pages/not-found/NotFoundPage.js';
 
@@ -18,6 +19,7 @@ export const routes = [
   { path: '/collections', page: CollectionsPage },
   { path: '/collections/:id', page: CollectionPage },
   { path: '/film/:id', page: FilmPage },
+  { path: '/person/:id', page: PersonPage },
   { path: '/watch-later', page: LibraryListPage, props: { list: 'watchlater' } },
   { path: '/favorites', page: LibraryListPage, props: { list: 'favorite' } },
   { path: '/watched', page: LibraryListPage, props: { list: 'watched' } },

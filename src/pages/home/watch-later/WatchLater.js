@@ -1,12 +1,13 @@
+import './watch-later.css';
+import templateSource from './WatchLater.hbs';
 import { Component } from '../../../core/component.js';
 import { countLabel } from '../../../core/format.js';
 import { readLibrary, watchLibrary } from '../../../services/library.js';
 import { SectionHeading } from '../../../components/section-heading/SectionHeading.js';
 import { MovieCard } from '../../../components/movie-card/MovieCard.js';
-import { loadStyles, loadTemplate } from '../../../core/assets.js';
+import { loadAssets } from '../../../core/assets.js';
 
-loadStyles(new URL('./watch-later.css', import.meta.url));
-const template = await loadTemplate(new URL('./WatchLater.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class WatchLater extends Component {
   static template = template;

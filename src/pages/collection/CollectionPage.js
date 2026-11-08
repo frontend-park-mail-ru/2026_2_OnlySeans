@@ -1,13 +1,15 @@
+import './collection-page.css';
+import templateSource from './CollectionPage.hbs';
 import { Component } from '../../core/component.js';
 import { countLabel } from '../../core/format.js';
 import { getCollection } from '../../api/collections.js';
 import { loadInto } from '../../components/status-message/load-into.js';
 import { FilmFeed } from '../../components/film-feed/FilmFeed.js';
 import { CollectionHero } from './CollectionHero.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
+import { HttpStatus } from '../../api/errors.js';
 
-loadStyles(new URL('./collection-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./CollectionPage.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const FILM_FORMS = ['фильм', 'фильма', 'фильмов'];
 
@@ -39,7 +41,7 @@ export class CollectionPage extends Component {
         return new CollectionHero({ ...collection, count });
       },
       failure: (error) =>
-        error.status === 404
+        error.status === HttpStatus.NOT_FOUND
           ? { text: 'Подборка не найдена.', retry: false }
           : 'Не удалось загрузить подборку.',
     });

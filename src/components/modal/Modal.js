@@ -1,7 +1,8 @@
+import './modal.css';
 import { Component } from '../../core/component.js';
-import { loadStyles } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./modal.css', import.meta.url));
+loadAssets({});
 
 export class Modal extends Component {
   open() {

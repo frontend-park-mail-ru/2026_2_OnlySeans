@@ -1,15 +1,5 @@
 const length = (value) => Array.from(value).length;
-const head = (value, max) => {
-  if (max <= 0) return '';
-  let count = 0;
-  let index = 0;
-  for (const char of value) {
-    if (count === max) break;
-    index += char.length;
-    count++;
-  }
-  return value.slice(0, index);
-};
+const head = (value, max) => Array.from(value).slice(0, Math.max(0, max)).join('');
 
 export const limitTextInput = (input, max, { onLimit } = {}) => {
   input.dataset.maxChars = String(max);

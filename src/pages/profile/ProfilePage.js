@@ -1,5 +1,7 @@
+import './profile-page.css';
+import templateSource from './ProfilePage.hbs';
 import { Component } from '../../core/component.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 import { store } from '../../core/store.js';
 import { changePassword, getProfile, updateProfile } from '../../api/profile.js';
 import { checkEmail, checkUsername, checkNewPassword } from '../../services/validation.js';
@@ -10,8 +12,7 @@ import { notify } from '../../services/notice.js';
 import { ConfirmDialog } from '../../components/confirm-dialog/ConfirmDialog.js';
 import { renderProfileLibrary } from './profile-library.js';
 
-loadStyles(new URL('./profile-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./ProfilePage.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class ProfilePage extends Component {
   static template = template;

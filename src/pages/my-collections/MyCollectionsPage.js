@@ -1,3 +1,5 @@
+import './my-collections-page.css';
+import templateSource from './MyCollectionsPage.hbs';
 import { Component } from '../../core/component.js';
 import { countLabel } from '../../core/format.js';
 import { createCollection, readLibrary, watchLibrary } from '../../services/library.js';
@@ -8,10 +10,10 @@ import { loadInto } from '../../components/status-message/load-into.js';
 import { Button } from '../../components/button/Button.js';
 import { CollectionCard } from '../../components/collection-card/CollectionCard.js';
 import { NameDialog } from '../../components/name-dialog/NameDialog.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadTemplate } from '../../core/assets.js';
 
-loadStyles(new URL('./my-collections-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./MyCollectionsPage.hbs', import.meta.url));
+
+const template = await loadTemplate(templateSource);
 
 const FORMS = ['коллекция', 'коллекции', 'коллекций'];
 
