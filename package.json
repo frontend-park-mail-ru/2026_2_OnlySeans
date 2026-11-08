@@ -1,14 +1,17 @@
 {
-  "name": "onlyseans-frontend-webpack",
+  "name": "frame",
   "version": "1.0.0",
   "private": true,
-  "type": "module",
+  "description": "Frame: фронтенд кинопоиска команды OnlySeans",
   "scripts": {
-    "dev": "webpack serve",
+    "start": "node server.js",
+    "dev": "webpack serve --mode development",
     "build": "webpack --mode production",
-    "lint": "eslint .",
+    "lint": "eslint src server.js webpack.config.js",
     "typecheck": "tsc --noEmit"
   },
+  "license": "ISC",
+  "type": "module",
   "dependencies": {
     "handlebars": "^4.7.9"
   },

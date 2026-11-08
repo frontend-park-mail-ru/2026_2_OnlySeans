@@ -1,0 +1,160 @@
+.movie-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.movie-card__link {
+  display: flex;
+  flex: none;
+  flex-direction: column;
+  min-width: 0;
+  color: var(--text-main);
+  text-decoration: none;
+}
+
+.movie-card__cover {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--surface-poster);
+  transition: box-shadow 300ms ease;
+}
+
+.movie-card__poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    transform 500ms cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 300ms ease;
+}
+
+.movie-card__no-poster,
+.movie-card__cover:has([data-broken])::after {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  text-align: center;
+}
+
+.movie-card__cover:has([data-broken])::after {
+  content: 'Нет постера';
+}
+
+.movie-card__link:hover .movie-card__poster {
+  transform: scale(1.045);
+  filter: brightness(1.08);
+}
+
+.movie-card__link:focus-visible {
+  outline: none;
+}
+
+.movie-card__link:focus-visible .movie-card__cover {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+  box-shadow: 0 8px 25px color-mix(in srgb, var(--euphoria-amber) 16%, transparent);
+}
+
+.movie-card__title {
+  display: -webkit-box;
+  margin-top: 12px;
+  overflow: hidden;
+  font-size: var(--text-meta);
+  font-weight: 650;
+  line-height: 21px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.movie-card__meta {
+  margin-top: 4px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 20.4px;
+}
+
+.movie-card__description {
+  display: none;
+}
+
+.movie-grid[data-view='list'] .movie-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  background: var(--bg-card);
+}
+
+.movie-grid[data-view='list'] .movie-card__link {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr);
+  grid-template-rows: auto auto 1fr;
+  column-gap: 20px;
+  min-height: 144px;
+}
+
+.movie-grid[data-view='list'] .movie-card__cover {
+  grid-row: 1 / 4;
+  aspect-ratio: auto;
+  border-radius: 0;
+}
+
+.movie-grid[data-view='list'] .movie-card__poster {
+  position: absolute;
+  inset: 0;
+}
+
+.movie-grid[data-view='list'] .movie-card__link:hover .movie-card__poster {
+  transform: none;
+}
+
+.movie-grid[data-view='list'] .movie-card__title {
+  margin: 16px 64px 6px 0;
+  font-size: var(--text-body);
+  font-weight: 700;
+  line-height: 23px;
+}
+
+.movie-grid[data-view='list'] .movie-card__meta {
+  margin: 0 64px 10px 0;
+  line-height: 20px;
+}
+
+.movie-grid[data-view='list'] .movie-card__description {
+  display: -webkit-box;
+  max-width: 760px;
+  margin: 0 52px 16px 0;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 21px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.movie-grid[data-view='list'] .movie-actions {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .movie-card__poster {
+    transition: none;
+  }
+
+  .movie-card__link:hover .movie-card__poster {
+    transform: none;
+  }
+}

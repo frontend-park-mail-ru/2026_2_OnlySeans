@@ -1,0 +1,10 @@
+.film-feed {
+  scroll-margin-top: 20px;
+}
+
+.film-feed__note {
+  margin: -10px 0 22px;
+  color: var(--text-muted);
+  font-size: var(--text-small);
+  line-height: 22px;
+}

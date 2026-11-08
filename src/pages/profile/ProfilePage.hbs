@@ -1,0 +1,28 @@
+<div class="profile-page">
+  <section class="profile-page__hero">
+    <span class="profile-page__avatar" aria-hidden="true">{{initials name}}</span>
+    <div class="profile-page__who">
+      <p class="profile-page__eyebrow">Моё кино</p>
+      <h1 class="profile-page__name">{{name}}</h1>
+      {{#if email}}<p class="profile-page__email">{{email}}</p>{{/if}}
+    </div>
+  </section>
+
+  <ul class="profile-page__stats">
+    {{#each stats}}
+      <li class="profile-page__stat">
+        <a class="profile-page__stat-link" href="{{href}}" data-link>
+          <span class="profile-page__stat-value">{{value}}</span>
+          <span class="profile-page__stat-label">{{label}}</span>
+        </a>
+      </li>
+    {{/each}}
+  </ul>
+
+  <div class="profile-page__shelves"></div>
+
+  <section class="profile-page__account" aria-label="Аккаунт">
+    <h2 class="profile-page__account-title">Аккаунт</h2>
+    <button class="profile-page__logout" type="button">{{icon "logout"}}Выйти из аккаунта</button>
+  </section>
+</div>

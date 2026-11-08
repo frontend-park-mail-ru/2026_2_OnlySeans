@@ -1,0 +1,14 @@
+<div class="spotlight__slide">
+  <a class="spotlight__poster" href="/film/{{film.id}}" data-link aria-label="О фильме: {{film.title}}">
+    {{#if film.poster}}<img class="spotlight__poster-image" src="{{film.poster}}" alt="" draggable="false" />{{/if}}
+  </a>
+  <div class="spotlight__text">
+    <p class="spotlight__eyebrow">{{label}}</p>
+    <h1 class="spotlight__title"><a class="spotlight__title-link" href="/film/{{film.id}}" data-link title="{{film.title}}">{{film.title}}</a></h1>
+    <p class="spotlight__original" lang="en">{{#if film.originalTitle}}{{film.originalTitle}}{{else}}{{#if film.isSeries}}Сериал{{else}}Фильм{{/if}}{{/if}}</p>
+    <p class="spotlight__meta">{{film.year}}{{#if film.duration}} · {{film.duration}} мин{{#if film.isSeries}}/серия{{/if}}{{/if}}</p>
+    <p class="spotlight__description" title="{{film.description}}">{{film.description}}</p>
+    <a class="spotlight__about" href="/film/{{film.id}}" data-link>О фильме {{icon "arrow-right"}}</a>
+  </div>
+  <div class="spotlight__actions"><div data-slot="actions"></div></div>
+</div>

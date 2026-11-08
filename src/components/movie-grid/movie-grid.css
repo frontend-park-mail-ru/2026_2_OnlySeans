@@ -1,0 +1,10 @@
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 28px 20px;
+}
+
+.movie-grid[data-view='list'] {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}

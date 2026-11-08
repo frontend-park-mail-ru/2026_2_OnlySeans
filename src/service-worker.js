@@ -1,7 +1,7 @@
 const CACHE_NAME = 'onlyseans-static-v1';
 const APP_SHELL_URL = new URL('./', self.registration.scope);
 const API_PATH_PREFIX = '/api/';
-const STATIC_FILE_PATTERN = /\.(?:css|gif|jpe?g|js|webp|png|svg|woff2?)(?:$|\?)/i;
+const STATIC_FILE_PATTERN = /\.(?:css|gif|hbs|jpe?g|js|webp|png|svg|woff2?)(?:$|\?)/i;
 
 
 self.addEventListener('install', (event) => {

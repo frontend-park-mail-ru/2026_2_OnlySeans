@@ -1,0 +1,137 @@
+.toast-stack {
+  --toast-room: 48px;
+
+  position: fixed;
+  inset: calc(100px - var(--toast-room)) calc(16px - var(--toast-room)) auto auto;
+  width: min(calc(460px + 2 * var(--toast-room)), calc(100vw - 32px + 2 * var(--toast-room)));
+  max-height: calc(100dvh - 120px + 2 * var(--toast-room));
+  margin: 0;
+  padding: var(--toast-room);
+  border: 0;
+  overflow: auto;
+  color: var(--text-main);
+  background: transparent;
+
+  pointer-events: none;
+}
+
+.toast-stack:popover-open {
+  display: grid;
+  gap: 10px;
+}
+
+.toast-stack::backdrop {
+  display: none;
+}
+
+.toast {
+  display: flex;
+  align-items: start;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid var(--border-active);
+  border-radius: 14px;
+  background: var(--bg-dark);
+
+  box-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.18),
+    0 14px 34px -6px rgba(0, 0, 0, 0.42);
+  font-size: var(--text-body);
+  line-height: 1.55;
+  animation: toast-in 320ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: auto;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+
+.toast--error {
+  border-color: var(--danger-border);
+  color: var(--danger-text);
+  background: var(--danger-surface);
+}
+
+.toast--success {
+  border-color: var(--success-border);
+  color: var(--success-text);
+  background: var(--success-surface);
+}
+
+.toast__icon {
+  display: grid;
+  flex: 0 0 25px;
+  place-items: center;
+  height: 25px;
+  border: 1px solid currentColor;
+  border-radius: 50%;
+}
+
+.toast__icon .icon {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.2;
+}
+
+.toast--error .toast__icon {
+  color: var(--danger-icon);
+}
+
+.toast__body {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.toast__text {
+  margin: 0;
+}
+
+.toast__close,
+.toast__action {
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+
+.toast__close {
+  display: grid;
+  flex: 0 0 32px;
+  place-items: center;
+  height: 32px;
+  padding: 0;
+}
+
+.toast__close .icon {
+  width: 20px;
+  height: 20px;
+}
+
+.toast__action {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin-top: 8px;
+  padding: 4px 12px;
+  border: 1px solid currentColor;
+  border-radius: 7px;
+  font-size: var(--text-control);
+  text-decoration: none;
+}
+
+.toast__close:focus-visible,
+.toast__action:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast {
+    animation: none;
+  }
+}

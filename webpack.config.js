@@ -11,8 +11,12 @@ export default (_env, argv) => {
   const isProduction = argv.mode === "production";
   const copyPatterns = [
     {
-      from: path.resolve(__dirname, "src/media"),
-      to: "src/media",
+      from: path.resolve(__dirname, "src/assets/images/grain.svg"),
+      to: "src/assets/images/grain.svg",
+    },
+    {
+      from: path.resolve(__dirname, "src/assets/images/auth/film-perforation-mask.svg"),
+      to: "src/assets/images/auth/film-perforation-mask.svg",
     },
   ];
 
@@ -28,16 +32,30 @@ export default (_env, argv) => {
     output: {
       filename: "assets/[name].[contenthash].js",
       path: path.resolve(__dirname, "dist"),
+      publicPath: "/",
       clean: true,
     },
     resolve: {
-         extensions: [".ts", ".js"],
+      extensions: [".ts", ".js"],
     },
     module: {
       rules: [
         {
           test: /\.css$/i,
+          dependency: { not: ["url"] },
           use: ["style-loader", "css-loader"],
+        },
+        {
+          // Preserve relative image URLs in styles loaded through loadStyles().
+          test: /\.css$/i,
+          dependency: "url",
+          type: "asset/resource",
+          generator: { filename: "[path][name][ext]" },
+        },
+        {
+          test: /\.hbs$/i,
+          type: "asset/resource",
+          generator: { filename: "assets/[name].[contenthash][ext]" },
         },
         {
           test: /\.(png|jpe?g|gif|svg|woff2?)$/i,
@@ -47,9 +65,9 @@ export default (_env, argv) => {
           },
         },
         {
-        test: /\.[jt]s$/,
-        exclude: /node_modules/,
-        use: "babel-loader",
+          test: /\.[jt]s$/,
+          exclude: /node_modules/,
+          use: "babel-loader",
         },
       ],
     },
@@ -59,6 +77,7 @@ export default (_env, argv) => {
       }),
       new HtmlWebpackPlugin({
         template: "./index.html",
+        favicon: "./src/assets/images/logo-mark.svg",
       }),
       new CopyWebpackPlugin({
         patterns: copyPatterns,

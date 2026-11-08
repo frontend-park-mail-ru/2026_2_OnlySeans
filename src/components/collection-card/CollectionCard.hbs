@@ -1,0 +1,9 @@
+<a class="collection-card" href="{{href}}" data-link>
+  <div class="collection-card__text">
+    <span class="collection-card__count">{{count}}</span>
+    <h3 class="collection-card__title">{{title}}</h3>
+    {{#if description}}<p class="collection-card__description">{{description}}</p>{{/if}}
+  </div>
+  <div data-slot="posters"></div>
+  <span class="collection-card__arrow">{{icon "arrow-right"}}</span>
+</a>

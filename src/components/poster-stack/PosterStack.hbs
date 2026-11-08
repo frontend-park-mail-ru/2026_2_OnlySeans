@@ -1,0 +1,7 @@
+<div class="poster-stack poster-stack--{{size}}" aria-hidden="true">
+  {{#each posters}}
+    <div class="poster-stack__frame">
+      {{#if this}}<img class="poster-stack__image" src="{{this}}" alt="" loading="lazy" />{{/if}}
+    </div>
+  {{/each}}
+</div>

@@ -1,0 +1,23 @@
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: var(--euphoria-amber);
+}
+
+.back-link:focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+}
+
+.back-link .icon {
+  width: 15px;
+  height: 15px;
+}

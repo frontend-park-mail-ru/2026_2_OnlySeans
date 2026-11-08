@@ -1,0 +1,15 @@
+<article class="movie-card">
+  <a class="movie-card__link" href="/film/{{film.id}}" data-link aria-label="О фильме: {{film.title}}">
+    <span class="movie-card__cover">
+      {{#if film.poster}}
+        <img class="movie-card__poster" src="{{film.poster}}" alt="" loading="lazy" decoding="async" />
+      {{else}}
+        <span class="movie-card__no-poster">Нет постера</span>
+      {{/if}}
+    </span>
+    <span class="movie-card__title" title="{{film.title}}">{{film.title}}</span>
+    <span class="movie-card__meta">{{film.year}} · {{#if film.isSeries}}Сериал{{else}}Фильм{{/if}}</span>
+    <span class="movie-card__description">{{film.description}}</span>
+  </a>
+  <div data-slot="actions"></div>
+</article>

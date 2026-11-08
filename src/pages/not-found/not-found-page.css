@@ -1,0 +1,140 @@
+.not-found {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  padding: 24px 20px 40px;
+  background:
+    radial-gradient(
+      ellipse 1000px 600px at 50% 0,
+      color-mix(in srgb, var(--euphoria-amber) 4.5%, transparent),
+      transparent 75%
+    ),
+    var(--surface-solid);
+}
+
+.not-found::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url('../../assets/images/grain.svg') repeat;
+  opacity: 0.15;
+  pointer-events: none;
+}
+
+.not-found__tv {
+  --tv-ratio: 1.5145;
+
+  position: relative;
+  container-type: inline-size;
+  flex: none;
+  width: min(600px, 86vw, calc((100dvh - 300px) * var(--tv-ratio)));
+  aspect-ratio: 2402 / 1586;
+  margin-bottom: 16px;
+}
+
+.not-found__tv-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: 3;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.not-found__noise {
+  position: absolute;
+  left: 6%;
+  top: 8%;
+  width: 68%;
+  height: 74%;
+  object-fit: cover;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.not-found__signal {
+  position: absolute;
+  left: 6%;
+  top: 8%;
+  width: 68%;
+  height: 74%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.not-found__number {
+  font-family: var(--font-tv);
+
+  font-size: 19.5cqi;
+  line-height: 0.85;
+  font-weight: 400;
+  letter-spacing: 1cqi;
+  color: var(--tv-text);
+  text-shadow: 0 0 18px var(--tv-glow);
+}
+
+.not-found__signal-text {
+  margin-top: 1.5cqi;
+  font-family: var(--font-tv);
+  font-size: max(11px, 2.3cqi);
+  font-weight: 700;
+  letter-spacing: 6px;
+  text-transform: uppercase;
+  color: var(--tv-text);
+  text-shadow:
+    0 0 10px var(--tv-glow-soft),
+    0.6px 0 currentColor;
+}
+
+.not-found__title {
+  margin: 0 0 8px;
+  font-size: var(--text-large);
+  font-weight: 700;
+  color: var(--text-main);
+  text-align: center;
+}
+
+.not-found__text {
+  max-width: 520px;
+  margin: 0 0 20px;
+  font-size: var(--text-small);
+  line-height: 1.5;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.not-found__signal {
+  animation: tv-flicker 3s infinite;
+}
+
+@keyframes tv-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.88;
+  }
+  52% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found__signal {
+    animation: none;
+  }
+}

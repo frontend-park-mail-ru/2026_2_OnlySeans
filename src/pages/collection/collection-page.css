@@ -1,0 +1,47 @@
+.collection-page {
+  padding-top: 28px;
+}
+
+.collection-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  min-height: 382px;
+  margin-bottom: 48px;
+  padding: 56px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 22px;
+  color: var(--text-main);
+  background: var(--surface-hero);
+}
+
+.collection-hero__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.collection-hero__eyebrow {
+  margin: 0 0 18px;
+  color: var(--euphoria-amber);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  line-height: 15px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.collection-hero__title {
+  margin: 0 0 6px;
+  font-size: var(--text-size-30);
+  font-weight: 800;
+  line-height: 41px;
+  letter-spacing: -0.5px;
+}
+
+.collection-hero__description {
+  margin: 10px 0 24px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 23.4px;
+}
