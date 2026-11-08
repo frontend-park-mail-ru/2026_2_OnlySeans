@@ -28,5 +28,5 @@ Webpack включает Handlebars в bundle, выпускает `.hbs` и ст
 ### Менторы:
 - [Шахмар Абдуллаев](https://github.com/abdullShah) - Frontend
 - [Антон Самойлов](https://github.com/samantonio28) - Backend
-- [???]() - UX
+- [Айбек Шомуродов]() - UX
 - [???]() - Database
