@@ -23,16 +23,22 @@ export async function getCollection(id, { signal } = {}) {
     count: (data) => data.collection.films?.length || 0,
   });
   const films = pages.flatMap((page) => (page.collection.films || []).map(toFilm));
-  const missing = [...new Set(films.filter((film) => !film.description || !film.type || film.ageLimit === null).map((film) => film.id))];
+  const missing = [...new Set(
+    films
+      .filter((film) => !film.description || !film.type || film.ageLimit === null)
+      .map((film) => film.id)
+  )];
   const details = new Map();
   for (let index = 0; index < missing.length; index += 6) {
-    const batch = await Promise.all(missing.slice(index, index + 6).map(async (filmId) => {
-      try {
-        return [filmId, await getFilm(filmId, { signal })];
-      } catch {
-        return [filmId, null];
-      }
-    }));
+    const batch = await Promise.all(
+      missing.slice(index, index + 6).map(async (filmId) => {
+        try {
+          return [filmId, await getFilm(filmId, { signal })];
+        } catch {
+          return [filmId, null];
+        }
+      })
+    );
     batch.forEach(([filmId, film]) => details.set(filmId, film));
   }
   return {

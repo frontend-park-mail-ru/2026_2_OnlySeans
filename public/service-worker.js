@@ -10,9 +10,13 @@ self.addEventListener('install', event => {
 });
 
 self.addEventListener('activate', event => {
-  event.waitUntil(caches.keys().then(keys => Promise.all(
-    keys.filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME).map(key => caches.delete(key)),
-  )));
+  event.waitUntil(
+    caches.keys().then(keys => Promise.all(
+      keys
+        .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME)
+        .map(key => caches.delete(key)),
+    ))
+  );
 });
 
 self.addEventListener('fetch', event => {
@@ -22,15 +26,19 @@ self.addEventListener('fetch', event => {
   // API and user images always go to the network, including when offline.
   if (/^\/(api|static|avatars)(\/|$)/.test(url.pathname)) return;
   if (request.mode === 'navigate') {
-    event.respondWith(fetch(request).catch(async () => {
-      const cache = await caches.open(CACHE_NAME);
-      return (await cache.match('/offline.html')) || Response.error();
-    }));
+    event.respondWith(
+      fetch(request).catch(async () => {
+        const cache = await caches.open(CACHE_NAME);
+        return (await cache.match('/offline.html')) || Response.error();
+      })
+    );
     return;
   }
   if (!url.search && STATIC_PATHS.has(url.pathname)) {
-    event.respondWith(caches.open(CACHE_NAME).then(async cache =>
-      (await cache.match(url.pathname)) || fetch(request),
-    ));
+    event.respondWith(
+      caches.open(CACHE_NAME).then(async cache =>
+        (await cache.match(url.pathname)) || fetch(request),
+      )
+    );
   }
 });

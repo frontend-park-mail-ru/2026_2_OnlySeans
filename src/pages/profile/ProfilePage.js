@@ -184,11 +184,21 @@ export class ProfilePage extends Component {
         if (error.message === 'username taken') fieldError(usernameInput, 'Это имя уже занято');
         else if (error.message === 'email taken') fieldError(emailInput, 'Этот email уже используется');
         else {
-          if (file && (identitySaved || !editedIdentity()) && (error.status === 400 || error.status === 413)) {
+          if (
+            file &&
+            (identitySaved || !editedIdentity()) &&
+            (error.status === 400 || error.status === 413)
+          ) {
             avatarInput.value = '';
             setPhotoError('Не удалось принять фото. Выберите PNG или JPEG до 5 МБ.');
           }
-          showStatus(profileStatus, identitySaved ? 'Данные сохранены, но фото не загрузилось.' : 'Не удалось сохранить. Попробуйте ещё раз.', 'error');
+          showStatus(
+            profileStatus,
+            identitySaved
+              ? 'Данные сохранены, но фото не загрузилось.'
+              : 'Не удалось сохранить. Попробуйте ещё раз.',
+            'error'
+          );
         }
       } finally {
         busy = false;
