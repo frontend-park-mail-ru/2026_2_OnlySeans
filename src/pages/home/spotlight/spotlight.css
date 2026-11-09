@@ -119,12 +119,14 @@
 }
 
 .spotlight__description {
+  display: -webkit-box;
+  height: 44px;
   margin: 0 0 12px;
   overflow: hidden;
   font-size: var(--text-small);
   line-height: 22px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
 }
 
 .spotlight__about {

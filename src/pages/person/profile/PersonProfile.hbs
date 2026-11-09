@@ -1,0 +1,28 @@
+<article class="person-profile">
+  <header class="person-profile__hero">
+    <div class="person-profile__photo">
+      {{#if person.photo}}
+        <img class="person-profile__image" src="{{person.photo}}" alt="Фото: {{person.name}}" />
+      {{else}}
+        <span class="person-profile__initials" aria-hidden="true">{{initials person.name}}</span>
+      {{/if}}
+    </div>
+    <div class="person-profile__info">
+      {{#if roles}}<p class="person-profile__roles">{{roles}}</p>{{/if}}
+      <h1 class="person-profile__name">{{person.name}}</h1>
+      {{#if person.originalName}}<p class="person-profile__original">{{person.originalName}}</p>{{/if}}
+      {{#if facts.length}}
+        <dl class="person-profile__facts">
+          {{#each facts}}
+            <div class="person-profile__fact">
+              <dt class="person-profile__term">{{term}}</dt>
+              <dd class="person-profile__value">{{value}}</dd>
+            </div>
+          {{/each}}
+        </dl>
+      {{/if}}
+    </div>
+  </header>
+  {{#if person.biography}}<p class="person-profile__biography">{{person.biography}}</p>{{/if}}
+  <div class="person-profile__works"></div>
+</article>

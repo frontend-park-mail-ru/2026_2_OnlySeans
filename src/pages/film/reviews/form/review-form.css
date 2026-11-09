@@ -1,0 +1,124 @@
+.review-form {
+  display: grid;
+  gap: 10px;
+}
+
+.review-form__label {
+  font-weight: 700;
+}
+
+.review-form__title,
+.review-form__text {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  background: var(--bg-input);
+  font: inherit;
+  line-height: 1.55;
+  transition: border-color 200ms ease;
+}
+
+.review-form__text {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.review-form__title::placeholder,
+.review-form__text::placeholder {
+  color: var(--text-muted);
+}
+
+.review-form__title:focus,
+.review-form__text:focus {
+  border-color: var(--border-active);
+  outline: none;
+}
+
+.review-form__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.review-form__spoiler {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  cursor: pointer;
+}
+
+.review-form__checkbox {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--euphoria-amber);
+}
+
+.review-form__counter {
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  font-variant-numeric: tabular-nums;
+}
+
+.review-form__actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.review-form__save {
+  padding: 12px 22px;
+  border: none;
+  border-radius: 100px;
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--euphoria-amber) 0%, var(--accent-deep) 100%);
+  font: inherit;
+  font-size: var(--text-meta);
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: filter 200ms ease;
+}
+
+.review-form__save:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.review-form__save:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.review-form__cancel,
+.review-form__remove {
+  padding: 4px 0;
+  border: 0;
+  color: var(--text-muted);
+  background: none;
+  font: inherit;
+  font-size: var(--text-meta);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.review-form__cancel:hover:not(:disabled) {
+  color: var(--text-main);
+}
+
+.review-form__remove:hover:not(:disabled) {
+  color: var(--color-danger);
+}
+
+.review-form__save:focus-visible,
+.review-form__cancel:focus-visible,
+.review-form__remove:focus-visible,
+.review-form__checkbox:focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+}

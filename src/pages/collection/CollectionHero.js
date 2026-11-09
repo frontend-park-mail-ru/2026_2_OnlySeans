@@ -1,9 +1,10 @@
+import templateSource from './CollectionHero.hbs';
 import { Component } from '../../core/component.js';
 import { Button } from '../../components/button/Button.js';
 import { PosterStack } from '../../components/poster-stack/PosterStack.js';
-import { loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-const template = await loadTemplate(new URL('./CollectionHero.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class CollectionHero extends Component {
   static template = template;

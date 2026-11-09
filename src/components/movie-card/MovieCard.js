@@ -1,9 +1,10 @@
+import './movie-card.css';
+import templateSource from './MovieCard.hbs';
 import { Component } from '../../core/component.js';
 import { MovieActions } from '../movie-actions/MovieActions.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./movie-card.css', import.meta.url));
-const template = await loadTemplate(new URL('./MovieCard.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class MovieCard extends Component {
   static template = template;

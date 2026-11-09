@@ -1,0 +1,36 @@
+.my-review {
+  display: grid;
+  gap: 10px;
+}
+
+.my-review__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.my-review__label {
+  font-weight: 700;
+}
+
+.my-review__edit {
+  padding: 4px 0;
+  border: 0;
+  color: var(--text-muted);
+  background: none;
+  font: inherit;
+  font-size: var(--text-meta);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.my-review__edit:hover {
+  color: var(--euphoria-amber);
+}
+
+.my-review__edit:focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+}

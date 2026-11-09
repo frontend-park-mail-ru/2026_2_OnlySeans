@@ -1,9 +1,10 @@
+import './text-field.css';
+import templateSource from './TextField.hbs';
 import { Component } from '../../core/component.js';
 import { limitTextInput } from '../../services/text-limit.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./text-field.css', import.meta.url));
-const template = await loadTemplate(new URL('./TextField.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class TextField extends Component {
   static template = template;

@@ -1,0 +1,98 @@
+.person-profile__hero {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  align-items: center;
+  gap: 36px;
+  padding: 32px;
+  border: 1px solid var(--border-active);
+  border-radius: 16px;
+  background: var(--surface-solid);
+}
+
+.person-profile__photo {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--bg-input);
+  box-shadow: 0 14px 30px var(--shadow-soft);
+}
+
+.person-profile__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.person-profile__initials {
+  color: var(--euphoria-amber);
+  font-size: var(--text-size-48);
+  font-weight: 800;
+}
+
+.person-profile__info {
+  min-width: 0;
+}
+
+.person-profile__roles {
+  margin: 0;
+  color: var(--euphoria-amber);
+  font-size: var(--text-meta);
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.person-profile__name {
+  margin: 10px 0 0;
+  font-size: clamp(30px, 3.4vw, 46px);
+  font-weight: 650;
+  line-height: 1.16;
+  letter-spacing: -1px;
+  overflow-wrap: anywhere;
+}
+
+.person-profile__original {
+  margin: 8px 0 0;
+  color: var(--text-muted);
+  font-size: var(--text-body);
+}
+
+.person-profile__facts {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 0;
+}
+
+.person-profile__fact {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 16px;
+}
+
+.person-profile__term {
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+
+.person-profile__value {
+  margin: 0;
+  font-size: var(--text-meta);
+}
+
+.person-profile__biography {
+  max-width: 820px;
+  margin: 24px 0 0;
+  padding: 24px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--bg-card);
+  line-height: 1.65;
+}
+
+.person-profile__works {
+  display: grid;
+  gap: 32px;
+  margin-top: 40px;
+}

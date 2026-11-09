@@ -1,3 +1,6 @@
+import '../../components/text-action/text-action.css';
+import './my-collection-page.css';
+import templateSource from './MyCollectionPage.hbs';
 import { Component } from '../../core/component.js';
 import { countLabel } from '../../core/format.js';
 import {
@@ -7,17 +10,18 @@ import {
   watchLibrary,
 } from '../../services/library.js';
 import { filmsByIds } from '../../services/catalog.js';
+import { notify } from '../../services/notice.js';
 import { StatusMessage } from '../../components/status-message/StatusMessage.js';
 import { loadInto } from '../../components/status-message/load-into.js';
 import { FilmFeed } from '../../components/film-feed/FilmFeed.js';
 import { NameDialog } from '../../components/name-dialog/NameDialog.js';
 import { ConfirmDialog } from '../../components/confirm-dialog/ConfirmDialog.js';
 import { BackLink } from '../../components/back-link/BackLink.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadTemplate } from '../../core/assets.js';
 
-loadStyles(new URL('../../components/text-action/text-action.css', import.meta.url));
-loadStyles(new URL('./my-collection-page.css', import.meta.url));
-const template = await loadTemplate(new URL('./MyCollectionPage.hbs', import.meta.url));
+
+
+const template = await loadTemplate(templateSource);
 
 export class MyCollectionPage extends Component {
   static template = template;
@@ -81,7 +85,11 @@ export class MyCollectionPage extends Component {
       danger: true,
     });
     if (!confirmed) return;
-    this.props.navigate('/my-collections');
-    deleteCollection(collection.id);
+    try {
+      await deleteCollection(collection.id);
+      this.props.navigate('/my-collections');
+    } catch (error) {
+      notify(error.message, { type: 'error' });
+    }
   }
 }

@@ -1,10 +1,11 @@
+import './collection-card.css';
+import templateSource from './CollectionCard.hbs';
 import { Component } from '../../core/component.js';
 import { countLabel } from '../../core/format.js';
 import { PosterStack } from '../poster-stack/PosterStack.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./collection-card.css', import.meta.url));
-const template = await loadTemplate(new URL('./CollectionCard.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 export class CollectionCard extends Component {
   static template = template;

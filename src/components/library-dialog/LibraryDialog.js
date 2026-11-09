@@ -1,3 +1,5 @@
+import './library-dialog.css';
+import templateSource from './LibraryDialog.hbs';
 import { Modal } from '../modal/Modal.js';
 import { countLabel } from '../../core/format.js';
 import {
@@ -7,10 +9,10 @@ import {
   setSaved,
 } from '../../services/library.js';
 import { notify } from '../../services/notice.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadTemplate } from '../../core/assets.js';
 
-loadStyles(new URL('./library-dialog.css', import.meta.url));
-const template = await loadTemplate(new URL('./LibraryDialog.hbs', import.meta.url));
+
+const template = await loadTemplate(templateSource);
 
 const FILM_FORMS = ['фильм', 'фильма', 'фильмов'];
 
@@ -48,9 +50,9 @@ export class LibraryDialog extends Modal {
     });
   }
 
-  #save(change, rerender = false) {
+  async #save(change, rerender = false) {
     try {
-      change();
+      await change();
       if (rerender) this.refreshContent();
     } catch (error) {
       notify(error.message, { type: 'error' });

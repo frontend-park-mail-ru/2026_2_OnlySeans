@@ -1,12 +1,13 @@
+import './movie-actions.css';
+import templateSource from './MovieActions.hbs';
 import { Component } from '../../core/component.js';
 import { store } from '../../core/store.js';
 import { isSaved, toggleSaved, watchLibrary } from '../../services/library.js';
 import { notify } from '../../services/notice.js';
 import { loginPathHere } from '../../services/auth-return.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./movie-actions.css', import.meta.url));
-const template = await loadTemplate(new URL('./MovieActions.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const LABELS = {
   favorite: ['В избранное', 'Убрать из избранного'],

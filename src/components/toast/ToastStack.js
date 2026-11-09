@@ -1,10 +1,11 @@
+import './toast.css';
+import templateSource from './ToastStack.hbs';
 import { Component } from '../../core/component.js';
 import { eventBus } from '../../core/event-bus.js';
 import { Toast } from './Toast.js';
-import { loadStyles, loadTemplate } from '../../core/assets.js';
+import { loadAssets } from '../../core/assets.js';
 
-loadStyles(new URL('./toast.css', import.meta.url));
-const template = await loadTemplate(new URL('./ToastStack.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const DURATION = { error: 8000, info: 4000, success: 4000 };
 

@@ -1,15 +1,20 @@
+import './film-about.css';
+import templateSource from './FilmAbout.hbs';
 import { Component } from '../../../core/component.js';
+import { store } from '../../../core/store.js';
 import { countLabel } from '../../../core/format.js';
 import { loadCatalog } from '../../../services/catalog.js';
 import { SectionHeading } from '../../../components/section-heading/SectionHeading.js';
 import { MovieGrid } from '../../../components/movie-grid/MovieGrid.js';
 import { StatusMessage } from '../../../components/status-message/StatusMessage.js';
 import { loadInto } from '../../../components/status-message/load-into.js';
+import { FilmPeople } from './FilmPeople.js';
 import { FilmRating } from './FilmRating.js';
-import { loadStyles, loadTemplate } from '../../../core/assets.js';
+import { FilmReviews } from '../reviews/FilmReviews.js';
+import { loadMyReview } from '../../../services/my-review.js';
+import { loadAssets } from '../../../core/assets.js';
 
-loadStyles(new URL('./film-about.css', import.meta.url));
-const template = await loadTemplate(new URL('./FilmAbout.hbs', import.meta.url));
+const template = await loadAssets({ template: templateSource });
 
 const SIMILAR_COUNT = 6;
 
@@ -44,9 +49,19 @@ export class FilmAbout extends Component {
   }
 
   onRender() {
+    const { people = [] } = this.props;
+    if (people.length) this.insert('people', new FilmPeople({ people }));
+    else this.find('[data-slot="people"]').remove();
     this.insert('rating', new FilmRating({ film: this.props.film }));
+    this.insert('reviews', new FilmReviews({ film: this.props.film }));
+    this.#loadMine();
+    this.watch(store.watch('user', () => this.#loadMine()));
     this.insert('similar-heading', new SectionHeading({ title: 'Похожие фильмы и сериалы' }));
     this.#loadSimilar();
+  }
+
+  #loadMine() {
+    loadMyReview(this.props.film.id).catch(() => {});
   }
 
   #seasons() {

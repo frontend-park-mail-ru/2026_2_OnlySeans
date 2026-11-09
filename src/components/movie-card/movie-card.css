@@ -130,7 +130,9 @@
 
 .movie-grid[data-view='list'] .movie-card__description {
   display: -webkit-box;
+  align-self: start;
   max-width: 760px;
+  max-height: 42px;
   margin: 0 52px 16px 0;
   overflow: hidden;
   color: var(--text-muted);
