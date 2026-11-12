@@ -4,13 +4,13 @@
   "private": true,
   "description": "Frame: фронтенд кинопоиска команды OnlySeans",
   "scripts": {
-    "start": "webpack serve --mode development",
+    "start": "node server.js",
     "lint": "eslint src server.js",
     "dev": "webpack serve --mode development",
     "build": "npm run typecheck && webpack --mode production",
-    "typecheck": "tsc --noEmit",
-    "serve:legacy": "node server.js",
-    "test:sw": "npm run build && node test-service-worker.cjs"
+    "typecheck": "tsc --noEmit && tsc -p tsconfig.worker.json",
+    "test:sw": "npm run build && node test-service-worker.cjs",
+    "test:offline": "npm run test:sw && node test-offline-edits.cjs"
   },
   "license": "ISC",
   "type": "commonjs",
@@ -29,6 +29,7 @@
     "globals": "^17.12.0",
     "html-webpack-plugin": "^5.6.8",
     "mini-css-extract-plugin": "^2.10.2",
+    "postcss": "8.5.32",
     "style-loader": "^4.0.0",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.70.1",

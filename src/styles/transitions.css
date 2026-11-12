@@ -22,7 +22,7 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   :root[data-loading]::after {
     background-size: 100% 100%;
     animation: none;

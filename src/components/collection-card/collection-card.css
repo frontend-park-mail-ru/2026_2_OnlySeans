@@ -122,7 +122,7 @@
   transform: rotate(-45deg);
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .collection-card,
   .collection-card:hover .poster-stack__frame {
     transform: none;

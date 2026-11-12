@@ -32,7 +32,11 @@ module.exports = (_, argv) => {
         },
         {
           test: /\.css$/,
-          use: [production ? MiniCssExtractPlugin.loader : 'style-loader', 'css-loader']
+          use: [
+            production ? MiniCssExtractPlugin.loader : 'style-loader',
+            'css-loader',
+            path.resolve(__dirname, 'build/postcss-loader.cjs')
+          ]
         },
         { test: /\.hbs$/, type: 'asset/source' },
         { test: /\.(svg|png|jpe?g|webp|gif|woff2?|mp4|webm|mp3)$/, type: 'asset/resource' }

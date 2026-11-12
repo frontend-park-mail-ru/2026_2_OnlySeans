@@ -98,7 +98,7 @@
   outline-offset: 4px;
 }
 
-@media (max-height: 860px) {
+@media (--short-auth) {
   .auth-page__panel {
     --auth-content-height: 540px;
   }
@@ -122,7 +122,7 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .auth-page__tabs::before,
   .auth-page__tab {
     transition: none;

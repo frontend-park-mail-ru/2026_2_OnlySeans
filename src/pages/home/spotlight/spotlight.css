@@ -229,7 +229,7 @@
   opacity: 0.25;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .spotlight__poster-image {
     transition: none;
   }
