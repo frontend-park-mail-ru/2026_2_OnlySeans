@@ -36,7 +36,7 @@
   margin: 0 auto;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .app-layout {
     transition: none;
   }

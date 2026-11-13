@@ -11,6 +11,7 @@
     </label>
     <output class="review-form__counter" name="counter"></output>
   </div>
+  {{#if syncStatus}}<p class="review-form__sync" role="status">{{syncStatus}}</p>{{/if}}
   <div class="review-form__actions">
     <button class="review-form__save" type="submit" name="save" disabled>{{#if editing}}Сохранить{{else}}Опубликовать{{/if}}</button>
     {{#if canCancel}}

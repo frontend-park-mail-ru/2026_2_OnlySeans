@@ -185,7 +185,7 @@
   line-height: 23.4px;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .auth-scene__track {
     animation: none;
     will-change: auto;

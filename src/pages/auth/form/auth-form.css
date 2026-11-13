@@ -123,7 +123,7 @@
   outline-offset: 4px;
 }
 
-@media (max-height: 860px) {
+@media (--short-auth) {
   .auth-form {
     min-height: 391px;
   }
@@ -159,7 +159,7 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .auth-form__heading--changed {
     animation: none;
   }
