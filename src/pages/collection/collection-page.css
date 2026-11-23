@@ -45,3 +45,63 @@
   font-size: var(--text-meta);
   line-height: 23.4px;
 }
+
+.collection-hero__title,
+.collection-hero__description {
+  overflow-wrap: anywhere;
+}
+@media (min-width: 768px) and (max-width: 1199px) {
+  .collection-hero {
+    gap: 20px;
+    padding: 28px;
+  }
+  .collection-hero .poster-stack--large {
+    width: 240px;
+    height: 240px;
+  }
+  .collection-hero .poster-stack--large .poster-stack__frame {
+    width: 120px;
+    height: 210px;
+    margin-right: -76px;
+  }
+  .collection-hero .poster-stack--large .poster-stack__frame:last-child {
+    margin-right: 0;
+  }
+}
+@media (max-width: 767px) {
+  .collection-page {
+    padding-top: 20px;
+  }
+  .collection-hero {
+    flex-direction: column-reverse;
+    gap: 20px;
+    min-height: 0;
+    margin-bottom: 24px;
+    padding: 24px 16px;
+    text-align: center;
+  }
+  .collection-hero__title {
+    font-size: var(--text-title);
+    line-height: 1.25;
+  }
+  .collection-hero__eyebrow {
+    margin-bottom: 10px;
+  }
+  .collection-hero__description {
+    font-size: var(--text-small);
+    line-height: 22px;
+  }
+  .collection-hero .poster-stack--large {
+    width: 100%;
+    max-width: 280px;
+    height: 168px;
+  }
+  .collection-hero .poster-stack--large .poster-stack__frame {
+    width: 96px;
+    height: 144px;
+    margin-right: -48px;
+  }
+  .collection-hero .poster-stack--large .poster-stack__frame:last-child {
+    margin-right: 0;
+  }
+}

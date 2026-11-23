@@ -1,0 +1,67 @@
+<section class='person-filmography' id='person-filmography' aria-label='Фильмография'>
+  <div data-slot='heading'></div>
+  {{#if unavailable}}<p class='person-filmography__empty' role='status'>Не удалось загрузить
+      фильмографию.</p>{{else}}
+    <div class='person-filmography__controls'>
+      <div class='person-filmography__roles' role='group' aria-label='Профессия'>
+        {{#each groups}}<button
+            class='person-filmography__role'
+            type='button'
+            data-person-role='{{role}}'
+            aria-pressed='{{active}}'
+          >{{label}} · {{count}}</button>{{/each}}
+      </div>
+      <div class='person-filmography__filters'>
+        <span title='Все полученные работы уже есть в каталоге'><button
+            class='person-filmography__catalog'
+            type='button'
+            disabled
+          >Только в каталоге</button></span>
+        <label class='person-filmography__sort'><span class='visually-hidden'>Сортировка
+            фильмографии</span><select data-person-sort><option value='newest'>Сначала новые</option><option
+              value='oldest'
+            >Сначала старые</option><option value='title'>По названию</option></select></label>
+      </div>
+    </div>
+    {{#if empty}}<p class='person-filmography__empty'>Работ в каталоге пока нет.</p>{{else}}
+      <ul class='person-filmography__list'>{{#each rows}}<li class='person-filmography__item'>
+            {{#if decade}}<div class='person-filmography__decade'>{{decade}}</div>{{/if}}
+            <span class='person-filmography__mobile-year'>{{year}}</span>
+            <div class='person-filmography__row'>
+              <span class='person-filmography__year'>{{year}}</span>
+              <a
+                class='person-filmography__poster'
+                href='/film/{{encode film.id}}'
+                data-link
+                aria-label='{{film.title}}'
+              >{{#if film.poster}}<img
+                    src='{{film.poster}}'
+                    alt=''
+                    loading='lazy'
+                    decoding='async'
+                  />{{else}}<span aria-hidden='true'>—</span>{{/if}}</a>
+              <div class='person-filmography__name'><a
+                  class='person-filmography__title'
+                  href='/film/{{encode film.id}}'
+                  data-link
+                >{{film.title}}</a>{{#if film.originalTitle}}<span
+                    class='person-filmography__original'
+                  >{{film.originalTitle}}</span>{{/if}}<span
+                  class='person-filmography__mobile-caption'
+                >{{caption}}</span><span class='person-filmography__mobile-status'>Есть в каталоге</span></div>
+              <span class='person-filmography__caption'>{{caption}}</span>
+              <span class='person-filmography__status'>В каталоге</span>
+              <div class='person-filmography__actions' data-film-actions></div>
+              <a
+                class='person-filmography__chevron'
+                href='/film/{{encode film.id}}'
+                data-link
+                aria-label='Открыть: {{film.title}}'
+              ><img src='{{chevron}}' alt='' /></a>
+            </div>
+          </li>{{/each}}</ul>
+    {{/if}}
+    {{#if hasMore}}<button class='person-filmography__more' type='button' data-person-more>Показать
+        ещё</button>{{/if}}
+  {{/if}}
+</section>

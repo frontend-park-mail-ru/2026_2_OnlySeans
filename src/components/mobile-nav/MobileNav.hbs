@@ -1,0 +1,8 @@
+<nav class='mobile-nav' aria-label='Основная навигация'>
+  {{#each links}}
+    <a class='mobile-nav__link' href='{{href}}' data-link>
+      <span class='mobile-nav__icon'>{{icon icon}}</span>
+      <span>{{label}}</span>
+    </a>
+  {{/each}}
+</nav>

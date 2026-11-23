@@ -21,3 +21,15 @@
   width: 16px;
   height: 16px;
 }
+
+.library-list-page__note {
+  overflow-wrap: anywhere;
+}
+.library-list-page__login {
+  min-height: 44px;
+}
+@media (max-width: 767px) {
+  .library-list-page {
+    padding-top: 20px;
+  }
+}

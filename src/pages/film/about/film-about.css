@@ -24,20 +24,86 @@
 
 .film-about__row {
   display: grid;
-  grid-template-columns: 140px minmax(0, 1fr);
+  grid-template-columns: 156px minmax(0, 1fr);
   gap: 16px;
 }
 
 .film-about__term {
   color: var(--text-muted);
-  font-size: var(--text-meta);
+  font-size: var(--text-small);
 }
 
 .film-about__value {
   margin: 0;
-  font-size: var(--text-meta);
+  font-size: var(--text-small);
 }
 
 .film-about__similar {
   margin-top: 40px;
+}
+
+.film-about__tabs,
+.film-about__facts > summary {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .film-about__tabs {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    margin-bottom: 18px;
+  }
+
+  .film-about__tab {
+    flex: none;
+    padding: 0 0 10px;
+    color: var(--text-muted);
+    font-size: var(--text-small);
+    text-decoration: none;
+  }
+
+  .film-about__tab[aria-current] {
+    border-bottom: 2px solid var(--euphoria-amber);
+    color: var(--euphoria-amber);
+  }
+
+  .film-about__tab[aria-disabled] {
+    opacity: 0.5;
+  }
+
+  .film-about__facts > summary {
+    display: list-item;
+    margin-top: 16px;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .film-about__title {
+    font-size: var(--text-small);
+  }
+
+  .film-about__title,
+  .film-people__title,
+  .film-reviews__title {
+    scroll-margin-top: 16px;
+  }
+  .film-about__panel {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .film-about__row {
+    grid-template-columns: 100px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .film-about__value {
+    overflow-wrap: anywhere;
+  }
+
+  .film-reviews {
+    padding: 16px;
+  }
 }

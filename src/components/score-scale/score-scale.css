@@ -60,7 +60,7 @@
   outline-offset: -3px;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .score-scale__score {
     transition: none;
   }

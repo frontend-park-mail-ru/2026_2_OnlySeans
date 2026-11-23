@@ -1,0 +1,235 @@
+.person-filmography {
+  margin-top: 40px;
+  scroll-margin-top: 72px;
+}
+.person-filmography__controls,
+.person-filmography__filters,
+.person-filmography__roles {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.person-filmography__controls {
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 24px 0 20px;
+}
+.person-filmography__roles {
+  flex-wrap: wrap;
+}
+.person-filmography__role,
+.person-filmography__catalog,
+.person-filmography__sort select,
+.person-filmography__more {
+  min-height: 40px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 100px;
+  color: var(--text-main);
+  background: var(--bg-input);
+  font: inherit;
+  font-size: var(--text-meta);
+  cursor: pointer;
+}
+.person-filmography__role[aria-pressed='true'] {
+  color: var(--on-accent);
+  background: var(--euphoria-amber);
+  border-color: var(--euphoria-amber);
+}
+.person-filmography__catalog {
+  opacity: 0.5;
+  cursor: default;
+}
+.person-filmography__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.person-filmography__decade {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 24px 0 16px;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+.person-filmography__decade::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-glass);
+}
+.person-filmography__row {
+  display: grid;
+  grid-template-columns: 64px 48px minmax(0, 1fr) minmax(100px, 200px) auto 64px;
+  align-items: center;
+  gap: 20px;
+  min-height: 92px;
+  padding: 10px 16px;
+  border-radius: 14px;
+}
+.person-filmography__row:hover {
+  background: var(--bg-input);
+}
+.person-filmography__year {
+  width: 64px;
+  color: var(--text-muted);
+  font-size: var(--text-title);
+  font-weight: 800;
+  white-space: nowrap;
+}
+.person-filmography__poster {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 72px;
+  overflow: hidden;
+  border-radius: 8px;
+  color: var(--text-muted);
+  background: var(--bg-input);
+  text-decoration: none;
+}
+.person-filmography__poster img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.person-filmography__name {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.person-filmography__title {
+  color: var(--text-main);
+  font-size: var(--text-small);
+  font-weight: 600;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.person-filmography__title:hover {
+  color: var(--euphoria-amber);
+}
+.person-filmography__original {
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  overflow-wrap: anywhere;
+}
+.person-filmography__caption {
+  font-size: var(--text-small);
+  overflow-wrap: anywhere;
+}
+.person-filmography__status {
+  color: var(--euphoria-amber);
+  font-size: var(--text-meta);
+  white-space: nowrap;
+}
+.person-filmography .person-filmography__actions .movie-actions__button--watched {
+  display: none;
+}
+.person-filmography__mobile-year,
+.person-filmography__mobile-caption,
+.person-filmography__mobile-status,
+.person-filmography__chevron {
+  display: none;
+}
+.person-filmography__empty {
+  padding: 24px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  color: var(--text-muted);
+}
+.person-filmography__more {
+  display: block;
+  margin: 20px auto 0;
+}
+.person-filmography button:focus-visible,
+.person-filmography a:focus-visible,
+.person-filmography select:focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 3px;
+}
+@media (min-width: 768px) and (max-width: 1100px) {
+  .person-filmography__row {
+    gap: 12px;
+    grid-template-columns: 64px 48px minmax(0, 1fr) 120px;
+  }
+  .person-filmography__status,
+  .person-filmography__actions {
+    display: none;
+  }
+}
+@media (max-width: 767px) {
+  .person-filmography {
+    margin-top: 28px;
+  }
+  .person-filmography__controls {
+    display: grid;
+    gap: 20px;
+    margin-top: 20px;
+  }
+  .person-filmography__roles {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 4px;
+    border: 1px solid var(--border-glass);
+    border-radius: 100px;
+    background: var(--bg-input);
+  }
+  .person-filmography__role {
+    flex: 1 0 auto;
+    min-height: 36px;
+    border-color: transparent;
+    background: transparent;
+  }
+  .person-filmography__role[aria-pressed='true'] {
+    border-color: var(--border-active);
+    color: var(--euphoria-amber);
+    background: rgba(230, 161, 92, 0.16);
+  }
+  .person-filmography__filters {
+    flex-wrap: wrap;
+  }
+  .person-filmography__sort {
+    order: -1;
+  }
+  .person-filmography__decade,
+  .person-filmography__year,
+  .person-filmography__caption,
+  .person-filmography__status,
+  .person-filmography__actions,
+  .person-filmography__original {
+    display: none;
+  }
+  .person-filmography__item {
+    margin-top: 20px;
+  }
+  .person-filmography__mobile-year {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--euphoria-amber);
+    font-size: var(--text-meta);
+  }
+  .person-filmography__row {
+    grid-template-columns: 48px minmax(0, 1fr) 24px;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--border-glass);
+    border-radius: 16px;
+    background: var(--bg-card);
+  }
+  .person-filmography__mobile-caption,
+  .person-filmography__mobile-status {
+    display: block;
+    color: var(--text-muted);
+    font-size: var(--text-meta);
+    overflow-wrap: anywhere;
+  }
+  .person-filmography__mobile-status {
+    color: var(--euphoria-amber);
+  }
+  .person-filmography__chevron {
+    display: grid;
+    place-items: center;
+    min-height: 44px;
+  }
+}

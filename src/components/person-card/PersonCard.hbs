@@ -1,0 +1,12 @@
+<a class='person-card' href='/person/{{id}}' data-link>
+  <span class='person-card__photo'>{{#if photo}}<img
+        src='{{photo}}'
+        width='64'
+        height='80'
+        alt='{{name}}'
+        loading='lazy'
+      />{{else}}{{icon 'user'}}{{/if}}</span>
+  <span><strong class='person-card__name'>{{name}}</strong>{{#if originalName}}<span
+        class='person-card__original'
+      >{{originalName}}</span>{{/if}}</span>
+</a>

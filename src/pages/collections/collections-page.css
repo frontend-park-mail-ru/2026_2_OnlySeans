@@ -22,3 +22,47 @@
 .collections-page__grid > .status-message {
   grid-column: 1 / -1;
 }
+
+.collections-page__grid .collection-card {
+  flex-direction: column-reverse;
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+}
+.collections-page__grid .collection-card__text {
+  padding: 20px;
+}
+.collections-page__grid .poster-stack {
+  justify-content: center;
+  min-height: 196px;
+  padding: 20px;
+  background: var(--surface-hero);
+}
+.collections-page__grid .poster-stack__frame {
+  width: 96px;
+  height: 144px;
+}
+.collections-page__grid .poster-stack__frame:not(:last-child) {
+  margin-right: -32px;
+}
+.collections-page__grid .collection-card__title,
+.collections-page__grid .collection-card__description {
+  overflow-wrap: anywhere;
+}
+@media (max-width: 1199px) {
+  .collections-page__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 767px) {
+  .collections-page {
+    padding-top: 20px;
+  }
+  .collections-page__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 20px;
+  }
+  .collections-page__note {
+    margin-bottom: 24px;
+  }
+}

@@ -14,8 +14,7 @@
   margin: 0;
   font-size: var(--text-heading);
   font-weight: 800;
-  line-height: 38px;
-  letter-spacing: -0.5px;
+  line-height: 1.25;
 }
 
 .section-heading__star {
@@ -46,4 +45,31 @@
 .section-heading__link:focus-visible {
   outline: 2px solid var(--euphoria-amber);
   outline-offset: 5px;
+}
+
+@media (max-width: 767px) {
+  .section-heading {
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .section-heading__title {
+    gap: 8px;
+  }
+
+  .section-heading__star {
+    width: 16px;
+    height: 16px;
+  }
+
+  .section-heading__count {
+    display: none;
+  }
+
+  .section-heading__link {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--text-meta);
+  }
 }

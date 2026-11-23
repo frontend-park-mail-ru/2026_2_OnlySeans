@@ -47,7 +47,6 @@
   height: 100%;
   object-fit: contain;
   z-index: 3;
-  user-select: none;
   -webkit-user-select: none;
 }
 
@@ -58,7 +57,6 @@
   width: 68%;
   height: 74%;
   object-fit: cover;
-  user-select: none;
   -webkit-user-select: none;
 }
 
@@ -133,8 +131,20 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .not-found__signal {
     animation: none;
+  }
+}
+
+@supports (user-select: none) {
+  .not-found__tv-image {
+    user-select: none;
+  }
+}
+
+@supports (user-select: none) {
+  .not-found__noise {
+    user-select: none;
   }
 }
