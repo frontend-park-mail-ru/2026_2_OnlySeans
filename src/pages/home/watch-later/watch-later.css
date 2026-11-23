@@ -10,7 +10,6 @@
   padding-bottom: 8px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
 }
 
 .watch-later .movie-card {
@@ -115,4 +114,10 @@
 .watch-later__empty-link:hover {
   border-color: var(--euphoria-amber);
   background: var(--bg-input);
+}
+
+@supports (scrollbar-width: thin) {
+  .watch-later__row {
+    scrollbar-width: thin;
+  }
 }

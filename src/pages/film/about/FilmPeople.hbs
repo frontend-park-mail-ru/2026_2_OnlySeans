@@ -1,20 +1,35 @@
-<section class="film-people" aria-labelledby="film-people-title">
-  <h2 class="film-people__title" id="film-people-title">Актёры и съёмочная группа</h2>
-  <ul class="film-people__list">
-    {{#each people}}
-      <li class="film-people__item">
-        <a class="film-people__link" href="/person/{{encode person.id}}" data-link>
-          <span class="film-people__photo">
-            {{#if person.photo}}
-              <img class="film-people__image" src="{{person.photo}}" alt="" loading="lazy" decoding="async" />
-            {{else}}
-              <span class="film-people__initials" aria-hidden="true">{{initials person.name}}</span>
-            {{/if}}
-          </span>
-          <span class="film-people__name">{{person.name}}</span>
-          <span class="film-people__role">{{caption}}</span>
-        </a>
-      </li>
-    {{/each}}
-  </ul>
+<section class='film-people' aria-labelledby='film-people-title'>
+  <h2 class='film-people__title' id='film-people-title'>Актёры и съёмочная группа</h2>
+  {{#if failed}}<p class='film-people__status' role='status'>Не удалось загрузить съёмочную группу.</p><button
+      class='film-people__retry'
+      type='button'
+      data-people-retry
+    >{{#if busy}}Загружаем…{{else}}Повторить{{/if}}</button>{{else}}
+    {{#if empty}}<p class='film-people__status'>Съёмочная группа пока не добавлена.</p>{{/if}}
+    <ul class='film-people__list'>
+      {{#each people}}
+        <li class='film-people__item'>
+          <a class='film-people__link' href='/person/{{encode person.id}}' data-link>
+            <span class='film-people__photo'>
+              {{#if person.photo}}
+                <img
+                  class='film-people__image'
+                  src='{{person.photo}}'
+                  alt=''
+                  loading='lazy'
+                  decoding='async'
+                />
+              {{else}}
+                <span class='film-people__initials' aria-hidden='true'>{{initials
+                    person.name
+                  }}</span>
+              {{/if}}
+            </span>
+            <span class='film-people__name'>{{person.name}}</span>
+            <span class='film-people__role'>{{caption}}</span>
+          </a>
+        </li>
+      {{/each}}
+    </ul>
+  {{/if}}
 </section>

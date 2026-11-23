@@ -1,23 +1,54 @@
-<form class="review-form" novalidate>
-  <span class="review-form__label">{{#if editing}}Ваш отзыв{{else}}Написать отзыв{{/if}}</span>
-  <input class="review-form__title" name="title" type="text" aria-label="Заголовок отзыва"
-    placeholder="Заголовок" value="{{title}}" {{#if busy}}disabled{{/if}} />
-  <textarea class="review-form__text" name="text" rows="5" aria-label="Текст отзыва"
-    placeholder="Что вы думаете об этом {{what}}е?" {{#if busy}}disabled{{/if}}>{{text}}</textarea>
-  <div class="review-form__bar">
-    <label class="review-form__spoiler">
-      <input class="review-form__checkbox" type="checkbox" name="spoiler" {{#if spoiler}}checked{{/if}} {{#if busy}}disabled{{/if}} />
+<form class='review-form' novalidate aria-busy='{{busy}}'>
+  <span class='review-form__label'>{{#if editing}}Ваш отзыв{{else}}Написать отзыв{{/if}}</span>
+  <input
+    class='review-form__title'
+    name='title'
+    type='text'
+    aria-label='Заголовок отзыва'
+    aria-describedby='{{id}}-title-error'
+    aria-invalid='false'
+    placeholder='Заголовок'
+    value='{{title}}'
+  />
+  <span
+    class='review-form__error'
+    id='{{id}}-title-error'
+    data-field-error='title'
+    aria-live='polite'
+  ></span>
+  <textarea
+    class='review-form__text'
+    name='text'
+    rows='5'
+    aria-label='Текст отзыва'
+    aria-describedby='{{id}}-text-error'
+    aria-invalid='false'
+    placeholder='Что вы думаете об этом {{what}}е?'
+  >{{text}}</textarea>
+  <span
+    class='review-form__error'
+    id='{{id}}-text-error'
+    data-field-error='text'
+    aria-live='polite'
+  ></span>
+  <p class='review-form__error' role='alert' data-error>{{error}}</p>
+  <div class='review-form__bar'>
+    <label class='review-form__spoiler'>
+      <input class='review-form__checkbox' type='checkbox' name='spoiler' />
       Есть спойлеры
     </label>
-    <output class="review-form__counter" name="counter"></output>
+    <output class='review-form__counter' name='counter'></output>
   </div>
-  <div class="review-form__actions">
-    <button class="review-form__save" type="submit" name="save" disabled>{{#if editing}}Сохранить{{else}}Опубликовать{{/if}}</button>
+  {{#if syncStatus}}<p class='review-form__sync' role='status'>{{syncStatus}}</p>{{/if}}
+  <div class='review-form__actions'>
+    <button class='review-form__save' type='submit' name='save' disabled>{{#if
+        busy
+      }}Отправляем…{{else if editing}}Сохранить{{else}}Опубликовать{{/if}}</button>
     {{#if canCancel}}
-      <button class="review-form__cancel" type="button" name="cancel" {{#if busy}}disabled{{/if}}>Отмена</button>
+      <button class='review-form__cancel' type='button' name='cancel'>Отмена</button>
     {{/if}}
     {{#if editing}}
-      <button class="review-form__remove" type="button" name="delete" {{#if busy}}disabled{{/if}}>Удалить отзыв</button>
+      <button class='review-form__remove' type='button' name='delete'>Удалить отзыв</button>
     {{/if}}
   </div>
 </form>

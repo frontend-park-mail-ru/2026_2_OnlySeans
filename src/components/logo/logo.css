@@ -1,32 +1,32 @@
 .logo {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   color: var(--text-main);
   text-decoration: none;
   white-space: nowrap;
 }
 
-.logo:focus-visible {
-  outline: 2px solid var(--euphoria-amber);
-  outline-offset: 5px;
-  border-radius: 4px;
-}
-
 .logo__mark {
   display: block;
   flex: none;
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
 }
 
 .logo__word {
-  font-size: var(--text-size-36);
-  font-weight: 800;
-  letter-spacing: -1px;
-  line-height: 1.2;
+  display: flex;
+  align-items: baseline;
+  gap: 1px;
 }
 
-.logo__accent {
-  color: var(--euphoria-amber);
+.logo__word img,
+.logo__mobile {
+  display: block;
+  flex: none;
+}
+
+.logo__mobile {
+  width: 108px;
+  height: 30px;
 }

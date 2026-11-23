@@ -72,5 +72,10 @@
   padding-bottom: 8px;
   color: var(--text-muted);
   letter-spacing: 1px;
-  user-select: none;
+}
+
+@supports (user-select: none) {
+  .pagination__gap {
+    user-select: none;
+  }
 }

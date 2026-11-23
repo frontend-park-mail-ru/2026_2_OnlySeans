@@ -63,9 +63,10 @@
 .review-card__text--hidden {
   filter: blur(6px);
   opacity: 0.7;
-  user-select: none;
   pointer-events: none;
-  transition: filter var(--spoiler-reveal-duration, 650ms) ease, opacity var(--spoiler-reveal-duration, 650ms) ease;
+  transition:
+    filter var(--spoiler-reveal-duration, 650ms) ease,
+    opacity var(--spoiler-reveal-duration, 650ms) ease;
 }
 
 .review-card__spoiler--revealing .review-card__text--hidden {
@@ -91,7 +92,10 @@
   font-size: var(--text-meta);
   cursor: pointer;
   transform: translate(-50%, -50%);
-  transition: opacity var(--spoiler-reveal-duration, 650ms) ease, border-color 160ms ease, color 160ms ease;
+  transition:
+    opacity var(--spoiler-reveal-duration, 650ms) ease,
+    border-color 160ms ease,
+    color 160ms ease;
 }
 
 .review-card__reveal:hover {
@@ -104,9 +108,39 @@
   outline-offset: 3px;
 }
 
-.review-card__head { grid-template-columns: auto minmax(0, 1fr) auto; }
-.review-card__score { color: var(--euphoria-amber); font-weight: 700; white-space: nowrap; }
-.review-card__text--collapsed { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 5; overflow: hidden; }
-.review-card__toggle { margin-top: 12px; margin-right: 16px; padding: 0; border: 0; color: var(--euphoria-amber); background: transparent; font: inherit; cursor: pointer; }
-.review-card__toggle[hidden] { display: none; }
-.review-card__toggle:focus-visible { outline: 2px solid var(--euphoria-amber); outline-offset: 4px; }
+.review-card__head {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+}
+.review-card__score {
+  color: var(--euphoria-amber);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.review-card__text--collapsed {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  overflow: hidden;
+}
+.review-card__toggle {
+  margin-top: 12px;
+  margin-right: 16px;
+  padding: 0;
+  border: 0;
+  color: var(--euphoria-amber);
+  background: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+.review-card__toggle[hidden] {
+  display: none;
+}
+.review-card__toggle:focus-visible {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 4px;
+}
+@supports (user-select: none) {
+  .review-card__text--hidden {
+    user-select: none;
+  }
+}

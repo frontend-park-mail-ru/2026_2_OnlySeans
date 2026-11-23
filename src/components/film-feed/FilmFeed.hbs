@@ -1,10 +1,32 @@
-<section class="film-feed" id="{{anchor}}">
-  <div data-slot="heading"></div>
-  {{#if note}}<p class="film-feed__note">{{note}}</p>{{/if}}
+<section class='film-feed' id='{{anchor}}'>
+  {{#if withHeading}}<div data-slot='heading'></div>{{/if}}
+  {{#if note}}<p class='film-feed__note'>{{note}}</p>{{/if}}
+  {{#if filters}}
+    <div class='film-feed__filters' role='group' aria-label='Категории ленты'>
+      {{#each categories}}<button
+          class='film-feed__filter'
+          type='button'
+          data-filter='{{value}}'
+          aria-pressed='{{active}}'
+        >{{label}}</button>{{/each}}
+    </div>
+  {{/if}}
   {{#if empty}}
-    <div data-slot="empty"></div>
+    <div data-slot='empty'></div>
   {{else}}
-    <div data-slot="grid"></div>
-    <div data-slot="pagination"></div>
+    <div data-slot='grid'></div>
+    {{#if infinite}}
+      <div class='film-feed__more'><button type='button' data-more>Показать ещё</button></div>
+      <p class='visually-hidden film-feed__announcement' role='status' aria-live='polite'></p>
+      {{#if endLabel}}<p
+          class='film-feed__end'
+          data-end
+          role='status'
+          hidden
+        >{{endLabel}}</p>{{/if}}
+      <button class='film-feed__top' type='button' data-top>Наверх</button>
+    {{else}}
+      <div data-slot='pagination'></div>
+    {{/if}}
   {{/if}}
 </section>

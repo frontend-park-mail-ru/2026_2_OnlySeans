@@ -1,6 +1,13 @@
-<div class="view-toggle" role="group" aria-label="Отображение фильмов">
+<div class='view-toggle' role='group' aria-label='Отображение фильмов'>
   {{#each options}}
-    <button class="view-toggle__button" type="button" data-view="{{value}}" aria-pressed="{{active}}" title="{{label}}">
+    <button
+      class='view-toggle__button'
+      type='button'
+      data-view='{{value}}'
+      aria-pressed='{{active}}'
+      title='{{label}}'
+      aria-label='{{label}}'
+    >
       {{icon icon}}<span>{{label}}</span>
     </button>
   {{/each}}

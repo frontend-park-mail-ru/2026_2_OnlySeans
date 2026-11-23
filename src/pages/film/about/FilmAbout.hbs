@@ -1,21 +1,32 @@
-<div class="film-about">
-  <section class="film-about__panel" aria-labelledby="film-about-title">
-    <h2 class="film-about__title" id="film-about-title">О фильме</h2>
-    {{#if film.description}}<p class="film-about__description">{{film.description}}</p>{{/if}}
-    <dl class="film-about__details">
-      {{#each details}}
-        <div class="film-about__row">
-          <dt class="film-about__term">{{term}}</dt>
-          <dd class="film-about__value">{{value}}</dd>
-        </div>
-      {{/each}}
-    </dl>
+<div class='film-about'>
+  <nav class='film-about__tabs' aria-label='Разделы фильма'>
+    <a class='film-about__tab' href='#film-about-title' aria-current='location'>Описание</a>
+    {{#if hasPeople}}<a class='film-about__tab' href='#film-people-title'>Актёры</a>{{/if}}
+    <a class='film-about__tab' href='#film-reviews-title'>Отзывы</a>
+    <span
+      class='film-about__tab'
+      aria-disabled='true'
+      title='API пока не передаёт кадры'
+    >Кадры</span>
+  </nav>
+  <section class='film-about__panel' aria-labelledby='film-about-title'>
+    <h2 class='film-about__title' id='film-about-title'>О фильме</h2>
+    {{#if film.description}}<p class='film-about__description'>{{film.description}}</p>{{/if}}
+    <details class='film-about__facts' open><summary>Характеристики</summary><dl
+        class='film-about__details'
+      >
+        {{#each details}}
+          <div class='film-about__row'>
+            <dt class='film-about__term'>{{term}}</dt>
+            <dd class='film-about__value'>{{value}}</dd>
+          </div>
+        {{/each}}
+      </dl></details>
   </section>
-  <div data-slot="people"></div>
-  <div data-slot="rating"></div>
-  <div data-slot="reviews"></div>
-  <section class="film-about__similar" aria-label="Похожие">
-    <div data-slot="similar-heading"></div>
-    <div data-slot="similar"></div>
+  <div data-slot='people'></div>
+  <div data-slot='reviews'></div>
+  <section class='film-about__similar' aria-label='Похожие'>
+    <div data-slot='similar-heading'></div>
+    <div data-slot='similar'></div>
   </section>
 </div>
