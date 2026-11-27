@@ -4,14 +4,18 @@ import { loadAssets } from '../../core/assets.js';
 import { EmptyState } from '../../components/empty-state/EmptyState.js';
 import './upcoming-page.css';
 import { SectionHeading } from '../../components/section-heading/SectionHeading.js';
+import { getReleases } from '../../api/releases.js';
 import { calendarMonth } from '../../services/release-calendar.js';
 import type { PageProps } from '../../app/router.js';
 
 const template = await loadAssets({ template: templateSource });
 
-/** Состояние недоступности расписания: API не возвращает даты премьер. */
 export class UpcomingPage extends Component<PageProps> {
   static template = template;
+
+  #phase: 'loading' | 'ready' | 'error' = 'loading';
+  #releases: Awaited<ReturnType<typeof getReleases>> = [];
+
 
   context() {
     const month = calendarMonth(this.props.query.get('month'));
@@ -21,6 +25,18 @@ export class UpcomingPage extends Component<PageProps> {
       `/upcoming?${new URLSearchParams({ month: key, view, region: releaseRegion })}`;
     return {
       ...month,
+      loading: this.#phase === 'loading',
+      days: month.days.map((day) => ({
+        ...day,
+        releases: this.#releases.filter((release) => release.date === day.date),
+      })),
+      groups: month.days.filter((day) => day.current).map((day) => ({
+        date: day.date,
+        label: new Intl.DateTimeFormat('ru', { day: 'numeric', month: 'long' }).format(
+          new Date(`${day.date}T12:00:00`),
+        ),
+        releases: this.#releases.filter((release) => release.date === day.date),
+      })).filter((group) => group.releases.length),
       list,
       regionLabel: region === 'russia' ? 'в России' : 'в мире',
       regions: [
@@ -67,16 +83,51 @@ export class UpcomingPage extends Component<PageProps> {
       },
       input,
     );
-    this.insert(
-      'state',
-      new EmptyState({
+    if (this.#phase === 'loading') {
+      const controller = new AbortController();
+      this.watch(() => controller.abort());
+      void this.#load(controller.signal);
+      return;
+    }
+    if (this.#phase === 'error') {
+      this.insert('state', new EmptyState({
+        variant: 'error',
+        level: 2,
+        title: 'Не удалось загрузить премьеры',
+        text: 'Проверьте соединение и повторите попытку.',
+        button: 'Повторить',
+        onRetry: () => {
+          this.#phase = 'loading';
+          this.update();
+        },
+      }));
+      return;
+    }
+    if (!this.#releases.length) {
+      this.insert('state', new EmptyState({
         variant: 'upcoming',
         level: 2,
-        title: `Даты выхода ${this.context().regionLabel} пока недоступны`,
-        text: 'Загляните позже или выберите фильм в каталоге.',
+        title: 'В этом месяце премьер нет',
+        text: 'Выберите другой месяц или регион.',
         href: '/films',
         linkText: 'Перейти к фильмам',
-      }),
-    );
+      }));
+    }
+  }
+
+  async #load(signal: AbortSignal) {
+    const month = calendarMonth(this.props.query.get('month'));
+    const region = this.props.query.get('region') === 'russia' ? 'russia' : 'world';
+    try {
+      const releases = await getReleases(`${month.key}-01`, `${month.next}-01`, region, { signal });
+      if (signal.aborted) return;
+      this.#releases = releases;
+      this.#phase = 'ready';
+    } catch {
+      if (signal.aborted) return;
+      this.#releases = [];
+      this.#phase = 'error';
+    }
+    if (!signal.aborted) this.update();
   }
 }

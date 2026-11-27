@@ -7,9 +7,6 @@
           data-link
           aria-current='{{current}}'
         >{{label}}</a>{{/each}}</nav></div>
-  <p class='upcoming-page__notice' role='status'>Даты премьер
-    {{regionLabel}}
-    пока недоступны. Напоминания о выходе фильмов ещё не подключены.</p>
   <div class='upcoming-page__toolbar'>
     <div class='upcoming-page__months'>{{#if previous}}<a
           href='{{previousHref}}'
@@ -34,16 +31,31 @@
         >{{label}}</a>{{/each}}</nav>
   </div>
   <p id='month-error' data-month-error aria-live='polite'></p>
+  {{#if loading}}<p role='status' aria-live='polite'>Загружаем премьеры…</p>{{/if}}
   {{#unless list}}<div
       class='upcoming-page__calendar'
-      aria-label='Календарь премьер {{regionLabel}} — даты пока недоступны'
+      aria-label='Календарь премьер {{regionLabel}}'
     >
       {{#each weekdays}}<span class='upcoming-page__weekday'>{{this}}</span>{{/each}}
       {{#each days}}<div
           class='upcoming-page__day'
           data-current='{{current}}'
           data-today='{{today}}'
-        ><time datetime='{{date}}'>{{day}}</time></div>{{/each}}
+        ><time datetime='{{date}}'>{{day}}</time>
+          {{#each releases}}<a class='upcoming-page__release' href='/film/{{film.id}}' data-link>
+            {{#if film.poster}}<img src='{{film.poster}}' alt='' loading='lazy' />{{/if}}
+            <span>{{film.title}}</span>
+          </a>{{/each}}
+        </div>{{/each}}
     </div>{{/unless}}
+  {{#if list}}<div class='upcoming-page__list'>
+    {{#each groups}}<section>
+      <h3><time datetime='{{date}}'>{{label}}</time></h3>
+      {{#each releases}}<a class='upcoming-page__release' href='/film/{{film.id}}' data-link>
+        {{#if film.poster}}<img src='{{film.poster}}' alt='' loading='lazy' />{{/if}}
+        <span>{{film.title}}</span>
+      </a>{{/each}}
+    </section>{{/each}}
+  </div>{{/if}}
   <div data-slot='state'></div>
 </div>

@@ -165,3 +165,44 @@
 .upcoming-page > .empty-state::before {
   display: none;
 }
+
+.upcoming-page__release {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 6px;
+  border-radius: 8px;
+  color: var(--text-main);
+  background: var(--bg-card);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.upcoming-page__release img {
+  width: 32px;
+  height: 48px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.upcoming-page__release:hover,
+.upcoming-page__release:focus-visible {
+  outline: 1px solid var(--euphoria-amber);
+}
+.upcoming-page__list section {
+  margin-block: 24px;
+}
+.upcoming-page__list .upcoming-page__release {
+  padding: 12px;
+}
+@media (max-width: 767px) {
+  .upcoming-page__calendar .upcoming-page__release {
+    flex-direction: column;
+    padding: 2px;
+    font-size: 10px;
+  }
+  .upcoming-page__calendar .upcoming-page__release img {
+    width: 24px;
+    height: 36px;
+  }
+}
