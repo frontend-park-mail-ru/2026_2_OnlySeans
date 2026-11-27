@@ -1,0 +1,28 @@
+<div class='search-page'>
+  <div data-slot='heading'></div>
+  <p class='search-page__note'>Найдите фильм, сериал, актёра или режиссёра</p>
+  <div class='search-page__field'><div data-slot='search'></div></div>
+  {{#if query}}
+    <div class='search-page__results' aria-live='polite'>
+      <section class='search-page__people'><h2>Люди</h2><div
+          class='search-page__people-grid'
+        ></div></section>
+      <div data-slot='films'></div>
+    </div>
+  {{else}}
+    <section class='search-page__history'>
+      <div class='search-page__history-heading'><h2>Недавно искали</h2>{{#if history.length}}<button
+            type='button'
+            data-clear-history
+          >Очистить историю</button>{{/if}}</div>
+      <div class='search-page__queries'>
+        {{#each history}}<a
+            class='search-page__query'
+            href='/search?q={{encode this}}'
+            data-link
+          >{{icon 'clock'}}{{this}}</a>{{else}}<p class='search-page__note'>Здесь появятся ваши
+            поисковые запросы.</p>{{/each}}
+      </div>
+    </section>
+  {{/if}}
+</div>

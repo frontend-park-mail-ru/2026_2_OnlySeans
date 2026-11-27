@@ -1,0 +1,148 @@
+<dialog class='catalog-filters' aria-labelledby='catalog-filter-title' aria-modal='true'>
+  <div class='catalog-filters__handle' data-handle aria-hidden='true'></div>
+  <header class='catalog-filters__header'>
+    <h2 id='catalog-filter-title'>{{title}}</h2>
+    <button
+      class='catalog-filters__close'
+      type='button'
+      data-close
+      aria-label='Закрыть фильтры'
+    >{{icon 'close'}}</button>
+  </header>
+  <form class='catalog-filters__form' novalidate>
+    <div class='catalog-filters__body'>
+      <fieldset class='catalog-filters__section catalog-filters__section--genres'>
+        <legend>Жанры</legend>
+        <div class='catalog-filters__genre-grid'>
+          {{#each genres}}
+            <div class='filter-option' data-state='{{state}}'>
+              <button
+                type='button'
+                class='filter-option__edge'
+                data-genre='{{name}}'
+                data-focus='include:{{name}}'
+                data-action='include'
+                aria-label='Показывать: {{name}}'
+              >+</button>
+              <button
+                type='button'
+                class='filter-option__label'
+                data-genre='{{name}}'
+                data-focus='genre:{{name}}'
+                role='checkbox'
+                aria-checked='{{checked}}'
+                aria-label='{{ariaLabel}}'
+              ><span>{{name}}</span></button>
+              <button
+                type='button'
+                class='filter-option__edge filter-option__edge--exclude'
+                data-genre='{{name}}'
+                data-focus='exclude:{{name}}'
+                data-action='exclude'
+                aria-label='Исключить: {{name}}'
+              >⦸</button>
+            </div>
+          {{else}}<p class='catalog-filters__note'>В каталоге пока нет жанров.</p>{{/each}}
+        </div>
+        <details class='catalog-filters__genre-details'>
+          <summary>Ещё настройки жанров</summary>
+          <div class='catalog-filters__genre-options'>
+            <label><input type='checkbox' name='anyGenre' />Хотя бы один из выбранных</label>
+            <label><input type='checkbox' name='artistic' />Художественные</label>
+            <button type='button' class='catalog-filters__text-button' data-reset-genres>Сбросить
+              жанры</button>
+          </div>
+        </details>
+      </fieldset>
+      <fieldset class='catalog-filters__section catalog-filters__section--year'>
+        <legend>Год выпуска</legend>
+        <div class='catalog-filters__years'>
+          <label><span class='visually-hidden'>Год от</span><input
+              name='yearFrom'
+              data-year
+              data-focus='yearFrom'
+              inputmode='numeric'
+              type='text'
+              maxlength='4'
+              placeholder='От'
+              value='{{yearFrom}}'
+              aria-describedby='catalog-year-error'
+            /></label>
+          <label><span class='visually-hidden'>Год до</span><input
+              name='yearTo'
+              data-year
+              data-focus='yearTo'
+              inputmode='numeric'
+              type='text'
+              maxlength='4'
+              placeholder='До'
+              value='{{yearTo}}'
+              aria-describedby='catalog-year-error'
+            /></label>
+        </div>
+        <p
+          class='catalog-filters__error'
+          id='catalog-year-error'
+          data-year-error
+          role='status'
+        >{{error}}</p>
+      </fieldset>
+      <fieldset class='catalog-filters__section catalog-filters__section--rating'>
+        <legend>Рейтинг от <span data-rating-label>{{ratingLabel}}</span></legend>
+        <div class='catalog-filters__quick-rating'>
+          <button type='button' data-rating='0' data-focus='rating:0'>Любой</button>
+          <button type='button' data-rating='6' data-focus='rating:6'>6+</button>
+          <button type='button' data-rating='7' data-focus='rating:7'>7+</button>
+          <button type='button' data-rating='8' data-focus='rating:8'>8+</button>
+          <button type='button' data-rating='9' data-focus='rating:9'>9+</button>
+        </div>
+        <input
+          class='catalog-filters__range'
+          style='--rating-percent: {{ratingPercent}}%'
+          type='range'
+          name='ratingFrom'
+          min='0'
+          max='10'
+          step='0.5'
+          value='{{ratingFrom}}'
+          aria-label='Минимальный рейтинг'
+        />
+      </fieldset>
+      <fieldset class='catalog-filters__section catalog-filters__section--age'>
+        <legend>Возраст</legend>
+        <div class='catalog-filters__ages'>{{#each ages}}<button
+              type='button'
+              data-age='{{age}}'
+              data-focus='age:{{age}}'
+              aria-pressed='{{active}}'
+            >{{age}}+</button>{{/each}}</div>
+      </fieldset>
+      <fieldset class='catalog-filters__section catalog-filters__section--sort'>
+        <legend class='visually-hidden'>Сортировка</legend>
+        <div class='catalog-filters__sorts' role='group' aria-label='Порядок фильмов'>{{#each
+            sorts
+          }}<button
+              type='button'
+              data-sort='{{value}}'
+              data-focus='sort:{{value}}'
+              aria-pressed='{{active}}'
+            >{{label}}{{#if active}}{{icon 'check'}}{{/if}}</button>{{/each}}</div>
+      </fieldset>
+      <p class='catalog-filters__note' data-rating-status role='status'></p>
+      <p class='catalog-filters__error' data-rating-error role='status' hidden>Не удалось загрузить
+        рейтинги.
+        <button type='button' data-retry-ratings>Повторить</button></p>
+    </div>
+    <footer class='catalog-filters__footer'>
+      <button
+        class='catalog-filters__reset'
+        type='button'
+        data-reset
+        data-focus='reset'
+      >Сбросить</button>
+      <button class='catalog-filters__apply' type='submit' data-apply data-focus='apply'><span
+          data-count
+        >Показать{{#unless pending}} {{count}}{{/unless}}</span></button>
+    </footer>
+  </form>
+</dialog>

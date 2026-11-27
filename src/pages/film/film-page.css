@@ -4,3 +4,29 @@
   min-width: 0;
   padding-top: 32px;
 }
+
+.film-page > .back-link {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .app-layout:has(.film-page) .site-header {
+    display: none;
+  }
+
+  .film-page {
+    position: relative;
+    gap: 20px;
+    padding-top: 0;
+  }
+
+  .film-page > .back-link {
+    display: inline-flex;
+    position: absolute;
+    top: 12px;
+    left: 0;
+    z-index: 2;
+    min-height: 44px;
+    color: var(--text-main);
+  }
+}

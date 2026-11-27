@@ -1,2 +1,4 @@
-// The development proxy and production reverse proxy share the same API origin.
-export const API_URL: string = window.location.origin;
+declare const __API_ORIGIN__: string;
+
+export const API_URL: string =
+  (typeof __API_ORIGIN__ === 'string' && __API_ORIGIN__) || window.location.origin;

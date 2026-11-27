@@ -1,0 +1,46 @@
+<div class='skeleton {{modifier}}' role='status' aria-busy='true'>
+  <span class='visually-hidden'>Загрузка…</span>
+  <div aria-hidden='true'>
+    {{#if showHero}}
+      <div class='skeleton__hero'>
+        <div class='skeleton__poster'></div>
+        <div class='skeleton__copy'>
+          <div class='skeleton__line skeleton__line--short'></div>
+          <div class='skeleton__line skeleton__line--title'></div>
+          <div class='skeleton__line'></div>
+          <div class='skeleton__line skeleton__line--short'></div>
+          <div class='skeleton__button'></div>
+        </div>
+      </div>
+    {{/if}}
+    {{#if home}}<div class='skeleton__heading'></div>{{/if}}
+    {{#if person}}<div class='skeleton__person-stats'>{{#each stats}}<div
+            class='skeleton__person-stat'
+          ><div class='skeleton__line'></div><div
+              class='skeleton__line skeleton__line--title'
+            ></div></div>{{/each}}</div><div class='skeleton__film-about'><div
+          class='skeleton__line skeleton__line--title'
+        ></div><div class='skeleton__line'></div><div class='skeleton__line'></div></div>{{/if}}
+    {{#if film}}<div class='skeleton__film-about'><div
+          class='skeleton__line skeleton__line--title'
+        ></div><div class='skeleton__line'></div><div class='skeleton__line'></div><div
+          class='skeleton__line skeleton__line--short'
+        ></div></div>{{/if}}
+    {{#if catalog}}<div class='skeleton__catalog-heading'></div><div
+        class='skeleton__catalog-note'
+      ></div><div class='skeleton__catalog-controls'></div>{{/if}}
+    {{#if showCollections}}<div class='skeleton__collections'>
+        {{#each collections}}<div class='skeleton__collection'><div
+              class='skeleton__line'
+            ></div><div class='skeleton__line skeleton__line--short'></div></div>{{/each}}
+      </div>{{/if}}
+    {{#if home}}<div class='skeleton__heading'></div>{{/if}}
+    {{#if showCards}}
+      <div class='movie-grid'>
+        {{#each cards}}<div class='skeleton__card'><div class='skeleton__cover'></div><div
+              class='skeleton__line'
+            ></div><div class='skeleton__line skeleton__line--short'></div></div>{{/each}}
+      </div>
+    {{/if}}
+  </div>
+</div>

@@ -1,0 +1,190 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 166px;
+  padding: 48px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  background: var(--bg-card);
+  text-align: center;
+}
+
+.empty-state__illustration {
+  display: block;
+  width: 140px;
+  height: 120px;
+  margin-bottom: 2px;
+}
+
+.empty-state__title {
+  margin: 0;
+  font-size: var(--text-heading);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.empty-state__text {
+  max-width: 520px;
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--text-body);
+  line-height: 22px;
+}
+
+.empty-state__button {
+  min-height: 46px;
+  margin-top: 6px;
+  padding: 12px 22px;
+  border: 0;
+  border-radius: 24px;
+  color: var(--on-accent);
+  background: linear-gradient(180deg, var(--gradient-amber-from), var(--gradient-amber-to));
+  box-shadow: 0 4px 18px var(--euphoria-amber-glow);
+  font-weight: 600;
+  line-height: 20px;
+  cursor: pointer;
+}
+
+.empty-state__button:active {
+  transform: scale(0.97);
+}
+
+.empty-state--movie,
+.empty-state--series {
+  position: relative;
+  isolation: isolate;
+  gap: 0;
+  margin-top: 0;
+  padding: 100px 0 48px;
+  border: 0;
+  background: transparent;
+}
+
+.empty-state--movie::before,
+.empty-state--series::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  z-index: -1;
+  width: min(520px, 100%);
+  aspect-ratio: 1;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--euphoria-amber) 7%, transparent),
+    transparent 70%
+  );
+  transform: translateX(-50%);
+}
+
+.empty-state__token {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 120px;
+  height: 120px;
+  margin: 0 0 28px;
+  border: 1px solid color-mix(in srgb, var(--text-main) 8%, transparent);
+  border-radius: 50%;
+  background: linear-gradient(180deg, var(--surface-elevated), var(--surface-token));
+  box-shadow:
+    0 16px 40px var(--shadow-soft),
+    inset 0 1px var(--control-light);
+}
+.empty-state__token .empty-state__illustration {
+  width: 48px;
+  height: 48px;
+  margin: 0;
+}
+.empty-state__zero {
+  color: var(--text-muted);
+  font-size: 72px;
+  font-weight: 800;
+  line-height: 72px;
+  font-variant-numeric: tabular-nums;
+}
+.empty-state__unit {
+  margin-top: 10px;
+  color: var(--text-muted);
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 1.8px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+.empty-state__accent {
+  width: 40px;
+  height: 2px;
+  margin: 28px 0 24px;
+  border-radius: 1px;
+  background: var(--euphoria-amber);
+  opacity: 0.7;
+}
+.empty-state--movie .empty-state__text,
+.empty-state--series .empty-state__text {
+  max-width: 380px;
+  margin-top: 10px;
+}
+.empty-state--movie .empty-state__button,
+.empty-state--series .empty-state__button {
+  margin-top: 28px;
+}
+.empty-state--error {
+  width: min(520px, 100%);
+  margin: 96px auto 0;
+  padding: 36px 40px;
+  background: var(--surface-elevated);
+  box-shadow: 0 16px 40px var(--shadow-soft);
+}
+.empty-state--error .empty-state__illustration {
+  width: 64px;
+  height: 64px;
+}
+.empty-state__home {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 10px 22px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  color: var(--text-main);
+  background: var(--bg-input);
+  text-decoration: none;
+}
+.empty-state__code {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+  line-height: 18px;
+}
+
+.empty-state__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 6px;
+}
+.empty-state__home--primary {
+  border-color: transparent;
+  color: var(--on-accent);
+  background: linear-gradient(180deg, var(--gradient-amber-from), var(--gradient-amber-to));
+  box-shadow: 0 4px 18px var(--euphoria-amber-glow);
+}
+.empty-state--person {
+  margin-top: 138px;
+}
+
+@media (max-width: 767px) {
+  .empty-state--person {
+    margin-top: 24px;
+  }
+  .empty-state {
+    margin-top: 24px;
+    padding: 32px 16px;
+  }
+}

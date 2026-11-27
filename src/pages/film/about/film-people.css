@@ -11,6 +11,22 @@
   font-size: var(--text-title);
 }
 
+.film-people__status {
+  color: var(--text-muted);
+  font-size: var(--text-small);
+}
+
+.film-people__retry {
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 100px;
+  color: var(--text-main);
+  background: var(--bg-input);
+  font: inherit;
+  cursor: pointer;
+}
+
 .film-people__list {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(124px, 1fr));
@@ -76,8 +92,44 @@
   border-radius: 10px;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .film-people__image {
     transition: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .film-people {
+    padding: 0;
+    border: 0;
+    background: none;
+  }
+
+  .film-people__list {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .film-people__item {
+    flex: 0 0 76px;
+    min-width: 0;
+  }
+
+  .film-people__photo {
+    width: 64px;
+    height: 64px;
+    aspect-ratio: 1;
+    margin: 0 auto 6px;
+    border-radius: 50%;
+  }
+
+  .film-people__name,
+  .film-people__role {
+    overflow: hidden;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }

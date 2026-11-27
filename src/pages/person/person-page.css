@@ -1,3 +1,13 @@
 .person-page {
-  padding-top: 32px;
+  min-width: 0;
+  padding-top: 16px;
+}
+
+@media (max-width: 767px) {
+  .person-page {
+    padding-top: 0;
+  }
+  .app-layout:has(.person-profile) .site-header {
+    display: none;
+  }
 }

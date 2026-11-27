@@ -8,7 +8,6 @@
   min-width: 0;
   overflow: hidden;
   -webkit-user-select: none;
-  user-select: none;
 }
 
 .auth-scene__canvas {
@@ -185,9 +184,15 @@
   line-height: 23.4px;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .auth-scene__track {
     animation: none;
     will-change: auto;
+  }
+}
+
+@supports (user-select: none) {
+  .auth-scene {
+    user-select: none;
   }
 }
