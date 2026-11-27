@@ -1,5 +1,10 @@
 <a class='logo' href='/' data-link aria-label='Frame, на главную'>
-  {{#if compact}}
+  {{#if coraline}}
+    <img class='logo__mark' src='{{mark}}' alt='' /><span class='logo__word'><img
+        src='{{letter}}'
+        alt=''
+      /><img src='{{word}}' alt='' /></span>
+  {{else if compact}}
     <img class='logo__mobile' src='{{mobile}}' width='108' height='30' alt='' />
   {{else}}
     <img class='logo__mark' src='{{mark}}' width='30' height='30' alt='' />

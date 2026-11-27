@@ -7,6 +7,7 @@
 .movie-actions__button {
   position: relative;
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   gap: 9px;
@@ -47,8 +48,9 @@
 }
 
 .movie-actions--card {
+  flex-wrap: wrap;
   margin-top: auto;
-  padding-top: 7px;
+  padding-top: 12px;
 }
 
 .movie-actions--card .movie-actions__button {
@@ -118,6 +120,14 @@
   height: 20px;
 }
 
+@media (pointer: coarse) {
+  .movie-actions--card .movie-actions__button,
+  .movie-actions--spotlight .movie-actions__button {
+    width: 44px;
+    height: 44px;
+  }
+}
+
 @media (max-width: 767px) {
   .movie-actions--hero {
     gap: 10px;
@@ -163,5 +173,17 @@
   .movie-actions--spotlight .movie-actions__button--favorite,
   .movie-actions--spotlight .movie-actions__button--watched {
     display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .movie-actions--hero {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .movie-actions--hero .movie-actions__button--watchlater {
+    min-height: 48px;
+    flex-basis: 148px;
+    white-space: nowrap;
   }
 }

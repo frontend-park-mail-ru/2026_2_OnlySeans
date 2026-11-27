@@ -1,0 +1,53 @@
+:root[data-cinema='coraline'] {
+  --text-muted: #aaa7c8;
+  --surface-sidebar: #0f1026;
+  --surface-elevated: #202340;
+  --surface-token: #161834;
+  --euphoria-wine: #d9466b;
+  --gradient-amber-from: #f5c542;
+  --gradient-amber-to: #f5c542;
+  --color-favorite: #d9466b;
+}
+[data-cinema='coraline'] .app-layout {
+  background:
+    linear-gradient(90deg, rgba(22, 24, 52, 0.95) 30%, rgba(22, 24, 52, 0.45) 100%),
+    url('../assets/images/coraline/tunnel.png') top right / min(100%, 1000px) auto no-repeat,
+    #161834;
+}
+[data-cinema='coraline']
+  :is(
+    .collection-card,
+    .spotlight,
+    .collection-hero,
+    .settings-page__card,
+    .profile-page__card,
+    .empty-state
+  ) {
+  border: 1px dashed color-mix(in srgb, #f5c542 50%, transparent);
+  border-radius: 22px;
+}
+[data-cinema='coraline'] .movie-card__cover {
+  border-radius: 22px;
+}
+[data-cinema='coraline'] .movie-card__link:hover .movie-card__cover {
+  outline: 1px dashed #f5c542;
+  outline-offset: -1px;
+}
+[data-cinema='coraline'] .sidebar__link[aria-current='page'] {
+  border: 1px dashed #d9466b;
+  color: #d9466b;
+  background: color-mix(in srgb, #d9466b 12%, transparent);
+}
+[data-cinema='coraline'] .sidebar__link[aria-current='page']::after {
+  content: '';
+  position: absolute;
+  right: 6px;
+  top: calc(50% - 7.7px);
+  width: 15.4px;
+  height: 15.4px;
+  background: url('../assets/images/coraline/active.svg') center no-repeat;
+}
+[data-cinema='coraline'] .settings-page__cinema button[aria-pressed='true'] {
+  outline: 2px solid #f5c542;
+  outline-offset: 4px;
+}

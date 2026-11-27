@@ -1,0 +1,31 @@
+<dialog class='modal collection-editor' aria-labelledby='collection-editor-title'><div
+    class='modal__header'
+  ><h2 class='modal__title' id='collection-editor-title'>{{#if collection}}Изменить подборку{{else}}Новая
+        подборка{{/if}}</h2><button
+      class='modal__close'
+      type='button'
+      data-close
+      aria-label='Закрыть'
+    >{{icon 'close'}}</button></div><p class='modal__text'>Подборка сохранится на этом устройстве
+    для вашего аккаунта. По ссылке можно передать снимок списка.</p><form novalidate><label
+    >Название<input name='title' maxlength='160' value='{{collection.title}}' /></label><label
+    >Описание<textarea
+        name='description'
+        maxlength='1000'
+        rows='3'
+      >{{collection.description}}</textarea></label><label>Найти фильм<input
+        name='search'
+        type='search'
+      /></label><p>Выбрано: <span data-count></span></p><div
+      class='collection-editor__films'
+    >{{#each films}}<label data-choice><input data-film type='checkbox' value='{{id}}' /><span
+          >{{title}} · {{year}}</span></label>{{/each}}</div><p
+      role='status'
+      class='collection-editor__error'
+      data-error
+    ></p><div class='modal__actions'><button
+        class='modal__button'
+        type='button'
+        data-close
+      >Отмена</button><button class='modal__button modal__button--primary' type='submit'>Сохранить
+        подборку</button></div></form></dialog>

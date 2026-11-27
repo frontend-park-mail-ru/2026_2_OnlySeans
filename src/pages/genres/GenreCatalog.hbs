@@ -1,0 +1,22 @@
+<section class='genre-catalog'>
+  <nav class='genre-catalog__breadcrumb' aria-label='Хлебные крошки'><a
+      href='/genres'
+      data-link
+    >Жанры</a><span aria-hidden='true'>/</span><span aria-current='page'>{{name}}</span></nav>
+  <div data-slot='heading'></div>
+  {{#if ready}}
+    <p class='genres-page__note'>{{count}}</p>
+    <div class='genre-catalog__toolbar'>
+      <nav aria-label='Тип произведения'>{{#each tabs}}<a
+            href='{{href}}'
+            data-link
+            aria-current='{{current}}'
+          >{{label}}</a>{{/each}}</nav>
+      <button type='button' data-genre-filter='year'>{{year}}{{icon 'catalog-chevron'}}</button>
+      <button type='button' data-genre-filter='sort'>Сортировка:
+        {{sort}}{{icon 'catalog-chevron'}}</button>
+      <div data-slot='view'></div>
+    </div>
+    <div data-slot='feed'></div>
+  {{else}}<div data-slot='state'></div>{{/if}}
+</section>

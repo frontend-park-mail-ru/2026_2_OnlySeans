@@ -8,15 +8,27 @@
 .film-page > .back-link {
   display: none;
 }
+.film-page > .empty-state--request-error {
+  margin-top: 157px;
+}
 
 @media (max-width: 767px) {
+  @supports (scrollbar-gutter: auto) and (scrollbar-width: none) {
+    html:has(.film-page) {
+      scrollbar-gutter: auto;
+      scrollbar-width: none;
+    }
+  }
+  .film-page > .empty-state--request-error {
+    margin-top: 80px;
+  }
   .app-layout:has(.film-page) .site-header {
     display: none;
   }
 
   .film-page {
     position: relative;
-    gap: 20px;
+    gap: 24px;
     padding-top: 0;
   }
 

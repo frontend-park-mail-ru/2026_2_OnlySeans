@@ -1,3 +1,4 @@
+import { ApiError } from '../../api/http.js';
 import './person-page.css';
 import templateSource from './PersonPage.hbs';
 import { Component } from '../../core/component.js';
@@ -40,21 +41,27 @@ export class PersonPage extends Component {
       },
       failureView: (error, retry) =>
         new EmptyState({
-          variant: error.status === HttpStatus.NOT_FOUND ? 'person' : 'error',
+          requestError: !(error instanceof ApiError && error.status === HttpStatus.NOT_FOUND),
+          code:
+            error instanceof ApiError && error.status !== HttpStatus.NOT_FOUND ? error.status : '',
+          button: 'Повторить',
+          variant:
+            error instanceof ApiError && error.status === HttpStatus.NOT_FOUND ? 'person' : 'error',
           title:
-            error.status === HttpStatus.NOT_FOUND
+            error instanceof ApiError && error.status === HttpStatus.NOT_FOUND
               ? 'Такого человека нет в каталоге'
               : 'Не удалось загрузить страницу человека',
           text:
-            error.status === HttpStatus.NOT_FOUND
+            error instanceof ApiError && error.status === HttpStatus.NOT_FOUND
               ? 'Возможно, ссылка устарела. Найдите актёра или режиссёра через поиск.'
-              : error.message === 'offline cache miss'
+              : error instanceof Error && error.message === 'offline cache miss'
                 ? 'Эта страница ещё не загружалась. Подключитесь к сети и повторите.'
                 : 'Попробуйте ещё раз через некоторое время.',
-          onRetry: error.status === HttpStatus.NOT_FOUND ? undefined : retry,
+          onRetry:
+            error instanceof ApiError && error.status === HttpStatus.NOT_FOUND ? undefined : retry,
           href: '/search',
           linkText: 'Найти человека',
-          homeLink: error.status === HttpStatus.NOT_FOUND,
+          homeLink: error instanceof ApiError && error.status === HttpStatus.NOT_FOUND,
         }),
     });
   }

@@ -40,6 +40,14 @@
   opacity: 0.5;
   cursor: default;
 }
+
+@media (pointer: coarse) {
+  .person-filmography .person-filmography__role,
+  .person-filmography__sort select,
+  .person-filmography__more {
+    min-height: 44px;
+  }
+}
 .person-filmography__list {
   margin: 0;
   padding: 0;

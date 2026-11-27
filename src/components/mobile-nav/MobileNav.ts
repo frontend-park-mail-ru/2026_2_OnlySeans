@@ -5,7 +5,7 @@ import { loadAssets } from '../../core/assets.js';
 
 const template = await loadAssets({ template: templateSource });
 const LINKS = [
-  { href: '/', label: 'Главная', icon: 'home', paths: ['/'] },
+  { href: '/', label: 'Главная', icon: 'home', paths: ['/', '/wheel'] },
   {
     href: '/films',
     label: 'Каталог',
@@ -18,7 +18,7 @@ const LINKS = [
     href: '/favorites',
     label: 'Моё кино',
     icon: 'user',
-    paths: ['/profile', '/favorites', '/watch-later', '/watched'],
+    paths: ['/profile', '/favorites', '/watch-later', '/watched', '/settings'],
   },
 ];
 
@@ -30,11 +30,10 @@ export class MobileNav extends Component {
     return { links: LINKS };
   }
 
-  syncRoute() {
+  syncRoute(currentPath = location.pathname) {
     this.findAll('a').forEach((link, index) => {
       const active = LINKS[index].paths.some(
-        (path) =>
-          location.pathname === path || (path !== '/' && location.pathname.startsWith(`${path}/`)),
+        (path) => currentPath === path || (path !== '/' && currentPath.startsWith(`${path}/`)),
       );
       if (active) link.setAttribute('aria-current', 'page');
       else link.removeAttribute('aria-current');

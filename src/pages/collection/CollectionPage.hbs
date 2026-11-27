@@ -1,3 +1,30 @@
-<div class="collection-page">
-  <div data-slot="content"></div>
-</div>
+<div class='collection-page'><nav
+    class='collection-page__mobile-toolbar'
+    aria-label='Навигация по подборке'
+  ><a href='/collections' data-link aria-label='Все подборки'><img
+        src='{{backIcon}}'
+        alt=''
+      /></a><span>Подборка</span><button
+      type='button'
+      data-mobile-share
+      aria-label='Поделиться подборкой'
+    ><img src='{{shareIcon}}' alt='' /></button></nav>{{#if ready}}<nav
+      class='collection-page__breadcrumbs'
+      aria-label='Хлебные крошки'
+    ><a href='/collections' data-link>Подборки</a><span>›</span><span>{{title}}</span></nav><div
+      data-slot='hero'
+    ></div>{{#if local}}<div class='collection-page__local-actions'><button
+          type='button'
+          data-edit
+        >Изменить подборку</button><button type='button' data-delete>Удалить</button><p
+          data-local-status
+          role='status'
+        ></p></div>{{/if}}<label class='collection-page__sort'>Сортировка<select name='sort'><option
+          value='catalog'
+        >Порядок подборки</option><option value='title'>По названию</option><option value='year'>По
+          году выхода</option></select></label><div data-slot='feed'></div>{{#if similar}}<section
+        class='collection-page__similar'
+      ><h2>Похожие подборки</h2><div
+          class='collection-page__similar-grid'
+          data-similar
+        ></div></section>{{/if}}{{else}}<div data-slot='state'></div>{{/if}}</div>

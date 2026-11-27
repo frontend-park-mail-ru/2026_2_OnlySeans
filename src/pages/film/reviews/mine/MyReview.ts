@@ -15,8 +15,8 @@ export class MyReview extends Component {
   static template = template;
 
   #editing = Boolean(reviewDraft(this.props.film.id));
-  #mode = null;
-  #form = null;
+  #mode: 'form' | 'card' | null = null;
+  #form: ReviewForm | null = null;
 
   get #review() {
     return myReview(this.props.film.id);
@@ -41,7 +41,7 @@ export class MyReview extends Component {
         new ReviewForm({
           film: this.props.film,
           onDone: () => this.#close(),
-          onCancel: this.#editing ? () => this.#close() : null,
+          onCancel: this.#editing ? () => this.#close() : undefined,
         }),
       );
     }
@@ -55,12 +55,12 @@ export class MyReview extends Component {
   #edit() {
     this.#editing = true;
     this.update();
-    this.#form.focus();
+    this.#form?.focus();
   }
 
   #close() {
     this.#editing = false;
-    if (this.element) this.update();
+    if (!this.destroyed) this.update();
     this.props.onDone?.();
   }
 }

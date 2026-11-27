@@ -1,0 +1,17 @@
+<dialog class='modal rating-dialog' aria-labelledby='rating-dialog-title'><div
+    class='modal__header'
+  ><h2 class='modal__title' id='rating-dialog-title'>Ваша оценка</h2><button
+      class='modal__close'
+      type='button'
+      data-close
+      aria-label='Закрыть'
+    >{{icon 'close'}}</button></div><p class='modal__text'>{{title}}</p><form><div
+      data-slot='scale'
+    ></div><p role='status' data-error></p><div class='modal__actions'><button
+        class='modal__button'
+        type='button'
+        data-reset
+      >Удалить оценку</button><button
+        class='modal__button modal__button--primary'
+        type='submit'
+      >Сохранить</button></div></form></dialog>

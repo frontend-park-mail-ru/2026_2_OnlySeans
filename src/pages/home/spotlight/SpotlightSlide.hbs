@@ -30,9 +30,13 @@
         ·
         {{film.duration}}
         мин{{#if film.isSeries}}/серия{{/if}}{{/if}}</p>
-    <p class='spotlight__mobile-meta'>{{film.year}}{{#if film.genres.length}}
+    <p class='spotlight__mobile-meta'>{{film.year}}{{#if mobileGenre}}
         ·
-        {{film.genres.[0]}}{{/if}}{{#if film.duration}} · {{film.duration}} мин{{/if}}</p>
+        {{mobileGenre}}{{/if}}{{#if mobileDuration}} · {{mobileDuration}}{{/if}}</p>
+    <p class='spotlight__rating' data-spotlight-rating hidden><img
+        src='{{ratingStar}}'
+        alt=''
+      /><span data-spotlight-score></span></p>
     <p class='spotlight__description' title='{{film.description}}'>{{film.description}}</p>
     <a class='spotlight__about' href='/film/{{film.id}}' data-link>О фильме
       {{icon 'arrow-right'}}</a>

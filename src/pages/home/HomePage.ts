@@ -1,10 +1,12 @@
 import './home-page.css';
 import templateSource from './HomePage.hbs';
 import type { Film } from '../../api/films.js';
+import { ApiError } from '../../api/http.js';
 import { Component } from '../../core/component.js';
 import { countLabel } from '../../core/format.js';
 import { store } from '../../core/store.js';
-import { loadCatalog } from '../../services/catalog.js';
+import { CatalogPager } from '../../services/catalog-pager.js';
+import { visibleContent } from '../../services/content-preferences.js';
 import { getCollections } from '../../api/collections.js';
 import { SectionHeading } from '../../components/section-heading/SectionHeading.js';
 import { StatusMessage } from '../../components/status-message/StatusMessage.js';
@@ -26,9 +28,17 @@ export class HomePage extends Component {
   #state: 'loading' | 'ready' | 'empty' | 'error' = 'loading';
   #films: Film[] = [];
   #fresh = false;
+  #pager: CatalogPager | undefined;
+  #error: unknown;
 
   context() {
-    return { ready: this.#state === 'ready', offline: !navigator.onLine };
+    return {
+      ready: this.#state === 'ready',
+      failed: this.#state === 'error',
+      offline: !navigator.onLine,
+      offlineIcon: new URL('../../assets/images/feed/offline.svg', import.meta.url).href,
+      offlineRetry: new URL('../../assets/images/feed/offline-retry.svg', import.meta.url).href,
+    };
   }
 
   onRender() {
@@ -43,14 +53,17 @@ export class HomePage extends Component {
       this.insert(
         'state',
         new EmptyState({
+          requestError: !empty,
           title: empty ? 'Каталог пока пуст' : 'Не удалось загрузить каталог',
           text: empty
             ? 'Мы готовим подборки и ленту. Обновите страницу чуть позже.'
             : 'Проверьте подключение к сети и попробуйте ещё раз.',
           button: empty ? 'Обновить' : 'Повторить',
           onRetry: () => this.#retry(),
+          code: this.#error instanceof ApiError && !empty ? this.#error.status : '',
         }),
       );
+      if (!empty) this.on('online', () => this.#retry(), window);
       return;
     }
 
@@ -71,18 +84,25 @@ export class HomePage extends Component {
         title: 'Лента',
         note: 'Знакомые истории и новые открытия.',
         films: this.#films,
-        count: countLabel(this.#films.length, [
-          'фильм и сериал',
-          'фильма и сериала',
-          'фильмов и сериалов',
-        ]),
+        pager: this.#pager,
+        count:
+          (this.#pager?.complete === false ? 'Загружено: ' : '') +
+          countLabel(this.#films.length, [
+            'фильм и сериал',
+            'фильма и сериала',
+            'фильмов и сериалов',
+          ]),
         empty: 'Каталог пока пуст.',
         query: this.props.query,
         filters: true,
         infinite: true,
+        rememberKey: 'home',
+        endLabel: 'Вы досмотрели всё',
       }),
     );
-    this.delegate('click', '[data-retry]', () => this.#retry());
+    this.delegate('click', '[data-retry]', () => {
+      if (navigator.onLine) this.#retry();
+    });
     this.on(
       'offline',
       () => {
@@ -97,22 +117,36 @@ export class HomePage extends Component {
       },
       window,
     );
-    this.#loadCollections();
+    const controller = new AbortController();
+    this.watch(() => controller.abort());
+    void this.#loadCollections().then(() => {
+      if (controller.signal.aborted || this.props.restoreScroll == null) return;
+      const frame = requestAnimationFrame(() => {
+        if (!controller.signal.aborted) window.scrollTo(0, this.props.restoreScroll);
+      });
+      this.watch(() => cancelAnimationFrame(frame));
+    });
   }
 
   async #load() {
-    let active = true;
-    this.watch(() => {
-      active = false;
-    });
+    const controller = new AbortController();
+    this.watch(() => controller.abort());
     try {
-      const films = await loadCatalog({ fresh: this.#fresh });
+      const saved = FilmFeed.snapshot('home');
+      this.#pager = new CatalogPager({ fresh: this.#fresh });
+      await this.#pager.loadTo(
+        saved.visible,
+        (films) => visibleContent(films).filter((film) => FilmFeed.category(film, saved.filter)),
+        controller.signal,
+      );
+      const films = visibleContent(this.#pager.films);
       this.#fresh = false;
-      if (!active) return;
+      if (controller.signal.aborted) return;
       this.#films = films;
       this.#state = films.length ? 'ready' : 'empty';
-    } catch {
-      if (!active) return;
+    } catch (error) {
+      if (controller.signal.aborted) return;
+      this.#error = error;
       this.#state = 'error';
     }
     this.update();
@@ -128,14 +162,17 @@ export class HomePage extends Component {
     const grid = this.find('.home-page__collection-grid');
     const controller = new AbortController();
     this.watch(() => controller.abort());
-    loadInto(this, grid, {
+    return loadInto(this, grid, {
       loadingView: () => new Skeleton({ variant: 'collections' }),
       load: () => getCollections({ signal: controller.signal }),
       render: (collections) => {
         collections
           .slice(0, 3)
           .forEach((item) =>
-            this.insert(grid, new CollectionCard({ ...item, href: `/collections/${item.id}` })),
+            this.insert(
+              grid,
+              new CollectionCard({ ...item, href: `/collections/${item.id}`, compact: true }),
+            ),
           );
         return collections.length ? null : new StatusMessage({ text: 'Подборок пока нет.' });
       },

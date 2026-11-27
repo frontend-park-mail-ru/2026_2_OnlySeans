@@ -1,0 +1,46 @@
+<dialog class='modal avatar-cropper' aria-labelledby='avatar-cropper-title'>
+  <div class='modal__header'><h2 class='modal__title' id='avatar-cropper-title'>Фото профиля</h2><button
+      class='modal__close'
+      type='button'
+      data-close
+      aria-label='Закрыть'
+    >{{icon 'close'}}</button></div>
+  <p class='modal__text'>Перетащите фото или используйте стрелки, чтобы выбрать область.</p>
+  <div class='avatar-cropper__body'><div class='avatar-cropper__stage'><canvas
+        width='512'
+        height='512'
+        data-crop
+        tabindex='0'
+        aria-label='Область кадрирования. Перемещение стрелками.'
+      ></canvas></div><div class='avatar-cropper__tools'><p>Предпросмотр</p><div
+        class='avatar-cropper__previews'
+      ><canvas width='112' height='112' data-preview aria-label='Фото профиля'></canvas><canvas
+          width='40'
+          height='40'
+          data-preview
+          aria-label='Фото в отзыве'
+        ></canvas><canvas
+          width='32'
+          height='32'
+          data-preview
+          aria-label='Фото в шапке'
+        ></canvas></div><label>Масштаб
+        <span data-scale>100 %</span><input
+          data-zoom
+          type='range'
+          min='1'
+          max='3'
+          step='0.01'
+          value='1'
+        /></label><button class='modal__button' type='button' data-rotate>Повернуть на 90°</button></div></div>
+  <p role='status' data-error></p><div class='modal__actions'><button
+      class='modal__button'
+      type='button'
+      data-close
+    >Отмена</button><button
+      class='modal__button modal__button--primary'
+      type='button'
+      data-save
+      disabled
+    >Применить фото</button></div>
+</dialog>

@@ -1,0 +1,33 @@
+.random-movie {
+  width: min(520px, calc(100vw - 32px));
+}
+.random-movie .modal__title {
+  font-size: var(--text-body);
+  color: var(--euphoria-amber);
+}
+.random-movie__film {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 0;
+}
+.random-movie__film > img {
+  width: 60px;
+  height: 90px;
+  flex: none;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.random-movie__film h3 {
+  margin: 0;
+  font-size: var(--text-heading);
+  overflow-wrap: anywhere;
+}
+.random-movie__film p {
+  margin: 8px 0;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+.random-movie a {
+  text-decoration: none;
+}

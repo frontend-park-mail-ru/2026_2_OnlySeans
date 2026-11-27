@@ -56,6 +56,28 @@
       </fieldset>
       <fieldset class='catalog-filters__section catalog-filters__section--year'>
         <legend>Год выпуска</legend>
+        <div class='catalog-filters__year-slider' data-year-slider>
+          <input
+            type='range'
+            name='yearFromRange'
+            min='{{yearMin}}'
+            max='{{yearMax}}'
+            value='{{yearLow}}'
+            aria-label='Год от — ползунок'
+          />
+          <input
+            type='range'
+            name='yearToRange'
+            min='{{yearMin}}'
+            max='{{yearMax}}'
+            value='{{yearHigh}}'
+            aria-label='Год до — ползунок'
+          />
+        </div>
+        <div class='catalog-filters__decades'>{{#each decades}}<button
+              type='button'
+              data-decade='{{start}}'
+            >{{label}}</button>{{/each}}</div>
         <div class='catalog-filters__years'>
           <label><span class='visually-hidden'>Год от</span><input
               name='yearFrom'

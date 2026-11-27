@@ -1,3 +1,4 @@
+import { ApiError } from '../../api/http.js';
 import './film-page.css';
 import templateSource from './FilmPage.hbs';
 import { Component } from '../../core/component.js';
@@ -17,11 +18,11 @@ const template = await loadAssets({ template: templateSource });
 export class FilmPage extends Component {
   static template = template;
 
-  #fetch() {
+  #fetch(signal: AbortSignal) {
     const { id } = this.props.params;
     return Promise.all([
-      getFilm(id),
-      getFilmPeople(id)
+      getFilm(id, { signal }),
+      getFilmPeople(id, { signal })
         .then((people) => ({ people, failed: false }))
         .catch(() => ({ people: [], failed: true })),
     ]);
@@ -33,10 +34,12 @@ export class FilmPage extends Component {
   }
 
   #load() {
+    const controller = new AbortController();
+    this.watch(() => controller.abort());
     loadInto(this, 'hero', {
       loading: 'Загружаем фильм...',
       loadingView: () => new Skeleton({ variant: 'film' }),
-      load: () => this.#fetch(),
+      load: () => this.#fetch(controller.signal),
       render: ([film, { people, failed }]) => {
         document.title = `${film.title} | Frame`;
         this.insert(
@@ -52,16 +55,22 @@ export class FilmPage extends Component {
       },
       failureView: (error, retry) =>
         new EmptyState({
-          variant: error.status === HttpStatus.NOT_FOUND ? 'movie' : 'error',
+          requestError: !(error instanceof ApiError && error.status === HttpStatus.NOT_FOUND),
+          code:
+            error instanceof ApiError && error.status !== HttpStatus.NOT_FOUND ? error.status : '',
+          button: 'Повторить',
+          variant:
+            error instanceof ApiError && error.status === HttpStatus.NOT_FOUND ? 'movie' : 'error',
           title:
-            error.status === HttpStatus.NOT_FOUND
+            error instanceof ApiError && error.status === HttpStatus.NOT_FOUND
               ? 'Такого фильма нет в каталоге'
               : 'Не удалось загрузить фильм',
           text:
-            error.status === HttpStatus.NOT_FOUND
+            error instanceof ApiError && error.status === HttpStatus.NOT_FOUND
               ? 'Возможно, ссылка устарела или фильм убрали. Попробуйте найти его через поиск.'
               : 'Проверьте подключение к сети и попробуйте ещё раз.',
-          onRetry: error.status === HttpStatus.NOT_FOUND ? undefined : retry,
+          onRetry:
+            error instanceof ApiError && error.status === HttpStatus.NOT_FOUND ? undefined : retry,
           href: '/films',
           linkText: 'В каталог',
         }),

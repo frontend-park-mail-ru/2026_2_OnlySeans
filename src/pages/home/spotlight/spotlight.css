@@ -108,6 +108,12 @@
 .spotlight__mobile-meta {
   display: none;
 }
+.spotlight__rating {
+  display: none;
+}
+.spotlight .movie-actions__spotlight-plus {
+  display: none;
+}
 
 .spotlight__description {
   display: -webkit-box;
@@ -256,11 +262,23 @@
 
   .spotlight__mobile-meta {
     display: block;
-    margin: 0 0 14px;
+    margin: 0 0 6px;
     color: var(--text-muted);
     font-size: var(--text-meta);
     font-weight: 600;
     line-height: 18px;
+  }
+  .spotlight__rating:not([hidden]) {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+  }
+  .spotlight__mobile-meta:has(+ .spotlight__rating[hidden]) {
+    margin-bottom: 14px;
   }
 
   .spotlight__about {
@@ -282,5 +300,11 @@
     display: inline-flex;
     margin-left: 4px;
     vertical-align: middle;
+  }
+  .spotlight .movie-actions__button--watchlater .icon {
+    display: none;
+  }
+  .spotlight .movie-actions__spotlight-plus {
+    display: block;
   }
 }

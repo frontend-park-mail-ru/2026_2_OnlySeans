@@ -10,7 +10,7 @@
 .review-form__error {
   margin: 0;
   color: var(--color-danger);
-  font-size: var(--text-meta);
+  font-size: var(--text-body);
 }
 
 .review-form__error:empty {
@@ -28,7 +28,7 @@
 .review-form__title,
 .review-form__text {
   width: 100%;
-  padding: 14px 16px;
+  padding: 14px 18px;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   color: var(--text-main);
@@ -39,7 +39,10 @@
 }
 
 .review-form__text {
-  min-height: 120px;
+  min-height: 161px;
+}
+.review-form__title {
+  min-height: 56px;
 }
 
 .review-form__title::placeholder,
@@ -87,15 +90,15 @@
 }
 
 .review-form__save {
+  min-height: 48px;
   padding: 12px 22px;
   border: none;
   border-radius: 100px;
   color: var(--on-accent);
   background: linear-gradient(135deg, var(--euphoria-amber) 0%, var(--accent-deep) 100%);
   font: inherit;
-  font-size: var(--text-meta);
-  font-weight: 800;
-  letter-spacing: 1px;
+  font-size: var(--text-body);
+  font-weight: 600;
   text-transform: uppercase;
   cursor: pointer;
   transition: filter 200ms ease;
@@ -117,9 +120,8 @@
   color: var(--text-muted);
   background: none;
   font: inherit;
-  font-size: var(--text-meta);
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  min-height: 44px;
+  font-size: var(--text-body);
   cursor: pointer;
 }
 

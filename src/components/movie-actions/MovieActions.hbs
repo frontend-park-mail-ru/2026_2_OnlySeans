@@ -22,7 +22,12 @@
     title='{{watchlaterLabel}}'
   >
     {{icon 'clock'}}{{#if wide}}<img class='movie-actions__plus' src='{{plusIcon}}' alt='' />{{/if}}
-    {{#if wide}}<span class='movie-actions__label'>{{watchlaterLabel}}</span>{{/if}}
+    {{#if spotlight}}<img
+        class='movie-actions__spotlight-plus'
+        src='{{spotlightPlus}}'
+        alt=''
+      />{{/if}}
+    {{#if wide}}<span class='movie-actions__label'>{{watchlaterCaption}}</span>{{/if}}
   </button>
   <button
     class='movie-actions__button movie-actions__button--watched'

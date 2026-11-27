@@ -187,6 +187,12 @@
   }
 }
 
+@media (max-width: 767px), (pointer: coarse) {
+  .movie-grid[data-view='list'] .movie-card__link {
+    min-height: 156px;
+  }
+}
+
 @media (max-width: 767px) {
   .movie-grid[data-view='list'] .movie-card__link {
     grid-template-columns: 72px minmax(0, 1fr);

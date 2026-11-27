@@ -1,0 +1,14 @@
+<dialog class='modal' aria-labelledby='share-dialog-title'><div class='modal__header'><h2
+      class='modal__title'
+      id='share-dialog-title'
+    >{{title}}</h2><button class='modal__close' type='button' data-close aria-label='Закрыть'>{{icon
+        'close'
+      }}</button></div><p class='modal__text'>{{description}}</p><label
+    class='shelf-editor__field'
+  >Ссылка<input type='url' readonly value='{{url}}' /></label><p role='status' data-status></p><div
+    class='modal__actions'
+  ><button class='modal__button' type='button' data-close>Закрыть</button><button
+      class='modal__button modal__button--primary'
+      type='button'
+      data-copy
+    >Копировать</button></div></dialog>

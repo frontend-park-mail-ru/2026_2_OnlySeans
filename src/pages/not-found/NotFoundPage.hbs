@@ -1,15 +1,33 @@
-<div class="not-found">
-  <div class="not-found__tv">
-    <img class="not-found__noise" src="{{noise}}" alt="" />
-    <div class="not-found__signal">
-      <div class="not-found__number">404</div>
-      <div class="not-found__signal-text">Нет сигнала</div>
-    </div>
-    <img class="not-found__tv-image" src="{{tv}}" alt="Телевизор" />
+<div class='not-found'>
+  <div class='not-found__tv'>
+    {{#unless mobile}}<div class='not-found__desktop-glow'><img
+          src='{{glow}}'
+          alt=''
+        /></div>{{/unless}}
+    <img class='not-found__noise' src='{{noise}}' alt='' />
+    {{#if mobile}}
+      <picture class='not-found__mobile-code'><source
+          media='(min-width: 400px)'
+          srcset='{{pixelCode}}'
+        /><img src='{{code}}' alt='404' /></picture>
+      <picture class='not-found__mobile-signal'><source
+          media='(min-width: 400px)'
+          srcset='{{pixelSignal}}'
+        /><img src='{{signal}}' alt='Нет сигнала' /></picture>
+    {{else}}
+      <div class='not-found__desktop-signal'><img
+          class='not-found__desktop-code'
+          src='{{desktopCode}}'
+          alt='404'
+        /><img class='not-found__desktop-label' src='{{desktopSignal}}' alt='Нет сигнала' /></div>
+    {{/if}}
+    <img class='not-found__tv-image' src='{{tv}}' alt='Телевизор' />
   </div>
-  <h1 class="not-found__title">Такой страницы нет</h1>
-  <p class="not-found__text">
-    Возможно, её удалили или в ссылке опечатка. Загляните в подборки: там вы точно найдёте что-то интересное.
-  </p>
-  <div data-slot="home"></div>
+  <h1 class='not-found__title'>{{#if mobile}}Такой страницы нет{{else}}Похоже, плёнка оборвалась{{/if}}</h1>
+  <p class='not-found__text'>{{#if mobile}}Возможно, ссылка устарела или фильм убрали из каталога{{else}}Такой
+      страницы нет: возможно, ссылка устарела или фильм убрали из каталога. Найдите нужное через
+      поиск или загляните на главную.{{/if}}</p>
+  <div class='not-found__actions'><div data-slot='home'></div>{{#if mobile}}<div
+        data-slot='search'
+      ></div>{{else}}<div data-slot='back'></div>{{/if}}</div>
 </div>

@@ -8,7 +8,7 @@ const template = await loadAssets({ template: templateSource });
 
 export class TextField extends Component {
   static template = template;
-  input: HTMLInputElement;
+  input!: HTMLInputElement;
 
   context() {
     const type = this.props.password ? 'password' : this.props.type || 'text';
@@ -23,7 +23,7 @@ export class TextField extends Component {
       this.#toggleVisibility(button),
     );
     const caps = this.find('.text-field__caps');
-    const syncCaps = (event) => {
+    const syncCaps = (event: KeyboardEvent) => {
       caps.hidden = !event.getModifierState?.('CapsLock');
     };
     this.on('keydown', syncCaps, this.input);
@@ -35,17 +35,17 @@ export class TextField extends Component {
     return this.props.password ? this.input.value : this.input.value.trim();
   }
 
-  setError(message) {
+  setError(message: string) {
     this.element.classList.toggle('text-field--invalid', Boolean(message));
     this.input.setAttribute('aria-invalid', String(Boolean(message)));
     this.find('.text-field__hint').textContent = message || '';
   }
 
-  setDisabled(disabled) {
+  setDisabled(disabled: boolean) {
     this.input.disabled = disabled;
   }
 
-  #toggleVisibility(button) {
+  #toggleVisibility(button: HTMLElement) {
     const show = this.input.type === 'password';
     this.input.type = show ? 'text' : 'password';
     button.setAttribute('aria-pressed', String(show));

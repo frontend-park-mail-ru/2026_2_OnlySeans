@@ -1,0 +1,37 @@
+<dialog class='modal search-advanced' aria-labelledby='search-advanced-title'>
+  <div class='modal__header'><h2 id='search-advanced-title' class='modal__title'>Расширенный фильтр</h2><button
+      class='modal__close'
+      type='button'
+      data-close
+      aria-label='Закрыть'
+    >{{icon 'close'}}</button></div>
+  <p class='modal__text'>По вашим спискам · для фильмов и сериалов</p>
+  {{#unless user}}<p class='modal__text'><a href='{{loginHref}}' data-link>Войдите</a>, чтобы
+      использовать личные списки.</p>{{/unless}}
+  <form>
+    <label class='search-advanced__shelf'>Полка избранного<select name='shelf'><option value=''>Все
+          полки</option>{{#each shelves}}<option value='{{id}}'>{{name}}
+            ·
+            {{count}}</option>{{/each}}</select></label>
+    <p class='modal__text'>Полки хранятся на этом устройстве отдельно для каждого аккаунта.</p>
+    {{#each rows}}
+      <fieldset class='search-advanced__row'>
+        <legend>{{icon icon}}{{label}}{{#unless (eq count -1)}} · {{count}}{{/unless}}</legend>
+        <div class='search-advanced__options'>
+          <label><input type='radio' name='{{key}}' value='all' /><span>Все</span></label>
+          <label><input type='radio' name='{{key}}' value='hide' /><span>Скрыть</span></label>
+          <label><input type='radio' name='{{key}}' value='only' /><span>Только</span></label>
+        </div>
+      </fieldset>
+    {{/each}}
+    <div class='modal__actions'><button
+        class='modal__button'
+        type='button'
+        data-reset
+      >Сбросить</button><button
+        class='modal__button modal__button--primary'
+        type='submit'
+        data-apply
+      >Показать</button></div>
+  </form>
+</dialog>

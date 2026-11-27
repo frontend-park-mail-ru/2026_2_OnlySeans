@@ -62,7 +62,7 @@ export class PersonFilmography extends Component {
         this.#limit = PAGE_SIZE;
         this.#remember();
         this.update();
-        this.find('[data-person-sort]')?.focus({ preventScroll: true });
+        this.query('[data-person-sort]')?.focus({ preventScroll: true });
       },
       sort,
     );
@@ -80,7 +80,7 @@ export class PersonFilmography extends Component {
       this.#limit += PAGE_SIZE;
       this.update();
       const target =
-        this.find('[data-person-more]') || this.findAll('.person-filmography__title')[firstNew];
+        this.query('[data-person-more]') || this.findAll('.person-filmography__title')[firstNew];
       target?.focus({ preventScroll: true });
     });
   }

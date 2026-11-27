@@ -9,9 +9,9 @@ const template = await loadAssets({ template: templateSource });
 export class BareLayout extends Component {
   static template = template;
 
-  #page = null;
+  #page: (Component & { reuse?: (props: Component['props']) => boolean }) | null = null;
 
-  show(page, { toTop = false } = {}) {
+  show(page: Component, { toTop = false } = {}) {
     const previous = this.#page;
 
     if (previous?.constructor === page.constructor && previous.reuse?.(page.props)) return;

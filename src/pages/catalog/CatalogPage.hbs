@@ -1,8 +1,8 @@
-<div class='catalog-page'>
+<div class='catalog-page' data-phase='{{phase}}'>
   {{#if ready}}
     <div class='catalog-page__heading'>
       <div data-slot='heading'></div>
-      <span class='catalog-page__count' aria-live='polite'>{{count}}</span>
+      <span class='catalog-page__count' data-catalog-count aria-live='polite'>{{count}}</span>
       <div class='catalog-page__view'><div data-slot='view'></div></div>
     </div>
     <p class='catalog-page__note'>{{note}}</p>
@@ -77,6 +77,12 @@
     </div>
     <div data-slot='feed'></div>
   {{else}}
+    {{#if failed}}
+      <h1 class='catalog-page__error-heading'>{{title}}</h1>
+      <div class='catalog-page__error-background' aria-hidden='true' inert><div
+          data-slot='error-skeleton'
+        ></div></div>
+    {{/if}}
     <div data-slot='state'></div>
   {{/if}}
 </div>

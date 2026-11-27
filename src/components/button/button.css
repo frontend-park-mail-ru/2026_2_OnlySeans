@@ -8,20 +8,23 @@
   border-radius: 100px;
   color: var(--bg-dark);
   background: linear-gradient(135deg, var(--euphoria-amber) 0%, var(--accent-deep) 100%);
-  box-shadow: 0 8px 25px var(--euphoria-amber-glow);
+  box-shadow: var(--shadow-button);
   font-size: var(--text-meta);
-  font-weight: 800;
-  letter-spacing: 1px;
+  font-weight: 600;
+  letter-spacing: 0.015em;
   text-decoration: none;
-  text-transform: uppercase;
+  text-transform: none;
   cursor: pointer;
-  transition: var(--transition);
+  transition:
+    transform 180ms var(--ease-out),
+    box-shadow 220ms ease,
+    filter 220ms ease;
 }
 
 .button:hover {
-  filter: brightness(1.15);
-  box-shadow: 0 12px 30px color-mix(in srgb, var(--euphoria-amber) 45%, transparent);
-  transform: translateY(-2px);
+  filter: brightness(1.04);
+  box-shadow: var(--shadow-button-hover);
+  transform: translateY(-1px);
 }
 
 .button:focus-visible {
@@ -43,10 +46,10 @@
 .button--secondary {
   color: var(--on-neutral);
   background: linear-gradient(135deg, var(--neutral-from) 0%, var(--neutral-to) 100%);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+  box-shadow: var(--shadow-button);
 }
 
 .button--secondary:hover {
-  filter: brightness(1.2);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+  filter: brightness(1.06);
+  box-shadow: var(--shadow-button-hover);
 }

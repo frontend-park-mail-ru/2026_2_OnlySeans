@@ -13,10 +13,10 @@ const template = await loadAssets({ template: templateSource });
 export class AppLayout extends Component {
   static template = template;
 
-  #page = null;
-  sidebar: Sidebar;
-  header: SiteHeader;
-  mobileNav: MobileNav;
+  #page: Component | null = null;
+  sidebar!: Sidebar;
+  header!: SiteHeader;
+  mobileNav!: MobileNav;
 
   context() {
     return { collapsed: readJson<boolean>(StorageKey.SIDEBAR_COLLAPSED, false) === true };
@@ -31,7 +31,16 @@ export class AppLayout extends Component {
     this.mobileNav = this.insert('mobile-nav', new MobileNav());
   }
 
-  show(page, { toTop = false } = {}) {
+  show(page: Component, { toTop = false } = {}) {
+    if (
+      this.#page?.constructor === page.constructor &&
+      'updateRoute' in this.#page &&
+      typeof this.#page.updateRoute === 'function'
+    ) {
+      this.#page.updateRoute(page.props);
+      this.header.syncRoute();
+      return;
+    }
     const content = this.find('.app-layout__content');
     const previous = this.#page;
     this.#page = page;

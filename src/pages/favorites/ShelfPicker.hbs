@@ -1,0 +1,27 @@
+<dialog class='modal shelf-picker' aria-labelledby='shelf-picker-title'>
+  <div class='modal__header'><h2 class='modal__title' id='shelf-picker-title'>На полку</h2><button
+      class='modal__close'
+      type='button'
+      data-close
+      aria-label='Закрыть'
+    >{{icon 'close'}}</button></div>
+  <p class='modal__text'>{{title}}</p>
+  <form>
+    <div class='shelf-picker__list'>{{#each shelves}}<label><input
+            type='checkbox'
+            value='{{id}}'
+            data-shelf
+          /><span>{{name}}</span></label>{{else}}<p class='modal__text'>Создайте первую полку для
+          этого фильма.</p>{{/each}}</div>
+    <button class='shelf-picker__create' type='button' data-create>+ Новая полка</button>
+    <p class='shelf-editor__error' role='status' data-error></p>
+    <div class='modal__actions'><button
+        class='modal__button'
+        type='button'
+        data-close
+      >Отмена</button><button
+        class='modal__button modal__button--primary'
+        type='submit'
+      >Сохранить</button></div>
+  </form>
+</dialog>

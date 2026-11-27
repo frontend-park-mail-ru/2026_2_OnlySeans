@@ -1,5 +1,11 @@
 {{#if href}}
-  <a class="button button--{{variant}}" href="{{href}}" data-link>{{#if iconBefore}}{{icon iconBefore}}{{/if}}{{text}}</a>
+  <a class='button button--{{variant}}' href='{{href}}' data-link>{{#if imageBefore}}<img
+        src='{{imageBefore}}'
+        alt=''
+      />{{else if iconBefore}}{{icon iconBefore}}{{/if}}{{text}}</a>
 {{else}}
-  <button class="button button--{{variant}}" type="{{type}}" {{#if disabled}}disabled{{/if}}>{{#if iconBefore}}{{icon iconBefore}}{{/if}}{{text}}</button>
+  <button class='button button--{{variant}}' type='{{type}}'>{{#if imageBefore}}<img
+        src='{{imageBefore}}'
+        alt=''
+      />{{else if iconBefore}}{{icon iconBefore}}{{/if}}{{text}}</button>
 {{/if}}

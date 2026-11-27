@@ -1,9 +1,10 @@
 <div class='home-page'>
   {{#if ready}}
     <div class='home-page__offline' role='status' data-offline='{{offline}}'>
+      <img src='{{offlineIcon}}' alt='' />
       <div><strong>Нет соединения</strong><p>Показываем сохранённые данные. Изменения отправим,
           когда сеть вернётся.</p></div>
-      <button type='button' data-retry>Повторить</button>
+      <button type='button' data-retry><img src='{{offlineRetry}}' alt='' />Повторить</button>
     </div>
     <div class='home-page__spotlight'><div data-slot='spotlight'></div></div>
     <div data-slot='watch-later'></div>

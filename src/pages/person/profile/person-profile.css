@@ -36,10 +36,18 @@
   gap: 0 48px;
   min-height: 420px;
   padding: 50px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--border-glass);
   border-radius: 24px;
   background: var(--surface-solid);
+}
+.person-profile__atmosphere {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+  pointer-events: none;
 }
 .person-profile__backdrop {
   position: absolute;
@@ -51,7 +59,7 @@
   filter: blur(24px);
   opacity: 0.25;
 }
-.person-profile__hero::after {
+.person-profile__atmosphere::after {
   content: '';
   position: absolute;
   z-index: -1;
@@ -161,8 +169,8 @@
   font-size: var(--text-small);
 }
 .person-profile__actions .person-profile__follow {
-  color: var(--on-accent);
-  background: linear-gradient(180deg, var(--gradient-amber-from), var(--gradient-amber-to));
+  color: var(--text-muted);
+  background: var(--bg-input);
 }
 .person-profile__actions button:disabled {
   opacity: 0.6;
@@ -401,12 +409,12 @@
   .person-profile__backdrop {
     inset: 0;
     width: 100%;
-    height: 380px;
+    height: 300px;
     filter: none;
     opacity: 0.65;
   }
-  .person-profile__hero::after {
-    height: 380px;
+  .person-profile__atmosphere::after {
+    height: 300px;
     background: linear-gradient(
       180deg,
       rgba(11, 12, 16, 0.3),
@@ -419,8 +427,8 @@
     flex-direction: column;
     align-items: center;
     justify-content: end;
-    min-height: 380px;
-    padding: 100px 16px 16px;
+    min-height: 300px;
+    padding: 72px 16px 16px;
   }
   .person-profile__photo {
     flex: none;
@@ -453,7 +461,7 @@
   }
   .person-profile__actions {
     gap: 10px;
-    margin: 24px 16px 0;
+    margin: 16px 16px 0;
   }
   .person-profile__follow {
     flex: 1;
@@ -517,5 +525,24 @@
   }
   .person-profile__filmography {
     order: 3;
+  }
+}
+
+@media (max-width: 767px) {
+  .person-profile__hero:not(:has(.person-profile__image)) .person-profile__portrait {
+    min-height: 0;
+    padding-top: 72px;
+  }
+  .person-profile__hero:not(:has(.person-profile__image)) .person-profile__photo {
+    width: 80px;
+    height: 96px;
+  }
+  .person-profile__biography {
+    order: 0;
+    margin-top: 24px;
+  }
+  .person-profile__known,
+  .person-profile__filmography {
+    margin-top: 24px;
   }
 }

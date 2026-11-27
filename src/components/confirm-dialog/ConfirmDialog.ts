@@ -7,8 +7,14 @@ const template = await loadAssets({ template: templateSource });
 export class ConfirmDialog extends Modal {
   static template = template;
 
-  static ask(props) {
-    return new Promise((resolve) => {
+  static ask(props: {
+    title: string;
+    text?: string;
+    confirmText?: string;
+    cancelText?: string;
+    danger?: boolean;
+  }) {
+    return new Promise<boolean>((resolve) => {
       new ConfirmDialog({ cancelText: 'Отмена', confirmText: 'Да', ...props, resolve }).open();
     });
   }

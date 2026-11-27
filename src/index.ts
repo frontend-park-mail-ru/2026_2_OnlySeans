@@ -2,6 +2,8 @@ import './styles/tokens.css';
 import './styles/fonts.css';
 import './styles/base.css';
 import './styles/transitions.css';
+import './styles/cinema.css';
+import './styles/interactions.css';
 import './core/helpers.js';
 import { Router } from './app/router.js';
 import { routes, notFound } from './app/routes.js';
@@ -12,6 +14,9 @@ import { refreshSession, restoreSession, watchSessionOnReturn } from './services
 import { syncFilmEdits } from './services/offline-film-edits.js';
 import { notify } from './services/notice.js';
 import { fontsReady, stylesReady } from './core/assets.js';
+import { startAppearance } from './services/appearance.js';
+
+startAppearance();
 
 document.addEventListener(
   'error',

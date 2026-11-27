@@ -132,6 +132,16 @@
   outline-offset: 3px;
 }
 
+@media (pointer: coarse) {
+  .toast__close {
+    flex-basis: 44px;
+    height: 44px;
+  }
+  .toast__action {
+    min-height: 44px;
+  }
+}
+
 @media (--reduced-motion) {
   .toast {
     animation: none;

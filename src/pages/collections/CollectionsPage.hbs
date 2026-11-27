@@ -1,5 +1,26 @@
-<div class="collections-page">
-  <div data-slot="heading"></div>
-  <p class="collections-page__note">Подборки редакции: от драм до сериалов на выходные.</p>
-  <div class="collections-page__grid"></div>
-</div>
+<div class='collections-page'><div data-slot='heading'></div><p
+    class='collections-page__note'
+  >Готовые списки на вечер и ваши личные подборки.</p><div class='collections-page__toolbar'><nav
+      aria-label='Источники подборок'
+    >{{#each tabs}}<a href='{{href}}' data-link aria-current='{{current}}'>{{label}}
+          ·
+          {{count}}</a>{{/each}}</nav><label><span class='visually-hidden'>Сортировка</span><select
+        name='sort'
+      ><option value='catalog'>Порядок каталога</option><option value='title'>По названию</option><option
+          value='count'
+        >По числу фильмов</option></select></label><button type='button' data-create>+ Создать</button></div>{{#if
+    loading
+  }}<div data-slot='state'></div>{{else}}{{#if error}}<p role='status'>Не удалось загрузить подборки
+        каталога. Личные подборки доступны.</p><button
+        type='button'
+        data-retry
+      >Повторить</button>{{/if}}{{#if catalogError}}<p role='status'>Каталог фильмов недоступен.
+        Создание личных подборок временно невозможно.</p><button type='button' data-retry>Повторить
+        каталог</button>{{/if}}<div data-featured></div><h2>Все подборки
+      <span>{{count}}</span></h2><p class='collections-page__note'>Личные подборки и сохранения
+      хранятся на этом устройстве отдельно для каждого аккаунта.</p>{{#if showMessage}}<p
+        role='status'
+      >{{#if community}}Публичные подборки сообщества пока недоступны.{{else}}В этом разделе пока
+          нет подборок.{{/if}}</p>{{/if}}{{#if showEmpty}}<div data-slot='empty'></div>{{/if}}<div
+      class='collections-page__grid'
+    ></div>{{/if}}</div>

@@ -10,6 +10,9 @@ import { countLabel } from '../../../../core/format.js';
 import { notify } from '../../../../services/notice.js';
 import { loadAssets } from '../../../../core/assets.js';
 import { REVIEW_LIMITS, reviewErrors } from '../../../../services/review-validation.js';
+import type { Film } from '../../../../api/films.js';
+import type { ReviewValues } from '../../../../api/reviews.js';
+import { ConfirmDialog } from '../../../../components/confirm-dialog/ConfirmDialog.js';
 
 const template = await loadAssets({ template: templateSource });
 
@@ -20,12 +23,16 @@ const Limit = Object.freeze({
   TEXT_MAX: 20000,
 });
 
-const length = (value) => Array.from(value).length;
+const length = (value: string) => Array.from(value).length;
 
 const EMPTY = Object.freeze({ title: '', text: '', spoiler: false });
 let nextFormId = 0;
 
-export class ReviewForm extends Component {
+export class ReviewForm extends Component<{
+  film: Film;
+  onCancel?: () => void;
+  onDone?: () => void;
+}> {
   static template = template;
   declare element: HTMLFormElement & {
     elements: HTMLFormControlsCollection & {
@@ -38,11 +45,12 @@ export class ReviewForm extends Component {
   };
 
   #busy = false;
-  #draft = null;
-  #shown = null;
+  #draft: ReviewValues | null = null;
+  #shown: ReviewValues = EMPTY;
   #touched = new Set<string>();
   #error = '';
   #id = `review-form-${++nextFormId}`;
+  #confirmation: ConfirmDialog | null = null;
 
   get #saved() {
     return myReview(this.props.film.id);
@@ -98,8 +106,22 @@ export class ReviewForm extends Component {
     }
     this.on('change', () => this.#refresh(), spoiler);
     this.on('submit', (event) => this.#save(event));
-    this.delegate('click', '[name="delete"]', () => this.#remove());
-    this.delegate('click', '[name="cancel"]', () => this.props.onCancel());
+    this.delegate('click', '[name="delete"]', () => {
+      if (this.#busy || this.#confirmation) return;
+      this.#confirmation = new ConfirmDialog({
+        title: 'Удалить отзыв?',
+        text: 'Оценка фильма останется. Удаление отзыва можно будет отменить в уведомлении.',
+        confirmText: 'Удалить',
+        cancelText: 'Отмена',
+        danger: true,
+        resolve: (confirmed: boolean) => {
+          this.#confirmation = null;
+          if (confirmed && !this.destroyed) this.#remove();
+        },
+      }).open();
+    });
+    this.watch(() => this.#confirmation?.close());
+    this.delegate('click', '[name="cancel"]', () => this.props.onCancel?.());
     this.watch(store.watch('myReview', () => !this.#busy && !this.#edited() && this.update()));
     this.#shown = this.#values();
     this.#refresh();
@@ -116,7 +138,7 @@ export class ReviewForm extends Component {
     return { title: title.value.trim(), text: text.value.trim(), spoiler: spoiler.checked };
   }
 
-  #differs(a, b) {
+  #differs(a: ReviewValues, b: ReviewValues) {
     return a.title !== b.title || a.text !== b.text || a.spoiler !== b.spoiler;
   }
 
@@ -124,12 +146,12 @@ export class ReviewForm extends Component {
     return this.#differs(this.#values(), this.#shown);
   }
 
-  #valid({ title, text }) {
+  #valid({ title, text }: Pick<ReviewValues, 'title' | 'text'>) {
     const errors = reviewErrors({ title, text });
     return !errors.title && !errors.text;
   }
 
-  #hint(text) {
+  #hint(text: string) {
     const missing = Limit.TEXT_MIN - length(text);
     if (missing > 0) return `Ещё ${countLabel(missing, ['символ', 'символа', 'символов'])}`;
     return `${length(text)} / ${Limit.TEXT_MAX}`;
@@ -139,7 +161,7 @@ export class ReviewForm extends Component {
     const { counter, save } = this.element.elements;
     const values = this.#values();
     const errors = reviewErrors(values);
-    for (const name of ['title', 'text']) {
+    for (const name of ['title', 'text'] as const) {
       const message = this.#touched.has(name) ? errors[name] : '';
       this.element.elements[name].setAttribute('aria-invalid', String(Boolean(message)));
       this.find(`[data-field-error="${name}"]`).textContent = message;
@@ -149,7 +171,7 @@ export class ReviewForm extends Component {
       this.#busy || !this.#valid(values) || !this.#differs(values, this.#savedValues());
   }
 
-  async #run(action, done) {
+  async #run(action: () => Promise<boolean>, done: string) {
     this.#busy = true;
     this.#error = '';
     this.update();
@@ -164,11 +186,11 @@ export class ReviewForm extends Component {
       notify(errorMessage(error), { type: 'error' });
     } finally {
       this.#busy = false;
-      if (this.element) this.update();
+      if (!this.destroyed) this.update();
     }
   }
 
-  #save(event) {
+  #save(event: Event) {
     event.preventDefault();
     const values = this.#values();
     if (this.#busy || !this.#valid(values) || !this.#differs(values, this.#savedValues())) return;

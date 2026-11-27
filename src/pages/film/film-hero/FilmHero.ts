@@ -29,9 +29,7 @@ export class FilmHero extends Component {
         film.originalTitle,
         film.year,
         film.duration && `${Math.floor(film.duration / 60)} ч ${film.duration % 60} мин`,
-      ]
-        .filter(Boolean)
-        .join(' · '),
+      ].filter(Boolean),
     };
   }
 

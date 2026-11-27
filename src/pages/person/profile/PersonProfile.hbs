@@ -8,7 +8,9 @@
       /></button>
   </nav>
   <header class='person-profile__hero'>
-    {{#if backdrop}}<img class='person-profile__backdrop' src='{{backdrop}}' alt='' />{{/if}}
+    <div class='person-profile__atmosphere' aria-hidden='true'>
+      {{#if backdrop}}<img class='person-profile__backdrop' src='{{backdrop}}' alt='' />{{/if}}
+    </div>
     <div class='person-profile__portrait'>
       <div class='person-profile__photo'><span
           class='person-profile__initials'

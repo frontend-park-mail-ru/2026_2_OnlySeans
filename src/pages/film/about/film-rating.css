@@ -212,6 +212,18 @@
   background: var(--euphoria-amber);
 }
 
+@media (max-width: 575px) {
+  .film-rating__dialog .score-scale {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+@media (pointer: coarse) {
+  .film-rating__reset {
+    min-height: 44px;
+  }
+}
+
 @media (max-width: 767px) {
   .film-rating__star {
     display: block;

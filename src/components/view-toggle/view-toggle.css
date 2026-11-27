@@ -44,6 +44,13 @@
   outline-offset: 2px;
 }
 
+@media (pointer: coarse) {
+  .view-toggle__button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
 @media (max-width: 767px) {
   .view-toggle {
     gap: 0;

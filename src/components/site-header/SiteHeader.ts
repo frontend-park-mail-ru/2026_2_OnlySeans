@@ -14,8 +14,8 @@ const template = await loadAssets({ template: templateSource });
 export class SiteHeader extends Component {
   static template = template;
 
-  #avatarUserId = null;
-  #search: SearchField;
+  #avatarUserId: number | undefined;
+  #search!: SearchField;
 
   context() {
     const user = store.get('user');
@@ -71,8 +71,8 @@ export class SiteHeader extends Component {
     this.element.classList.remove('site-header--searching');
     this.find('.site-header__search').setAttribute('aria-expanded', 'false');
     const { loginHref, onProfile } = this.context();
-    this.find('.site-header__login')?.setAttribute('href', loginHref);
-    const account = this.find('.site-header__account');
+    this.element.querySelector('.site-header__login')?.setAttribute('href', loginHref);
+    const account = this.query('.site-header__account');
     if (account && onProfile) account.setAttribute('aria-current', 'page');
     else account?.removeAttribute('aria-current');
   }

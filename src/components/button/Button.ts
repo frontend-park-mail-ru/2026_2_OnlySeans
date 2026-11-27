@@ -13,6 +13,8 @@ export class Button extends Component {
   }
 
   onRender() {
+    if (this.element instanceof HTMLButtonElement)
+      this.element.disabled = Boolean(this.props.disabled);
     if (this.props.onClick) this.on('click', this.props.onClick);
   }
 }

@@ -6,10 +6,15 @@ import { readLibrary, watchLibrary } from '../../services/library.js';
 import { loadAssets } from '../../core/assets.js';
 import { Icon } from '../../core/icons.js';
 import { Logo } from '../logo/Logo.js';
+import type { LibraryList } from '../../services/library.js';
 
 const template = await loadAssets({ template: templateSource });
 
-const GROUPS = [
+const GROUPS: {
+  caption: string;
+  forUser?: boolean;
+  links: { href: string; text: string; icon: string; count?: LibraryList }[];
+}[] = [
   {
     caption: 'Каталог',
     links: [
@@ -19,6 +24,8 @@ const GROUPS = [
       { href: '/collections', text: 'Подборки', icon: Icon.GRID },
       { href: '/genres', text: 'Жанры', icon: Icon.TAG },
       { href: '/upcoming', text: 'Скоро в кино', icon: Icon.CALENDAR },
+      { href: '/map', text: 'Карта съёмок', icon: Icon.MAP },
+      { href: '/wheel', text: 'Что посмотреть', icon: Icon.FILMS },
     ],
   },
   {
@@ -31,9 +38,13 @@ const GROUPS = [
       { href: '/favorites', text: 'Избранное', icon: Icon.HEART, count: 'favorite' },
     ],
   },
+  {
+    caption: 'Приложение',
+    links: [{ href: '/settings', text: 'Настройки', icon: Icon.SETTINGS }],
+  },
 ];
 
-const countLabel = (count) => (count >= 99 ? '99+' : count || '');
+const countLabel = (count: number) => (count >= 99 ? '99+' : count || '');
 
 export class Sidebar extends Component {
   static template = template;

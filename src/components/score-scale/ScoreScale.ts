@@ -6,11 +6,21 @@ import { loadAssets } from '../../core/assets.js';
 
 const template = await loadAssets({ template: templateSource });
 
-const ARROW_STEPS = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 };
+const ARROW_STEPS: Record<string, number> = {
+  ArrowRight: 1,
+  ArrowUp: 1,
+  ArrowLeft: -1,
+  ArrowDown: -1,
+};
 const MIN_SCORE = SCORES[0];
 const MAX_SCORE = SCORES[SCORES.length - 1];
 
-export class ScoreScale extends Component {
+export class ScoreScale extends Component<{
+  value?: number;
+  disabled?: boolean;
+  labelledBy?: string;
+  onSelect(value: number): void;
+}> {
   static template = template;
 
   #value = 0;
@@ -30,7 +40,7 @@ export class ScoreScale extends Component {
     this.paint(this.props.value ?? 0, this.props.disabled);
   }
 
-  paint(value, disabled = false) {
+  paint(value: number, disabled = false) {
     this.#value = value;
     this.findAll<HTMLButtonElement>('.score-scale__score').forEach((button) => {
       const score = Number(button.dataset.score);
@@ -42,12 +52,12 @@ export class ScoreScale extends Component {
   }
 
   focus(value = this.#value) {
-    this.find(`[data-score="${value || MIN_SCORE}"]`)?.focus();
+    this.query(`[data-score="${value || MIN_SCORE}"]`)?.focus();
   }
 
-  #onArrows(event) {
+  #onArrows(event: KeyboardEvent) {
     const step = ARROW_STEPS[event.key];
-    const targets = { Home: MIN_SCORE, End: MAX_SCORE };
+    const targets: Record<string, number> = { Home: MIN_SCORE, End: MAX_SCORE };
     const next = step
       ? Math.min(MAX_SCORE, Math.max(MIN_SCORE, this.#value + step))
       : targets[event.key];

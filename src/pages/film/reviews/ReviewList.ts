@@ -8,18 +8,24 @@ import { notify } from '../../../services/notice.js';
 import { myReview } from '../../../services/my-review.js';
 import { ReviewCard } from './card/ReviewCard.js';
 import { loadAssets } from '../../../core/assets.js';
+import type { Film } from '../../../api/films.js';
+type ReviewPage = Awaited<ReturnType<typeof getReviewsPage>>;
+interface ReviewListProps {
+  film: Film;
+  page: ReviewPage;
+}
 
 const template = await loadAssets({ template: templateSource });
 
-export class ReviewList extends Component {
+export class ReviewList extends Component<ReviewListProps> {
   static template = template;
 
-  #cards = [];
+  #cards: ReviewCard[] = [];
   #nextOffset = 0;
   #hasMore = false;
   #busy = false;
 
-  constructor(props) {
+  constructor(props: ReviewListProps) {
     super(props);
     this.#add(props.page);
   }
@@ -34,7 +40,7 @@ export class ReviewList extends Component {
   }
 
   onRender() {
-    const more = this.find<HTMLButtonElement>('[data-more]');
+    const more = this.query<HTMLButtonElement>('[data-more]');
     if (more) more.disabled = this.#busy;
     const items = this.find('[data-items]');
     this.#cards.forEach((card) => {
@@ -50,7 +56,7 @@ export class ReviewList extends Component {
     );
   }
 
-  #add({ reviews, nextOffset, hasMore }) {
+  #add({ reviews, nextOffset, hasMore }: ReviewPage) {
     const me = store.get('user')?.id;
     const known = new Set(this.#cards.map((card) => card.props.review.id));
     reviews
@@ -70,7 +76,7 @@ export class ReviewList extends Component {
       notify(errorMessage(error), { type: 'error' });
     } finally {
       this.#busy = false;
-      if (this.element) this.update();
+      if (!this.destroyed) this.update();
     }
   }
 }

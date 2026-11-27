@@ -10,10 +10,13 @@ const STRIPS = 3;
 const FRAMES = 4;
 const REPEATS = 3;
 
-export class AuthScene extends Component {
+export class AuthScene extends Component<{
+  films?: Awaited<ReturnType<typeof getFilmPosters>>;
+  centered?: boolean;
+}> {
   static template = template;
 
-  context() {
+  context(): object {
     const films = this.props.films || [];
     const reels = Array.from({ length: STRIPS }, (_, reel) => {
       const frames = films.slice(reel * FRAMES, (reel + 1) * FRAMES).map((film, frame) => ({

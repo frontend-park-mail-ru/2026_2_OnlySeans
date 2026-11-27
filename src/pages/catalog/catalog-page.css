@@ -1,6 +1,65 @@
 .catalog-page {
   padding-top: 32px;
 }
+.catalog-page[data-phase='error'] {
+  position: relative;
+  min-height: calc(100dvh - 95px);
+  padding-top: 189px;
+}
+.catalog-page__error-heading {
+  display: none;
+}
+.catalog-page__error-background {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0.25;
+  pointer-events: none;
+}
+.catalog-page__error-background .skeleton::after {
+  display: none;
+}
+.catalog-page[data-phase='empty'] > .empty-state {
+  padding-top: 168px;
+}
+@media (max-width: 767px) {
+  @supports (scrollbar-gutter: auto) and (scrollbar-width: none) {
+    html:has(.catalog-page) {
+      scrollbar-gutter: auto;
+      scrollbar-width: none;
+    }
+  }
+  .catalog-page[data-phase='error'] {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-top: 8px;
+  }
+  .catalog-page__error-heading {
+    display: block;
+    margin: 0;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.25;
+  }
+  .catalog-page__error-background {
+    position: static;
+    order: 1;
+    height: 310px;
+    opacity: 0.5;
+  }
+  .catalog-page__error-background .skeleton {
+    margin: 0;
+  }
+  .catalog-page__error-background .skeleton__catalog-heading,
+  .catalog-page__error-background .skeleton__catalog-note,
+  .catalog-page__error-background .skeleton__catalog-controls {
+    display: none;
+  }
+  .catalog-page[data-phase='empty'] > .empty-state {
+    padding-top: 64px;
+  }
+}
 .catalog-page__heading {
   display: flex;
   align-items: center;
@@ -19,7 +78,7 @@
   margin-left: auto;
 }
 .catalog-page__note {
-  margin: 18px 0 24px;
+  margin: 8px 0 24px;
   color: var(--text-muted);
   font-size: var(--text-body);
 }
@@ -37,7 +96,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 40px;
+  min-height: 44px;
   padding: 8px 14px;
   border: 1px solid var(--border-subtle);
   border-radius: 24px;
@@ -112,6 +171,13 @@
 .catalog-page__quick-genres {
   display: none;
 }
+
+@media (pointer: coarse) {
+  .catalog-page__toolbar button,
+  .catalog-page__tag {
+    min-height: 44px;
+  }
+}
 .catalog-page > .film-feed .movie-card__cover {
   border-radius: 14px;
 }
@@ -180,7 +246,7 @@
   }
   .catalog-page__toolbar {
     justify-content: space-between;
-    margin: 20px 0 12px;
+    margin: 16px 0 12px;
   }
   .catalog-page__toolbar button {
     min-height: 44px;
@@ -226,13 +292,13 @@
     border-radius: 12px;
   }
   .catalog-page .movie-grid {
-    row-gap: 20px;
+    row-gap: 24px;
   }
   .catalog-page .movie-grid[data-view='grid'] .movie-actions {
     display: none;
   }
   .catalog-page .movie-grid[data-view='grid'] .movie-card__title {
-    margin-top: 6px;
+    margin-top: 12px;
   }
   .catalog-page .movie-grid[data-view='list'] .movie-card__link {
     min-height: 156px;

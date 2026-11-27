@@ -1,15 +1,24 @@
-<aside class="auth-scene" aria-label="Frame: кино, которое попало в кадр">
-  <div class="auth-scene__canvas" aria-hidden="true">
-    <div class="auth-scene__reels">
+<aside class='auth-scene' aria-label='Frame: кино, которое попало в кадр'>
+  <div class='auth-scene__canvas' aria-hidden='true'>
+    <div class='auth-scene__reels'>
       {{#each reels}}
-        <div class="auth-scene__strip auth-scene__strip--{{number}}">
-          <div class="auth-scene__track">
+        <div class='auth-scene__strip auth-scene__strip--{{number}}'>
+          <div class='auth-scene__track'>
             {{#each tiles}}
-              <div class="auth-scene__tile">
+              <div class='auth-scene__tile'>
                 {{#each this}}
-                  <figure class="auth-scene__frame">
-                    <img class="auth-scene__poster" src="{{src}}" width="182" height="324" alt="" title="{{title}}" draggable="false" />
-                    <figcaption class="auth-scene__caption"><span>FRAME · 35MM</span><span>{{code}}</span></figcaption>
+                  <figure class='auth-scene__frame'>
+                    <img
+                      class='auth-scene__poster'
+                      src='{{src}}'
+                      width='182'
+                      height='324'
+                      alt=''
+                      title='{{title}}'
+                      draggable='false'
+                    />
+                    <figcaption class='auth-scene__caption'><span>FRAME · 35MM</span><span
+                      >{{code}}</span></figcaption>
                   </figure>
                 {{/each}}
               </div>
@@ -19,10 +28,10 @@
       {{/each}}
     </div>
   </div>
-  <div class="auth-scene__shade" aria-hidden="true"></div>
-  <div class="auth-scene__copy">
-    <p class="auth-scene__rec"><span class="auth-scene__rec-dot">● REC</span> 00:00:01:15</p>
-    <h2 class="auth-scene__title">Кино, которое<br />попало в кадр.</h2>
-    <p class="auth-scene__description">Подборки, оценки и свои списки: всё о фильмах в одном месте.</p>
+  <div class='auth-scene__shade' aria-hidden='true'></div>
+  <div class='auth-scene__copy'>
+    <p class='auth-scene__rec'><span class='auth-scene__rec-dot'>● REC</span> 00:00:01:15</p>
+    <h2 class='auth-scene__title'>Кино, которое<br />попало в кадр.</h2>
+    <p class='auth-scene__description'>Подборки, оценки и свои списки: всё о фильмах в одном месте.</p>
   </div>
 </aside>

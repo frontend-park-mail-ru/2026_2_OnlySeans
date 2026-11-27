@@ -36,6 +36,8 @@ export class MovieActions extends Component {
     const watched = isSaved('watched', film.id);
     return {
       variant,
+      spotlight: variant === 'spotlight',
+      spotlightPlus: new URL('../../assets/images/feed/spotlight-plus.svg', import.meta.url).href,
       wide: variant === 'hero',
       heartIcon,
       eyeIcon,
@@ -48,6 +50,7 @@ export class MovieActions extends Component {
       watched,
       favoriteLabel: LABELS.favorite[Number(favorite)],
       watchlaterLabel: LABELS.watchlater[Number(watchlater)],
+      watchlaterCaption: watchlater ? 'В планах' : 'Смотреть позже',
       watchedLabel: LABELS.watched[Number(watched)],
     };
   }
@@ -62,7 +65,8 @@ export class MovieActions extends Component {
     this.watch(store.watch('user', () => this.#refresh()));
   }
 
-  async #toggle(list) {
+  async #toggle(list: string | undefined) {
+    if (list !== 'favorite' && list !== 'watchlater' && list !== 'watched') return;
     if (this.#busy) return;
     if (!store.get('user')) {
       notify(GUEST_MESSAGE[list], {
@@ -79,7 +83,7 @@ export class MovieActions extends Component {
       notify(error.message, { type: 'error' });
     } finally {
       this.#busy = false;
-      if (this.element) this.#refresh();
+      if (!this.destroyed) this.#refresh();
     }
   }
 
@@ -98,9 +102,9 @@ export class MovieActions extends Component {
 
   #refresh() {
     const focused = this.element.contains(document.activeElement)
-      ? document.activeElement.classList[1]
+      ? document.activeElement!.classList[1]
       : null;
     this.update();
-    if (focused) this.find(`.${focused}`)?.focus({ preventScroll: true });
+    if (focused) this.query(`.${focused}`)?.focus({ preventScroll: true });
   }
 }

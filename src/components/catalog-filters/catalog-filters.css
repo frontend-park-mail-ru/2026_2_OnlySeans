@@ -64,6 +64,11 @@
   font-weight: 600;
   line-height: 20px;
 }
+
+.catalog-filters[data-single-section='true'][data-tab='year']
+  .catalog-filters__section:not(.catalog-filters__section--year) {
+  display: none;
+}
 .catalog-filters[data-tab='genres'] .catalog-filters__section--genres,
 .catalog-filters[data-tab='year'] .catalog-filters__section--year,
 .catalog-filters[data-tab='rating'] .catalog-filters__section--rating,
@@ -369,6 +374,31 @@
 .catalog-filters :focus-visible {
   outline-offset: -2px;
 }
+
+@media (pointer: coarse) {
+  .catalog-filters__close {
+    width: 44px;
+    height: 44px;
+  }
+  .filter-option {
+    height: auto;
+    min-height: 44px;
+  }
+  .filter-option__label {
+    min-height: 44px;
+  }
+  .filter-option__edge {
+    display: none;
+  }
+  .catalog-filters__genre-options label,
+  .catalog-filters__text-button,
+  .catalog-filters__ages button,
+  .catalog-filters__quick-rating button,
+  .catalog-filters__sorts button,
+  .catalog-filters__error button {
+    min-height: 44px;
+  }
+}
 @keyframes catalog-popover-in {
   from {
     opacity: 0;
@@ -517,4 +547,100 @@
       transform: none;
     }
   }
+}
+.catalog-filters__year-slider {
+  position: relative;
+  height: 44px;
+  margin: 12px 0;
+  --year-low: 0%;
+  --year-high: 100%;
+}
+.catalog-filters__year-slider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 20px;
+  height: 4px;
+  border-radius: 4px;
+  background: var(--border-glass);
+}
+.catalog-filters__year-slider::after {
+  content: '';
+  position: absolute;
+  top: 20px;
+  left: var(--year-low);
+  right: calc(100% - var(--year-high));
+  height: 4px;
+  background: var(--euphoria-amber);
+  pointer-events: none;
+}
+.catalog-filters__year-slider input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 44px;
+  margin: 0;
+  appearance: none;
+  background: transparent;
+  pointer-events: none;
+}
+.catalog-filters__year-slider input:focus-visible {
+  z-index: 2;
+  outline: none;
+}
+.catalog-filters__year-slider input::-webkit-slider-thumb {
+  width: 20px;
+  height: 20px;
+  appearance: none;
+  border: 3px solid var(--euphoria-amber);
+  border-radius: 50%;
+  background: var(--text-main);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.catalog-filters__year-slider input::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--euphoria-amber);
+  border-radius: 50%;
+  background: var(--text-main);
+  cursor: pointer;
+  pointer-events: auto;
+}
+.catalog-filters__year-slider input:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 4px var(--border-active);
+}
+.catalog-filters__year-slider input:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 4px var(--border-active);
+}
+.catalog-filters__decades {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0;
+}
+.catalog-filters__decades button {
+  min-height: 36px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-glass);
+  border-radius: 10px;
+  background: var(--bg-input);
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.search-advanced__shelf {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+}
+.search-advanced__shelf select {
+  min-height: 44px;
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 16px;
+  color: var(--text-main);
+  background: var(--surface-solid);
+  font: inherit;
 }

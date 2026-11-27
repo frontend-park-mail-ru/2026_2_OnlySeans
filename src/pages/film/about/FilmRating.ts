@@ -12,21 +12,22 @@ import { loginPathHere } from '../../../services/auth-return.js';
 import { notify } from '../../../services/notice.js';
 import { loadAssets } from '../../../core/assets.js';
 import { MyReview } from '../reviews/mine/MyReview.js';
+import type { Film } from '../../../api/films.js';
 
 const template = await loadAssets({ template: templateSource });
 const star = new URL('../../../assets/icons/film-star.svg', import.meta.url).href;
 const rateIcon = new URL('../../../assets/icons/film-rate.svg', import.meta.url).href;
 const closeIcon = new URL('../../../assets/icons/film-close.svg', import.meta.url).href;
 
-export class FilmRating extends Component {
+export class FilmRating extends Component<{ film: Film }> {
   static template = template;
 
   #audience: { average: number; count: number } | null = null;
   #busy = false;
   #loaded = false;
-  #pending = null;
+  #pending: number | null = null;
   #refs: ReturnType<Component['refs']> = {};
-  #scale = null;
+  #scale: ScoreScale | null = null;
   #error = '';
 
   get #score() {
@@ -105,7 +106,7 @@ export class FilmRating extends Component {
       () => {
         release();
         if (this.element?.isConnected)
-          this.find('[data-rate-open]')?.focus({ preventScroll: true });
+          this.query('[data-rate-open]')?.focus({ preventScroll: true });
       },
       dialog,
     );
@@ -126,7 +127,7 @@ export class FilmRating extends Component {
   }
 
   #paint() {
-    if (!this.element) return;
+    if (this.destroyed) return;
     const value = this.#shown;
     const texts = this.#texts();
     const { average, count, mine, mineBox, reset } = this.#refs;
@@ -141,10 +142,10 @@ export class FilmRating extends Component {
     mineBox.hidden = !value;
     reset.hidden = !value;
     (reset as HTMLButtonElement).disabled = this.#busy;
-    this.#scale.paint(value, this.#busy);
+    this.#scale?.paint(value, this.#busy);
   }
 
-  #setText(element, text) {
+  #setText(element: HTMLElement, text: string) {
     if (element.textContent === text) return;
     element.textContent = text;
     element.classList.remove('film-rating__changed');
@@ -161,7 +162,7 @@ export class FilmRating extends Component {
     this.#paint();
   }
 
-  async #rate(value) {
+  async #rate(value: number) {
     if (this.#busy || value === this.#score) return;
     await this.#save(value, () => setScore(this.props.film.id, value));
     this.#scale?.focus();
@@ -173,7 +174,7 @@ export class FilmRating extends Component {
     this.#scale?.focus();
   }
 
-  async #save(value, action) {
+  async #save(value: number, action: () => Promise<boolean>) {
     this.#error = '';
     this.#busy = true;
     this.#pending = value;

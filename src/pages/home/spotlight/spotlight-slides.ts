@@ -1,6 +1,8 @@
-const hasGenre = (film, pattern) => film.genres.some((genre) => pattern.test(genre));
+import type { Film } from '../../../api/films.js';
 
-const RUBRICS = [
+const hasGenre = (film: Film, pattern: RegExp) => film.genres.some((genre) => pattern.test(genre));
+
+const RUBRICS: { label: string; fits: (film: Film) => boolean }[] = [
   { label: 'Фильм недели', fits: () => true },
   { label: 'Фильм дня', fits: (film) => !film.isSeries },
   { label: 'Сейчас в тренде', fits: (film) => film.year >= 2019 },
@@ -11,7 +13,7 @@ const RUBRICS = [
   { label: 'Сериал на выходные', fits: (film) => film.isSeries },
 ];
 
-export function buildSlides(films) {
+export function buildSlides(films: Film[]) {
   const used = new Set();
   return RUBRICS.map(({ label, fits }) => {
     const film =

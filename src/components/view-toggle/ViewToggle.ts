@@ -11,7 +11,7 @@ const OPTIONS = [
   { value: 'list', label: 'Список', icon: Icon.LIST },
 ];
 
-export class ViewToggle extends Component {
+export class ViewToggle extends Component<{ view: string; onChange(view: string): void }> {
   static template = template;
 
   context() {
@@ -23,7 +23,7 @@ export class ViewToggle extends Component {
   onRender() {
     this.delegate('click', '[data-view]', (event, button) => {
       if (button.dataset.view === this.props.view) return;
-      this.update({ view: button.dataset.view });
+      this.update({ view: button.dataset.view || 'grid' });
       this.find(`[data-view="${this.props.view}"]`).focus();
       this.props.onChange(this.props.view);
     });

@@ -1,14 +1,112 @@
 <div class='search-page'>
   <div data-slot='heading'></div>
-  <p class='search-page__note'>Найдите фильм, сериал, актёра или режиссёра</p>
-  <div class='search-page__field'><div data-slot='search'></div></div>
-  {{#if query}}
-    <div class='search-page__results' aria-live='polite'>
-      <section class='search-page__people'><h2>Люди</h2><div
-          class='search-page__people-grid'
-        ></div></section>
-      <div data-slot='films'></div>
+  <p class='search-page__note'>{{#if hasSearch}}{{#if query}}По запросу «{{query}}»{{else}}Расширенный
+        поиск{{/if}}{{#unless (eq total null)}}
+        ·
+        {{total}}
+        {{plural total 'результат' 'результата' 'результатов'}}{{/unless}}{{else}}Найдите фильм,
+      сериал, актёра или режиссёра{{/if}}</p>
+  <div class='search-page__field'><a
+      class='search-page__back'
+      href='/'
+      data-link
+      aria-label='На главную'
+    >{{icon 'arrow-left'}}</a><div data-slot='search'></div></div>
+  {{#if hasSearch}}
+    {{#if needsLogin}}<p class='search-page__note' role='status'>Личные фильтры будут применены
+        после
+        <a href='{{loginHref}}' data-link>входа</a>.</p>{{/if}}
+    <div class='search-page__toolbar'>
+      <nav class='search-page__tabs' aria-label='Тип результатов'>
+        {{#each tabs}}<a href='{{href}}' data-link aria-current='{{current}}'>{{label}}{{#unless
+              (eq count null)
+            }} · {{count}}{{/unless}}</a>{{/each}}
+      </nav>
+
+      {{#unless loading}}{{#unless peopleTab}}<div class='search-page__tools'><div
+              data-slot='view'
+            ></div><button type='button' data-toggle-filters aria-expanded='{{filterPanel}}'>{{icon
+                'catalog-filter'
+              }}{{#if filterPanel}}Скрыть фильтры{{else}}Фильтры{{/if}}{{#if activeCount}}
+                ·
+                {{activeCount}}{{/if}}</button><button
+              class='search-page__mobile-sort'
+              type='button'
+              data-filter-tab='sort'
+            >{{icon 'catalog-sort'}}{{sortLabel}}</button><button
+              class='search-page__mobile-advanced'
+              type='button'
+              data-advanced
+            >По моим спискам</button>{{#if wheelHref}}<a
+                class='search-page__wheel'
+                href='{{wheelHref}}'
+                data-link
+                title='Первые 100 фильмов текущего результата'
+              >В колесо</a>{{/if}}</div>{{/unless}}{{/unless}}
     </div>
+    {{#if tags.length}}<div class='search-page__tags' aria-label='Активные фильтры'>{{#each
+          tags
+        }}<button
+            type='button'
+            data-remove-filter='{{key}}'
+            aria-label='Убрать фильтр: {{label}}'
+          >{{label}}{{icon 'close'}}</button>{{/each}}<button
+          type='button'
+          data-clear
+        >Сбросить</button></div>{{/if}}
+    {{#if loading}}
+      <div data-slot='loading'></div>
+    {{else}}
+      <div class='search-page__layout {{layoutClass}}'>
+        <div class='search-page__results' aria-live='polite'>
+          {{#if peopleError}}<div class='search-page__error' role='status'><p>Не удалось загрузить
+                людей. Остальные результаты доступны.</p><button
+                type='button'
+                data-retry
+              >Повторить</button></div>{{/if}}
+          {{#if filmError}}<div class='search-page__error' role='status'><p>Не удалось загрузить
+                фильмы или их рейтинги.</p><button
+                type='button'
+                data-retry
+              >Повторить</button></div>{{/if}}
+          {{#if showPeople}}
+            <section class='search-page__people'>
+              <div class='search-page__section-heading'><h2>Люди</h2>{{#if morePeople}}<a
+                    href='{{peopleHref}}'
+                    data-link
+                  >Все люди →</a>{{/if}}</div>
+              <div class='search-page__people-grid'></div>
+            </section>
+          {{/if}}
+          {{#if showFilms}}
+            {{#if allTab}}
+              <section><div class='search-page__section-heading'><h2>Фильмы</h2><a
+                    href='{{moviesHref}}'
+                    data-link
+                  >Все фильмы →</a></div><div data-slot='movies'></div></section>
+              <section><div class='search-page__section-heading'><h2>Сериалы</h2><a
+                    href='{{seriesHref}}'
+                    data-link
+                  >Все сериалы →</a></div><div data-slot='series'></div></section>
+            {{else}}<div data-slot='films'></div>{{/if}}
+          {{/if}}
+          {{#if empty}}<div class='search-page__empty'><h2>Ничего не найдено</h2><p>Попробуйте
+                изменить запрос или фильтры.</p>{{#if activeCount}}<button
+                  type='button'
+                  data-clear
+                >Сбросить фильтры</button>{{/if}}</div>{{/if}}
+        </div>
+        {{#if filterPanel}}<aside
+            class='search-page__filters'
+            aria-label='Фильтры фильмов и сериалов'
+          >{{#each filterRows}}<button type='button' data-filter-tab='{{tab}}'><span
+                >{{label}}</span><small>{{value}}</small></button>{{/each}}<button
+              type='button'
+              data-advanced
+            >Расширенный</button>{{#if activeCount}}<button type='button' data-clear>Сбросить
+                фильтры</button>{{/if}}</aside>{{/if}}
+      </div>
+    {{/if}}
   {{else}}
     <section class='search-page__history'>
       <div class='search-page__history-heading'><h2>Недавно искали</h2>{{#if history.length}}<button
@@ -16,13 +114,19 @@
             data-clear-history
           >Очистить историю</button>{{/if}}</div>
       <div class='search-page__queries'>
-        {{#each history}}<a
-            class='search-page__query'
-            href='/search?q={{encode this}}'
-            data-link
-          >{{icon 'clock'}}{{this}}</a>{{else}}<p class='search-page__note'>Здесь появятся ваши
+        {{#each history}}<div class='search-page__history-row'><a
+              class='search-page__query'
+              href='/search?q={{encode this}}'
+              data-link
+            >{{icon 'clock'}}{{this}}</a><button
+              type='button'
+              data-remove-history='{{this}}'
+              aria-label='Удалить запрос: {{this}}'
+            >{{icon 'close'}}</button></div>{{else}}<p class='search-page__note'>Здесь появятся ваши
             поисковые запросы.</p>{{/each}}
       </div>
+      <button class='search-page__advanced-start' type='button' data-start-advanced>Расширенный
+        поиск</button>
     </section>
   {{/if}}
 </div>

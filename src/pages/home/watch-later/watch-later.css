@@ -121,3 +121,13 @@
     scrollbar-width: thin;
   }
 }
+
+@media (max-width: 767px), (pointer: coarse) {
+  .watch-later .movie-card {
+    min-height: 156px;
+  }
+  .watch-later .movie-card__title,
+  .watch-later .movie-card__meta {
+    margin-right: 44px;
+  }
+}

@@ -8,16 +8,18 @@ import { loadAssets } from '../../../core/assets.js';
 const template = await loadAssets({ template: templateSource });
 
 const INTERVAL = 8000;
-const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const reducedMotion = () =>
+  document.documentElement.dataset.reduceMotion === 'true' ||
+  matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 export class Spotlight extends Component {
   static template = template;
-  slides: ReturnType<typeof buildSlides>;
+  slides!: ReturnType<typeof buildSlides>;
 
   #current = 0;
-  #slide = null;
-  #timer = null;
-  #progress = null;
+  #slide: SpotlightSlide | null = null;
+  #timer: ReturnType<typeof setTimeout> | undefined;
+  #progress: Animation | null = null;
   #remaining = INTERVAL;
   #startedAt = 0;
   #holds = new Set();
@@ -35,7 +37,13 @@ export class Spotlight extends Component {
     );
     this.on('pointerenter', (event) => event.pointerType === 'mouse' && this.#hold('hover'));
     this.on('pointerleave', () => this.#release('hover'));
-    this.on('focusin', (event) => event.target instanceof Element && event.target.matches(':focus-visible') && this.#hold('focus'));
+    this.on(
+      'focusin',
+      (event) =>
+        event.target instanceof Element &&
+        event.target.matches(':focus-visible') &&
+        this.#hold('focus'),
+    );
     this.on(
       'focusout',
       (event) => !this.element.contains(event.relatedTarget as Node) && this.#release('focus'),
@@ -48,7 +56,7 @@ export class Spotlight extends Component {
     });
   }
 
-  #show(index, animate = true) {
+  #show(index: number, animate = true) {
     this.#current = (index + this.slides.length) % this.slides.length;
     const { label, film } = this.slides[this.#current];
     const slide = new SpotlightSlide({ label, film });
@@ -77,7 +85,7 @@ export class Spotlight extends Component {
     });
   }
 
-  #updateAtmosphere(poster) {
+  #updateAtmosphere(poster: string) {
     const atmosphere = this.find('.spotlight__atmosphere');
     if (!poster) return;
     const image = new Image();
@@ -146,7 +154,7 @@ export class Spotlight extends Component {
     this.#timer = setTimeout(() => this.#show(this.#current + 1), this.#remaining);
   }
 
-  #hold(reason) {
+  #hold(reason: string) {
     if (!this.#holds.size) {
       clearTimeout(this.#timer);
       this.#remaining = Math.max(0, this.#remaining - (performance.now() - this.#startedAt));
@@ -156,7 +164,7 @@ export class Spotlight extends Component {
     this.element.classList.add('is-paused');
   }
 
-  #release(reason) {
+  #release(reason: string) {
     if (!this.#holds.delete(reason) || this.#holds.size) return;
     this.element.classList.remove('is-paused');
     this.#progress?.play();

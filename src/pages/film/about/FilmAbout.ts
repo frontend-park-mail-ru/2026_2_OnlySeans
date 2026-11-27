@@ -4,6 +4,8 @@ import { Component } from '../../../core/component.js';
 import { store } from '../../../core/store.js';
 import { countLabel } from '../../../core/format.js';
 import { loadCatalog } from '../../../services/catalog.js';
+import { readContentPreferences } from '../../../services/content-preferences.js';
+import { readLibrary } from '../../../services/library.js';
 import { SectionHeading } from '../../../components/section-heading/SectionHeading.js';
 import { MovieGrid } from '../../../components/movie-grid/MovieGrid.js';
 import { StatusMessage } from '../../../components/status-message/StatusMessage.js';
@@ -13,12 +15,14 @@ import { FilmReviews } from '../reviews/FilmReviews.js';
 import { loadMyReview } from '../../../services/my-review.js';
 import { loadAssets } from '../../../core/assets.js';
 import { notify } from '../../../services/notice.js';
+import type { Film } from '../../../api/films.js';
+import type { getFilmPeople } from '../../../api/people.js';
 
 const template = await loadAssets({ template: templateSource });
 
 const SIMILAR_COUNT = 6;
 
-function similarFilms(film, catalog) {
+function similarFilms(film: Film, catalog: Film[]) {
   const genres = new Set(film.genres);
   return catalog
     .filter((other) => other.id !== film.id)
@@ -29,7 +33,11 @@ function similarFilms(film, catalog) {
     .map(({ other }) => other);
 }
 
-export class FilmAbout extends Component {
+export class FilmAbout extends Component<{
+  film: Film;
+  people?: Awaited<ReturnType<typeof getFilmPeople>>;
+  peopleFailed?: boolean;
+}> {
   static template = template;
 
   context() {
@@ -78,7 +86,7 @@ export class FilmAbout extends Component {
 
   #loadMine() {
     loadMyReview(this.props.film.id).catch(() => {
-      if (this.element)
+      if (!this.destroyed)
         notify('Не удалось загрузить вашу оценку и отзыв.', {
           type: 'error',
           action: { label: 'Повторить', run: () => this.#loadMine() },
@@ -97,7 +105,15 @@ export class FilmAbout extends Component {
   #loadSimilar() {
     loadInto(this, 'similar', {
       loading: 'Подбираем похожие...',
-      load: async () => similarFilms(this.props.film, await loadCatalog()),
+      load: async () =>
+        similarFilms(
+          this.props.film,
+          (await loadCatalog()).filter(
+            (film) =>
+              !readContentPreferences().hideWatchedRecommendations ||
+              !readLibrary().watched.includes(film.id),
+          ),
+        ),
       render: (films) =>
         films.length
           ? new MovieGrid({ films, view: 'grid' })

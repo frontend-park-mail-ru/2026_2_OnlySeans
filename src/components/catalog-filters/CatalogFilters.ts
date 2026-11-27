@@ -15,6 +15,19 @@ import {
   type CatalogRatings,
 } from '../../services/catalog-filters.js';
 import { loadCatalogRatings } from '../../services/catalog-ratings.js';
+import type { Film } from '../../api/films.js';
+
+export interface FilterProps {
+  state: FilterState;
+  ratings?: CatalogRatings;
+  films: Film[];
+  genres: string[];
+  tab: keyof typeof TITLES;
+  singleSection?: boolean;
+  anchor?: HTMLElement;
+  onApply(state: FilterState): void;
+  onClose?: () => void;
+}
 
 const template = await loadAssets({ template: templateSource });
 const TITLES = {
@@ -27,7 +40,7 @@ const TITLES = {
 };
 
 /** Поповер на десктопе и модальная шторка на мобильном экране. */
-export class CatalogFilters extends Component {
+export class CatalogFilters extends Component<FilterProps> {
   static template = template;
   declare element: HTMLDialogElement;
   #draft: FilterState;
@@ -39,7 +52,7 @@ export class CatalogFilters extends Component {
   #overflow = '';
   #genreOptionsOpen = false;
 
-  constructor(props) {
+  constructor(props: FilterProps) {
     super(props);
     this.#draft = structuredClone(props.state);
     this.#ratings = props.ratings || new Map();
@@ -47,12 +60,25 @@ export class CatalogFilters extends Component {
   }
 
   context() {
+    const years = this.props.films
+      .map((film) => film.year)
+      .filter((year) => Number.isInteger(year) && year > 0);
+    const yearMin = Math.min(1900, ...years);
+    const yearMax = Math.max(new Date().getFullYear(), ...years);
     const error = catalogYearError(this.#draft);
     const waiting = needsCatalogRatings(this.#draft) && this.#ratingStatus !== 'ready';
     const count =
       error || waiting ? null : filterCatalog(this.props.films, this.#draft, this.#ratings).length;
     return {
       ...this.#draft,
+      yearMin,
+      yearMax,
+      yearLow: Number(this.#draft.yearFrom) || yearMin,
+      yearHigh: Number(this.#draft.yearTo) || yearMax,
+      decades: Array.from({ length: Math.floor((yearMax - 1950) / 10) + 1 }, (_, index) => ({
+        start: 1950 + index * 10,
+        label: 1950 + index * 10 + '-е',
+      })),
       title:
         matchMedia('(max-width: 767px)').matches && this.props.tab !== 'sort'
           ? 'Фильтры'
@@ -92,6 +118,7 @@ export class CatalogFilters extends Component {
 
   onRender() {
     this.element.dataset.tab = this.props.tab;
+    this.element.dataset.singleSection = String(Boolean(this.props.singleSection));
     this.on('cancel', (event) => {
       event.preventDefault();
       this.close();
@@ -143,6 +170,7 @@ export class CatalogFilters extends Component {
     });
     this.delegate('click', '[data-genre]', (event, button) => {
       const name = button.dataset.genre;
+      if (!name) return;
       const current = genreSelection(this.#draft, name);
       const action = button.dataset.action;
       const selection =
@@ -180,8 +208,26 @@ export class CatalogFilters extends Component {
       this.#ensureRatings();
     });
     this.delegate('click', '[data-retry-ratings]', () => void this.#loadRatings());
+    this.delegate('click', '[data-decade]', (_, button) => {
+      const year = Number(button.dataset.decade);
+      this.#draft.yearFrom = String(year);
+      this.#draft.yearTo = String(year + 9);
+      this.#refresh();
+    });
     this.on('input', (event) => {
       const input = event.target as HTMLInputElement;
+      if (input.name === 'yearFromRange' || input.name === 'yearToRange') {
+        const from = this.find<HTMLInputElement>('[name=yearFromRange]');
+        const to = this.find<HTMLInputElement>('[name=yearToRange]');
+        if (Number(from.value) > Number(to.value)) {
+          if (input === from) to.value = from.value;
+          else from.value = to.value;
+        }
+        this.#draft.yearFrom = from.value;
+        this.#draft.yearTo = to.value;
+        this.find<HTMLInputElement>('[name=yearFrom]').value = from.value;
+        this.find<HTMLInputElement>('[name=yearTo]').value = to.value;
+      }
       if (input.name === 'yearFrom' || input.name === 'yearTo')
         this.#draft[input.name] = input.value;
       if (input.name === 'ratingFrom') {
@@ -260,18 +306,30 @@ export class CatalogFilters extends Component {
       if (this.#controller.signal.aborted) return;
       this.#ratingStatus = 'error';
     }
-    if (this.element) this.#updateCount();
+    if (!this.destroyed) this.#updateCount();
   }
 
   #refresh() {
     const focus = (document.activeElement as HTMLElement)?.dataset.focus;
     this.refreshContent();
     this.#syncInputs();
-    if (focus) this.find(`[data-focus="${CSS.escape(focus)}"]`)?.focus({ preventScroll: true });
+    if (focus) this.query(`[data-focus="${CSS.escape(focus)}"]`)?.focus({ preventScroll: true });
   }
 
   #updateCount() {
     const state = this.context();
+    const from = this.find<HTMLInputElement>('[name=yearFromRange]');
+    const to = this.find<HTMLInputElement>('[name=yearToRange]');
+    from.value = String(state.yearLow);
+    to.value = String(state.yearHigh);
+    this.find('[data-year-slider]').style.setProperty(
+      '--year-low',
+      `${((Number(from.value) - state.yearMin) / (state.yearMax - state.yearMin)) * 100}%`,
+    );
+    this.find('[data-year-slider]').style.setProperty(
+      '--year-high',
+      `${((Number(to.value) - state.yearMin) / (state.yearMax - state.yearMin)) * 100}%`,
+    );
     this.find<HTMLButtonElement>('[data-apply]').disabled = state.invalid;
     this.find('[data-count]').textContent = state.pending ? 'Показать' : `Показать ${state.count}`;
     this.find('[data-year-error]').textContent = state.error;

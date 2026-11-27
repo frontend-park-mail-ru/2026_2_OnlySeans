@@ -15,6 +15,14 @@ import {
 import { TextField } from '../../../components/text-field/TextField.js';
 import { loadAssets } from '../../../core/assets.js';
 import { HttpStatus } from '../../../api/errors.js';
+import type { Navigate } from '../../../app/router.js';
+type AuthMode = 'login' | 'register';
+interface AuthFormProps {
+  mode: AuthMode;
+  navigate: Navigate;
+  onPendingChange?: (pending: boolean) => void;
+  mobileDesign?: boolean;
+}
 
 const template = await loadAssets({ template: templateSource });
 
@@ -37,16 +45,17 @@ const TEXTS = {
   },
 };
 
-const TEXT_REFS = ['title', 'subtitle', 'button', 'switchText', 'switchLink'];
+const TEXT_REFS = ['title', 'subtitle', 'button', 'switchText', 'switchLink'] as const;
 
-export class AuthForm extends Component {
+export class AuthForm extends Component<AuthFormProps> {
   static template = template;
-  email: TextField;
-  username: TextField;
-  password: TextField;
-  validator: FormValidator;
+  email!: TextField;
+  username!: TextField;
+  password!: TextField;
+  validator!: FormValidator;
 
   #sending = false;
+  #termsTouched = false;
   #refs: ReturnType<Component['refs']> = {};
 
   get #registering() {
@@ -54,7 +63,11 @@ export class AuthForm extends Component {
   }
 
   context() {
-    return { registering: this.#registering, ...this.#texts() };
+    return {
+      registering: this.#registering,
+      mobileDesign: this.props.mobileDesign,
+      ...this.#texts(),
+    };
   }
 
   onRender() {
@@ -104,10 +117,30 @@ export class AuthForm extends Component {
       this.on('blur', () => this.#onEdit(field), field.input);
     });
     this.on('submit', (event) => this.#submit(event), this.#refs.form);
+    this.#refs.username.inert = !this.#registering;
+    const terms = this.query<HTMLInputElement>('[name=terms]');
+    if (terms)
+      this.on(
+        'change',
+        () => {
+          this.#termsTouched = true;
+          this.#refreshSubmit();
+        },
+        terms,
+      );
+    this.on(
+      'resize',
+      () => {
+        this.#syncCopy();
+        this.#refreshSubmit();
+      },
+      window,
+    );
+    this.#syncCopy();
     this.#refreshSubmit();
   }
 
-  setMode(mode) {
+  setMode(mode: AuthMode) {
     if (mode === this.props.mode) return;
     this.props = { ...this.props, mode };
     const texts = this.#texts();
@@ -126,6 +159,7 @@ export class AuthForm extends Component {
     this.password.input.autocomplete = this.#registering ? 'new-password' : 'current-password';
 
     this.#showError('');
+    this.#syncCopy();
     this.#refreshSubmit();
   }
 
@@ -134,7 +168,12 @@ export class AuthForm extends Component {
     return { ...TEXTS[mode], switchHref: authPath(mode === 'login' ? 'register' : 'login') };
   }
 
-  #onEdit(field) {
+  /** Обновляет переход между формами после изменения returnTo в адресе. */
+  syncLinks() {
+    this.#refs.switchLink.setAttribute('href', this.#texts().switchHref);
+  }
+
+  #onEdit(field: TextField) {
     this.validator.touch(field);
     this.#showError('');
     this.#refreshSubmit();
@@ -142,39 +181,60 @@ export class AuthForm extends Component {
 
   #refreshSubmit() {
     const valid = this.validator.validate();
+    const needsTerms = this.#mobile() && this.#registering;
+    const terms = this.query<HTMLInputElement>('[name=terms]');
+    const termsValid = !needsTerms || Boolean(terms?.checked);
+    const termsError = this.query('[data-terms-error]');
+    if (termsError)
+      termsError.textContent =
+        needsTerms && !termsValid && this.#termsTouched
+          ? 'Примите условия сервиса, чтобы создать аккаунт.'
+          : '';
+    terms?.setAttribute('aria-invalid', String(needsTerms && !termsValid && this.#termsTouched));
     const button = this.#refs.button as HTMLButtonElement;
-    button.disabled = !valid || this.#sending;
-    button.classList.toggle('auth-form__submit--ready', valid && !this.#sending);
+    button.disabled = !valid || !termsValid || this.#sending;
+    button.classList.toggle('auth-form__submit--ready', valid && termsValid && !this.#sending);
   }
 
-  #showError(message) {
+  #showError(message: string) {
     this.#refs.error.textContent = message;
   }
 
-  async #submit(event) {
+  async #submit(event: Event) {
     event.preventDefault();
+    if (
+      this.#mobile() &&
+      this.#registering &&
+      !this.query<HTMLInputElement>('[name=terms]')?.checked
+    ) {
+      this.#termsTouched = true;
+      this.#refreshSubmit();
+      return;
+    }
     if (this.#sending || !this.validator.validate({ showAll: true })) return;
     const registering = this.#registering;
-    const data: { email: string; password: string; username?: string } = {
+    const data = {
       email: this.email.value,
       password: this.password.value,
+      username: this.username.value,
     };
     if (registering) data.username = this.username.value;
 
     this.#setSending(true);
     this.#refreshSubmit();
     try {
-      await (registering ? register({ ...data, username: this.username.value }) : login(data));
-      if (this.element) this.props.navigate(getReturnPath() || '/', { replace: true });
+      await (registering ? register(data) : login(data));
+      if (!this.destroyed) this.props.navigate(getReturnPath() || '/', { replace: true });
     } catch (error) {
-      if (!this.element) return;
+      if (this.destroyed) return;
       this.#showError(this.#errorText(error, registering));
+      this.#refs.error.scrollIntoView({ block: 'nearest', behavior: 'instant' });
     } finally {
-      if (this.element) this.#setSending(false);
+      if (!this.destroyed) this.#setSending(false);
     }
   }
 
-  #errorText(error, registering) {
+  #errorText(error: unknown, registering: boolean) {
     if (!(error instanceof ApiError)) return 'Не удалось связаться с сервером. Попробуйте ещё раз.';
     if (registering && error.status === HttpStatus.CONFLICT) {
       return error.message === 'user with this username already exists'
@@ -193,6 +253,8 @@ export class AuthForm extends Component {
     this.#refs.form.setAttribute('aria-busy', String(sending));
     [this.email, this.username, this.password].forEach((field) => field.setDisabled(sending));
     this.#refs.switchLink.inert = sending;
+    const terms = this.query<HTMLInputElement>('[name=terms]');
+    if (terms) terms.disabled = sending;
     this.props.onPendingChange?.(sending);
     this.#refs.button.textContent = sending
       ? this.#registering
@@ -200,5 +262,29 @@ export class AuthForm extends Component {
         : 'Входим…'
       : this.#texts().button;
     this.#refreshSubmit();
+  }
+  #mobile() {
+    return Boolean(this.props.mobileDesign) && matchMedia('(max-width: 767px)').matches;
+  }
+
+  #syncCopy() {
+    const mobile = this.#mobile();
+    const texts = this.#texts();
+    this.#refs.title.textContent = mobile
+      ? this.#registering
+        ? 'Создайте аккаунт'
+        : 'С возвращением'
+      : texts.title;
+    this.#refs.subtitle.textContent = mobile
+      ? this.#registering
+        ? 'Списки, оценки и колесо — на всех устройствах'
+        : 'Войдите, чтобы видеть свои списки и оценки'
+      : texts.subtitle;
+    this.email.find('label').textContent = mobile ? 'Почта' : 'Email';
+    this.username.find('label').textContent = mobile ? 'Имя' : 'Имя пользователя';
+    const terms = this.query('[data-mobile-terms]');
+    const recovery = this.query('[data-mobile-recovery]');
+    if (terms) terms.hidden = !this.#registering;
+    if (recovery) recovery.hidden = this.#registering;
   }
 }

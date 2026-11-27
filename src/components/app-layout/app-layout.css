@@ -7,9 +7,7 @@
   min-height: 100vh;
   padding: 0 0 64px var(--sidebar-width);
   color: var(--text-main);
-  background:
-    radial-gradient(ellipse 1000px 600px at 55% 0, rgba(230, 161, 92, 0.045), transparent 75%),
-    var(--surface-solid);
+  background: var(--page-background, var(--surface-solid));
 }
 
 .app-layout[data-sidebar-collapsed='true'] {

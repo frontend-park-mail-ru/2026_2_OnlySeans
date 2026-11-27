@@ -24,6 +24,7 @@
       {{/if}}
     </span>
     <span class='movie-card__title' title='{{film.title}}'>{{film.title}}</span>
+    {{#if originalTitle}}<span class='movie-card__meta'>{{originalTitle}}</span>{{/if}}
     <span class='movie-card__meta'>{{film.year}}
       ·
       {{#if film.isSeries}}Сериал{{else}}Фильм{{/if}}{{#unless (eq film.ageLimit null)}}

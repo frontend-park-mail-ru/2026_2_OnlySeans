@@ -24,7 +24,7 @@ export class FilmPeople extends Component {
   }
 
   onRender() {
-    const button = this.find<HTMLButtonElement>('[data-people-retry]');
+    const button = this.query<HTMLButtonElement>('[data-people-retry]');
     if (button) button.disabled = this.#busy;
     this.delegate('click', '[data-people-retry]', () => this.#retry());
   }
@@ -40,7 +40,7 @@ export class FilmPeople extends Component {
       this.props = { ...this.props, failed: true };
     } finally {
       this.#busy = false;
-      if (this.element) this.update();
+      if (!this.destroyed) this.update();
     }
   }
 }

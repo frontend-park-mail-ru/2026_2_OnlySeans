@@ -1,0 +1,46 @@
+<section class='watchlater-list'>
+  <header><h1>Смотреть позже</h1><p>{{count}}{{#if hours}} · около {{hours}} ч{{/if}}</p></header>
+  {{#unless empty}}<a class='watchlater-list__wheel' href='{{wheelHref}}' data-link><span><img
+          src='{{wheel}}'
+          alt=''
+        /></span><div><strong>Не можете выбрать?</strong><p>Пусть решит колесо</p></div><img
+        src='{{chevron}}'
+        alt=''
+      /></a>{{/unless}}
+  <div class='watchlater-list__filters' role='group' aria-label='Тип фильма'>{{#each
+      filters
+    }}<button type='button' data-type='{{value}}' aria-pressed='{{active}}'>{{label}}
+        ·
+        {{count}}</button>{{/each}}</div>
+  <div class='watchlater-list__toolbar'><label><span
+        class='visually-hidden'
+      >Сортировка</span><select name='sort'><option value='catalog'>Порядок списка</option><option
+          value='title'
+        >По названию</option><option value='year'>Сначала новые</option><option value='rating'>По
+          рейтингу Frame</option></select></label><div data-slot='view'></div></div>
+  {{#if ratingError}}<p class='watchlater-list__rating-error' role='status'>Не удалось загрузить
+      оценки. Фильмы доступны.
+      <button type='button' data-retry-ratings>Повторить</button></p>{{/if}}
+  {{#if empty}}<p role='status'>В этой категории пока нет фильмов.</p>{{else if grid}}<div
+      data-slot='grid'
+    ></div>{{else}}<div class='watchlater-list__rows'>{{#each films}}<article
+          class='watchlater-list__row'
+        ><a class='watchlater-list__film' href='/film/{{id}}' data-link><span
+              class='watchlater-list__poster'
+            >{{#if poster}}<img src='{{poster}}' alt='' loading='lazy' />{{else}}Нет постера{{/if}}</span><div
+            ><h2>{{title}}</h2><p>{{year}}
+                ·
+                {{#if isSeries}}Сериал{{else}}Фильм{{/if}}{{#unless (eq ageLimit null)}}
+                  ·
+                  {{ageLimit}}+{{/unless}}</p>{{#if rating}}<span
+                  class='watchlater-list__rating'
+                  aria-label='Рейтинг Frame {{rating}} из 10'
+                ><img src='{{star}}' alt='' />{{rating}}</span>{{/if}}</div></a><details
+            class='watchlater-list__menu'
+          ><summary aria-label='Действия с фильмом «{{title}}»'><img
+                src='{{more}}'
+                alt=''
+              /></summary><div class='watchlater-list__menu-content'><div
+                data-actions='{{id}}'
+              ></div><button type='button' data-move-watched='{{id}}'>Перенести в просмотренное</button></div></details></article>{{/each}}</div>{{/if}}
+</section>

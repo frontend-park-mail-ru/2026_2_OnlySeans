@@ -71,7 +71,7 @@ export class PersonProfile extends Component<PersonProfileProps> {
       mobileFacts: [...facts, stats[0], stats[3]],
       cards,
       cardTitle: known.size ? 'Роли в каталоге' : 'Работы в каталоге',
-      backdrop: cards.find((credit) => credit.film.poster)?.film.poster || '',
+      backdrop: person.photo ? cards.find((credit) => credit.film.poster)?.film.poster || '' : '',
       subtitle: [person.originalName, roles.toLocaleLowerCase('ru')].filter(Boolean).join(' · '),
       bell,
       heart,
@@ -95,8 +95,8 @@ export class PersonProfile extends Component<PersonProfileProps> {
     if (context.cards.length)
       this.insert('roles-heading', new SectionHeading({ title: context.cardTitle }));
     this.delegate('click', '[data-share-person]', () => this.#share());
-    const biography = this.find('.person-profile__biography-text');
-    const toggle = this.find<HTMLButtonElement>('[data-biography-toggle]');
+    const biography = this.query('.person-profile__biography-text');
+    const toggle = this.query<HTMLButtonElement>('[data-biography-toggle]');
     const measure = () => {
       if (biography && toggle && toggle.getAttribute('aria-expanded') !== 'true')
         toggle.hidden = biography.scrollHeight <= biography.clientHeight + 1;
@@ -107,6 +107,7 @@ export class PersonProfile extends Component<PersonProfileProps> {
     if (biography) resize.observe(biography);
     this.watch(() => resize.disconnect());
     this.delegate('click', '[data-biography-toggle]', () => {
+      if (!toggle || !biography) return;
       const expanded = toggle.getAttribute('aria-expanded') !== 'true';
       biography.classList.toggle('person-profile__biography-text--expanded', expanded);
       toggle.setAttribute('aria-expanded', String(expanded));

@@ -27,7 +27,15 @@ import { FilmFeed } from '../../components/film-feed/FilmFeed.js';
 import { ViewToggle } from '../../components/view-toggle/ViewToggle.js';
 import { Skeleton } from '../../components/skeleton/Skeleton.js';
 import { EmptyState } from '../../components/empty-state/EmptyState.js';
-import { CatalogFilters } from '../../components/catalog-filters/CatalogFilters.js';
+import {
+  CatalogFilters,
+  type FilterProps,
+} from '../../components/catalog-filters/CatalogFilters.js';
+import type { PageProps } from '../../app/router.js';
+import { readContentPreferences } from '../../services/content-preferences.js';
+import { visibleContent } from '../../services/content-preferences.js';
+import { CatalogPager } from '../../services/catalog-pager.js';
+import { notify } from '../../services/notice.js';
 
 const template = await loadAssets({ template: templateSource });
 const snapshots = new Map<string, number>();
@@ -77,43 +85,53 @@ const GENRE_ORDER = [
 ];
 
 /** Каталог с состоянием фильтров в URL и восстановлением загруженных карточек. */
-export class CatalogPage extends Component {
+export class CatalogPage extends Component<PageProps> {
   static template = template;
   #phase: 'loading' | 'ready' | 'empty' | 'error' = 'loading';
   #state: FilterState;
   #films: Film[] = [];
   #results: Film[] = [];
   #ratings: CatalogRatings = new Map();
-  #panel: CatalogFilters = null;
-  #feed: FilmFeed;
+  #panel: CatalogFilters | null = null;
+  #feed!: FilmFeed;
   #view: string;
   #fresh = false;
   #error: unknown;
   #key: string;
-  #visible = 40;
+  #visible = 20;
   #ratingController = new AbortController();
   #wantedRatings = new Set<number>();
+  #pager: CatalogPager | undefined;
+  #filtersRequest: AbortController | null = null;
+  #filtersAnchor: HTMLElement | null = null;
+  #top = false;
   #ratingQueue = Promise.resolve();
 
-  constructor(props) {
+  constructor(props: PageProps) {
     super(props);
     this.#state = readCatalogFilters(props.query);
+    if (!props.query.has('sort')) this.#state.sort = readContentPreferences().sort;
+    this.#top = props.query.get('top') === '250';
+    if (this.#top) this.#state.sort = 'rating';
     const view = props.query.get('view') || readJson(StorageKey.CATALOG_VIEW, 'grid');
     this.#view = view === 'list' ? 'list' : 'grid';
-    this.#key = `${props.type}?${catalogQuery(this.#state)}`;
-    this.#visible = snapshots.get(this.#key) || 40;
+    this.#key = `${props.type}?${catalogQuery(this.#state)}${this.#top ? '&top=250' : ''}`;
+    this.#visible = snapshots.get(this.#key) || 20;
   }
 
   context() {
-    const section = SECTIONS[this.props.type];
-    const tags = catalogFilterTags(this.#state);
+    const section = this.#section();
+    const tags = catalogFilterTags(this.#state, this.#genres());
     return {
       ...section,
       ready: this.#phase === 'ready',
-      count: `${this.#results.length !== this.#films.length ? `${this.#results.length} из ` : ''}${countLabel(this.#films.length, section.forms)}`,
+      phase: this.#phase,
+      failed: this.#phase === 'error',
+      count: this.#count(),
       activeCount: catalogFilterCount(this.#state),
       tags,
-      sortLabel: CATALOG_SORTS.find((sort) => sort.value === this.#state.sort).label,
+      sortLabel:
+        CATALOG_SORTS.find((sort) => sort.value === this.#state.sort)?.label || 'По умолчанию',
       yearLabel:
         this.#state.yearFrom || this.#state.yearTo
           ? `${this.#state.yearFrom || '…'}–${this.#state.yearTo || '…'}`
@@ -132,7 +150,7 @@ export class CatalogPage extends Component {
   }
 
   onRender() {
-    const section = SECTIONS[this.props.type];
+    const section = this.#section();
     document.title = `${section.title} | Frame`;
     if (this.#phase === 'loading') {
       this.insert('state', new Skeleton({ variant: 'catalog' }));
@@ -142,10 +160,12 @@ export class CatalogPage extends Component {
       return;
     }
     if (this.#phase === 'error') {
+      this.insert('error-skeleton', new Skeleton({ variant: 'catalog' }));
       this.insert(
         'state',
         new EmptyState({
           variant: 'error',
+          requestError: true,
           title:
             needsCatalogRatings(this.#state) && this.#films.length
               ? 'Не удалось загрузить рейтинги'
@@ -183,6 +203,13 @@ export class CatalogPage extends Component {
         'feed',
         new FilmFeed({
           films: this.#results,
+          pager: this.#pager,
+          accept: (film) => film.type === this.props.type,
+          onFilmsChange: (films) => {
+            this.#films = films;
+            this.#results = films;
+            this.find('[data-catalog-count]').textContent = this.#count();
+          },
           title: section.title,
           heading: false,
           infinite: true,
@@ -195,7 +222,7 @@ export class CatalogPage extends Component {
           onVisibleChange: (visible) => {
             this.#visible = visible;
             this.#saveVisible();
-            if (matchMedia('(max-width: 767px)').matches) this.#loadVisibleRatings();
+            this.#loadVisibleRatings();
           },
         }),
       );
@@ -220,12 +247,10 @@ export class CatalogPage extends Component {
       this.#removeFilter(button.dataset.removeFilter),
     );
     this.delegate('click', '[data-quick-genre]', (event, button) => {
+      const genre = button.dataset.quickGenre;
+      if (!genre) return;
       const state = structuredClone(this.#state);
-      selectGenre(
-        state,
-        button.dataset.quickGenre,
-        genreSelection(state, button.dataset.quickGenre) === 1 ? 0 : 1,
-      );
+      selectGenre(state, genre, genreSelection(state, genre) === 1 ? 0 : 1);
       this.#apply(state);
     });
     this.delegate('click', '[data-all-genres]', () => {
@@ -247,21 +272,37 @@ export class CatalogPage extends Component {
       window,
     );
     if (this.props.restoreScroll != null) {
-      const frame = requestAnimationFrame(() => window.scrollTo(0, this.props.restoreScroll));
+      const scrollY = this.props.restoreScroll;
+      const frame = requestAnimationFrame(() => window.scrollTo(0, scrollY));
       this.watch(() => cancelAnimationFrame(frame));
     }
   }
 
   async #load(signal: AbortSignal) {
     try {
-      const films = await loadCatalog({ fresh: this.#fresh });
+      const paged = catalogFilterCount(this.#state) === 0 && this.#state.sort === 'catalog';
+      let films: Film[];
+      if (paged) {
+        this.#pager = new CatalogPager({ fresh: this.#fresh });
+        await this.#pager.loadTo(
+          this.#visible,
+          (items) => visibleContent(items).filter((film) => film.type === this.props.type),
+          signal,
+        );
+        films = visibleContent(this.#pager.films);
+      } else films = await loadCatalog({ fresh: this.#fresh, signal });
       if (signal.aborted) return;
       this.#films = films.filter((film) => film.type === this.props.type);
       if (needsCatalogRatings(this.#state))
         this.#ratings = await loadCatalogRatings(this.#films, { signal });
       if (signal.aborted) return;
       this.#results = filterCatalog(this.#films, this.#state, this.#ratings);
-      this.#phase = this.#films.length ? 'ready' : 'empty';
+      if (this.#top)
+        this.#results = this.#results
+          .filter((film) => (this.#ratings.get(film.id)?.votes ?? 0) > 0)
+          .slice(0, 250);
+      this.#phase =
+        this.#films.length || catalogFilterCount(this.#state) || this.#top ? 'ready' : 'empty';
     } catch (error) {
       if (signal.aborted) return;
       this.#error = error;
@@ -280,16 +321,43 @@ export class CatalogPage extends Component {
     });
   }
 
-  #openFilters(tab: string, anchor: HTMLElement) {
+  async #openFilters(tab: string | undefined, anchor: HTMLElement) {
+    if (!tab || !['genres', 'year', 'rating', 'age', 'sort', 'all'].includes(tab)) return;
     this.#panel?.destroy();
+    this.#filtersRequest?.abort();
+    this.#filtersAnchor?.setAttribute('aria-busy', 'false');
+    const controller = new AbortController();
+    this.#filtersRequest = controller;
+    this.#filtersAnchor = anchor;
+    this.watch(() => controller.abort());
+    anchor.setAttribute('aria-busy', 'true');
+    let films = this.#films;
+    try {
+      if (this.#pager && !this.#pager.complete)
+        films = (await loadCatalog({ signal: controller.signal })).filter(
+          (film) => film.type === this.props.type,
+        );
+      if (controller.signal.aborted) return;
+    } catch {
+      if (!controller.signal.aborted) {
+        anchor.setAttribute('aria-busy', 'false');
+        notify('Не удалось загрузить варианты фильтра. Нажмите ещё раз, чтобы повторить.', {
+          type: 'error',
+        });
+      }
+      return;
+    }
+    anchor.setAttribute('aria-busy', 'false');
     anchor.setAttribute('aria-expanded', 'true');
     this.#panel = new CatalogFilters({
-      tab,
+      tab: tab as FilterProps['tab'],
       anchor,
       state: this.#state,
-      films: this.#films,
+      films,
       ratings: this.#ratings,
-      genres: this.#genres(),
+      genres: [...new Set(films.flatMap((film) => film.genres))].sort((a, b) =>
+        a.localeCompare(b, 'ru'),
+      ),
       onApply: (state) => this.#apply(state),
       onClose: () => {
         anchor.setAttribute('aria-expanded', 'false');
@@ -300,11 +368,13 @@ export class CatalogPage extends Component {
 
   #apply(state: FilterState) {
     const query = catalogQuery(state);
+    if (this.#top && state.sort === 'rating') query.set('top', '250');
     query.set('view', this.#view);
     this.props.navigate(`${this.props.type === 'series' ? '/series' : '/films'}?${query}`);
   }
 
-  #removeFilter(key: string) {
+  #removeFilter(key: string | undefined) {
+    if (!key) return;
     const state = structuredClone(this.#state);
     if (key.startsWith('genre:')) delete state.genres[key.slice(6)];
     if (key === 'artistic') state.allGenres = false;
@@ -321,7 +391,7 @@ export class CatalogPage extends Component {
   #setView(view: string) {
     this.#view = view;
     writeJson(StorageKey.CATALOG_VIEW, view);
-    this.#feed?.grid.setView(view);
+    this.#feed?.setView(view);
     const query = new URLSearchParams(location.search);
     query.set('view', view);
     history.replaceState(history.state, '', `${location.pathname}?${query}`);
@@ -333,10 +403,29 @@ export class CatalogPage extends Component {
     this.update();
   }
 
+  #count() {
+    const section = SECTIONS[this.props.type || 'movie'];
+    const count = countLabel(this.#films.length, section.forms);
+    if (this.#pager?.complete === false) return `Загружено: ${count}`;
+    return `${this.#results.length !== this.#films.length ? `${this.#results.length} из ` : ''}${count}`;
+  }
+
+  #section() {
+    const section = SECTIONS[this.props.type || 'movie'];
+    return this.#top
+      ? {
+          ...section,
+          title: 'Топ-250 Frame',
+          note: 'Фильмы каталога с наибольшей средней оценкой пользователей Frame.',
+        }
+      : section;
+  }
+
   #saveVisible() {
     snapshots.delete(this.#key);
     snapshots.set(this.#key, this.#visible);
-    if (snapshots.size > 10) snapshots.delete(snapshots.keys().next().value);
+    const oldest = snapshots.keys().next().value;
+    if (snapshots.size > 10 && oldest !== undefined) snapshots.delete(oldest);
   }
 
   #loadVisibleRatings() {

@@ -4,6 +4,11 @@ import { Component } from '../../core/component.js';
 import { eventBus } from '../../core/event-bus.js';
 import { Toast } from './Toast.js';
 import { loadAssets } from '../../core/assets.js';
+import type { Notice } from '../../services/notice.js';
+interface ToastEntry {
+  toast: Toast;
+  timer: ReturnType<typeof setTimeout> | undefined;
+}
 
 const template = await loadAssets({ template: templateSource });
 
@@ -12,13 +17,13 @@ const DURATION = { error: 8000, info: 4000, success: 4000 };
 export class ToastStack extends Component {
   static template = template;
 
-  #shown = new Map();
+  #shown = new Map<string, ToastEntry>();
 
   onRender() {
-    this.watch(eventBus.on('notice', (notice) => this.#show(notice)));
+    this.watch(eventBus.on<Notice>('notice', (notice) => this.#show(notice)));
   }
 
-  #show(notice) {
+  #show(notice: Notice) {
     const key = `${notice.type}:${notice.message}`;
     const existing = this.#shown.get(key);
     if (existing) {
@@ -30,7 +35,7 @@ export class ToastStack extends Component {
       this.element,
       new Toast({ ...notice, onClose: () => this.#close(key) }),
     );
-    const entry = { toast, timer: null };
+    const entry: ToastEntry = { toast, timer: undefined };
     this.#shown.set(key, entry);
     this.#restartTimer(entry, notice.type);
 
@@ -38,7 +43,7 @@ export class ToastStack extends Component {
     this.element.showPopover();
   }
 
-  #restartTimer(entry, type) {
+  #restartTimer(entry: ToastEntry, type: Notice['type']) {
     clearTimeout(entry.timer);
     entry.timer = setTimeout(
       () => entry.toast.props.onClose(),
@@ -46,7 +51,7 @@ export class ToastStack extends Component {
     );
   }
 
-  async #close(key) {
+  async #close(key: string) {
     const entry = this.#shown.get(key);
     if (!entry) return;
     clearTimeout(entry.timer);
@@ -56,7 +61,7 @@ export class ToastStack extends Component {
     if (!this.#shown.size && this.element.matches(':popover-open')) this.element.hidePopover();
   }
 
-  #leave(element) {
+  #leave(element: HTMLElement) {
     if (!element || matchMedia('(prefers-reduced-motion: reduce)').matches) return null;
     const keyframes = [{ opacity: 1 }, { opacity: 0, transform: 'translateX(16px)' }];
     return element.animate(keyframes, { duration: 200, easing: 'ease-in', fill: 'forwards' })

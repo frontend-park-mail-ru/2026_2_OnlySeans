@@ -2,8 +2,20 @@
   min-width: 0;
   padding-top: 16px;
 }
+.person-page > .empty-state--request-error {
+  margin-top: 173px;
+}
 
 @media (max-width: 767px) {
+  @supports (scrollbar-gutter: auto) and (scrollbar-width: none) {
+    html:has(.person-page) {
+      scrollbar-gutter: auto;
+      scrollbar-width: none;
+    }
+  }
+  .person-page > .empty-state--request-error {
+    margin-top: 24px;
+  }
   .person-page {
     padding-top: 0;
   }
