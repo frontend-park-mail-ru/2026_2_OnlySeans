@@ -1,4 +1,3 @@
-import { UpcomingPage } from '../pages/upcoming/UpcomingPage.js';
 import { HomePage } from '../pages/home/HomePage.js';
 import { CatalogPage } from '../pages/catalog/CatalogPage.js';
 import { CollectionsPage } from '../pages/collections/CollectionsPage.js';
@@ -22,7 +21,23 @@ export const routes: Route[] = [
   { path: '/series', page: CatalogPage, props: { type: 'series' } },
   { path: '/search', page: SearchPage },
   { path: '/genres', page: GenresPage },
-  { path: '/upcoming', page: UpcomingPage },
+  {
+    path: '/upcoming',
+    load: () => import('../pages/upcoming/UpcomingPage.js').then((module) => module.UpcomingPage),
+  },
+  { path: '/map', load: () => import('../pages/map/MapPage.js').then((module) => module.MapPage) },
+  {
+    path: '/settings',
+    load: () => import('../pages/settings/SettingsPage.js').then((module) => module.SettingsPage),
+  },
+  {
+    path: '/wheel',
+    load: () => import('../pages/wheel/WheelPage.js').then((module) => module.WheelPage),
+  },
+  {
+    path: '/wheel/history',
+    load: () => import('../pages/wheel/WheelPage.js').then((module) => module.WheelPage),
+  },
   { path: '/collections', page: CollectionsPage },
   { path: '/collections/:id', page: CollectionPage },
   { path: '/film/:id', page: FilmPage },

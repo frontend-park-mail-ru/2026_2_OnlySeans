@@ -1,0 +1,40 @@
+<dialog class='modal wheel-winner' aria-labelledby='wheel-winner-title'>
+  <button class='wheel-winner__close' type='button' data-close aria-label='Закрыть'>{{icon
+      'close'
+    }}</button>
+  <div class='wheel-winner__body'>
+    <div class='wheel-winner__poster'>
+      {{#if film.poster}}<img src='{{film.poster}}' alt='{{film.title}}' />{{/if}}
+      <span>Шанс {{chance}} %</span>
+    </div>
+    <div class='wheel-winner__info'>
+      <span class='wheel-page__badge'>Колесо решило</span>
+      <h2 id='wheel-winner-title'>{{film.title}}</h2>
+      <p>{{film.originalTitle}} · {{film.year}}</p>
+      {{#if rating}}<p>★ {{rating}} · оценка зрителей</p>{{/if}}
+      <div class='wheel-winner__meta'><span>{{join film.genres ', '}}</span>{{#if
+          film.duration
+        }}<span>{{film.duration}} мин</span>{{/if}}{{#unless (eq film.ageLimit null)}}<span
+          >{{film.ageLimit}}+</span>{{/unless}}</div>
+      <p class='wheel-winner__description'>{{film.description}}</p>
+      <div class='wheel-winner__actions'>
+        <a class='wheel-page__primary' href='/film/{{film.id}}' data-link>О фильме</a>
+        <button type='button' data-replay>Перекрутить</button>
+        <button type='button' data-save>{{#if saved}}В списке{{else}}Смотреть позже{{/if}}</button>
+      </div>
+      <div class='wheel-winner__participants' aria-label='Участники колеса'>
+        {{#each participants}}<div>{{#if film.poster}}<img
+                src='{{film.poster}}'
+                alt='{{film.title}}'
+              />{{else}}<span>{{film.title}}</span>{{/if}}<small>{{chance}} %</small></div>{{/each}}
+      </div>
+      <label class='wheel-winner__share'>Поделиться результатом<input
+          data-share
+          readonly
+          value='{{share}}'
+        /></label>
+      <button type='button' data-copy>Копировать ссылку</button>
+      <button type='button' data-share-open>Поделиться результатом</button>
+    </div>
+  </div>
+</dialog>

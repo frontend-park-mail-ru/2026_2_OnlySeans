@@ -1,1 +1,49 @@
-<div class='upcoming-page'><div data-slot='state'></div></div>
+<div class='upcoming-page'>
+  <div data-slot='heading'></div>
+  <div class='upcoming-page__regions'><span id='release-region-label'>Дата выхода</span><nav
+      aria-labelledby='release-region-label'
+    >{{#each regions}}<a
+          href='{{href}}'
+          data-link
+          aria-current='{{current}}'
+        >{{label}}</a>{{/each}}</nav></div>
+  <p class='upcoming-page__notice' role='status'>Даты премьер
+    {{regionLabel}}
+    пока недоступны. Напоминания о выходе фильмов ещё не подключены.</p>
+  <div class='upcoming-page__toolbar'>
+    <div class='upcoming-page__months'>{{#if previous}}<a
+          href='{{previousHref}}'
+          data-link
+          aria-label='Предыдущий месяц'
+        >{{icon 'arrow-left'}}</a>{{/if}}<h2>{{title}}</h2>{{#if next}}<a
+          href='{{nextHref}}'
+          data-link
+          aria-label='Следующий месяц'
+        >{{icon 'arrow-right'}}</a>{{/if}}</div>
+    <label class='upcoming-page__picker'><span class='visually-hidden'>Месяц</span><input
+        type='month'
+        name='month'
+        min='1900-01'
+        max='2099-12'
+        aria-describedby='month-error'
+      /></label>
+    <nav aria-label='Вид расписания'>{{#each views}}<a
+          href='{{href}}'
+          data-link
+          aria-current='{{current}}'
+        >{{label}}</a>{{/each}}</nav>
+  </div>
+  <p id='month-error' data-month-error aria-live='polite'></p>
+  {{#unless list}}<div
+      class='upcoming-page__calendar'
+      aria-label='Календарь премьер {{regionLabel}} — даты пока недоступны'
+    >
+      {{#each weekdays}}<span class='upcoming-page__weekday'>{{this}}</span>{{/each}}
+      {{#each days}}<div
+          class='upcoming-page__day'
+          data-current='{{current}}'
+          data-today='{{today}}'
+        ><time datetime='{{date}}'>{{day}}</time></div>{{/each}}
+    </div>{{/unless}}
+  <div data-slot='state'></div>
+</div>

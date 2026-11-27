@@ -1,0 +1,244 @@
+<div class='wheel-page'>
+  <header class='wheel-page__mobile-heading'><a
+      href='{{backHref}}'
+      data-link
+      aria-label='Назад'
+    ><img src='/src/assets/images/wheel/mobile-back.svg' alt='' /></a><h1>{{#if historyPage}}История
+        вращений{{else}}Что смотрим сегодня?{{/if}}</h1>{{#unless historyPage}}<a
+        href='/wheel/history'
+        data-link
+        aria-label='История вращений'
+      ><img src='/src/assets/images/wheel/mobile-history.svg' alt='' /></a>{{/unless}}</header>
+  <div class='wheel-page__heading'>
+    <div data-slot='heading'></div>
+    {{#if historyPage}}<a href='/wheel' data-link>Вернуться к колесу</a>{{else}}<a
+        href='/wheel/history'
+        data-link
+      >История вращений · {{history.length}}</a>{{/if}}
+  </div>
+  {{#if loading}}<p class='wheel-page__status' role='status'>Загружаем фильмы…</p>{{/if}}
+  {{#if error}}<div class='wheel-page__status' role='alert'><p>Не удалось загрузить фильмы.</p><button
+        type='button'
+        data-retry
+      >Повторить</button></div>{{/if}}
+  {{#if ready}}
+    {{#if historyPage}}
+      {{#if history.length}}<p class='wheel-page__intro'>Последние 50 результатов · на этом
+          устройстве</p>{{/if}}
+      <div class='wheel-page__history'>
+        {{#each history}}
+          {{#if group}}<h2 class='wheel-page__history-day'>{{group}}</h2>{{/if}}
+          <article class='wheel-page__history-row'>
+            {{#if film.poster}}<img src='{{film.poster}}' alt='' />{{else}}<span
+                class='wheel-page__history-placeholder'
+                aria-hidden='true'
+              >—</span>{{/if}}
+            <div><span>{{this.date}}</span><h2>{{#if film}}{{film.title}}{{else}}Фильм больше
+                  недоступен{{/if}}</h2><p>{{source}} · {{entries.length}} участников</p></div>
+            <div class='wheel-page__history-actions'><button
+                type='button'
+                data-history-replay='{{index}}'
+              >Повторить</button>
+              <button type='button' data-history-share='{{index}}'>Поделиться</button>{{#if
+                watched
+              }}<span>Посмотрено</span>{{/if}}</div>
+          </article>
+        {{else}}
+          <div class='wheel-page__empty-history'><h2>Пока ни одного вращения</h2><p>Выберите фильмы
+              и крутите колесо. Последние 50 результатов сохранятся на этом устройстве.</p><a
+              class='wheel-page__primary'
+              href='/wheel'
+              data-link
+            >Выбрать фильм на вечер</a></div>
+        {{/each}}
+      </div>
+    {{else}}
+      <p class='wheel-page__intro wheel-page__intro--setup'>Соберите колесо из своих списков — и
+        пусть решит случай</p>
+      <div class='wheel-page__layout'>
+        <section class='wheel-page__panel' aria-label='Настройка участников'>
+          <h2>Какие фильмы включить</h2>
+          <div class='wheel-page__sources'>
+            {{#each sources}}<button
+                type='button'
+                data-source='{{value}}'
+                aria-pressed='{{active}}'
+              >{{label}} · {{count}}</button>{{/each}}
+          </div>
+          <label class='wheel-page__exclude'><input name='excludeWatched' type='checkbox' />Без
+            просмотренного</label>
+          <h2>Как распределить шансы</h2>
+          <div class='wheel-page__modes'>
+            {{#each modes}}<button
+                type='button'
+                data-mode='{{value}}'
+                aria-pressed='{{active}}'
+              >{{label}}</button>{{/each}}
+          </div>
+          <p class='wheel-page__mode-hint'>{{modeHint}}</p>
+          <div class='wheel-page__count'><strong>Фильмы · {{count}} / 16</strong><span
+            >Шанс</span></div>
+          <div class='wheel-page__participants'>
+            {{#each participants}}
+              <div class='wheel-page__participant' data-entry='{{id}}'>
+                {{#if film.poster}}<img src='{{film.poster}}' alt='' />{{else}}<span
+                    class='wheel-page__no-poster'
+                  ></span>{{/if}}
+                <div class='wheel-page__film-name'><span>{{film.title}}</span><small>{{film.year}}
+                    · ★
+                    {{rating}}</small></div>
+                <span class='wheel-page__chance'>{{chance}} %</span>
+                {{#if manual}}<div class='wheel-page__stepper'><button
+                      type='button'
+                      data-adjust='-1'
+                      data-id='{{id}}'
+                      aria-label='Уменьшить вес: {{film.title}}'
+                    >−</button><span>{{weight}}</span><button
+                      type='button'
+                      data-adjust='1'
+                      data-id='{{id}}'
+                      aria-label='Увеличить вес: {{film.title}}'
+                    >+</button></div>{{/if}}
+                <button
+                  type='button'
+                  data-remove='{{id}}'
+                  aria-label='Убрать: {{film.title}}'
+                >×</button>
+              </div>
+            {{else}}<p class='wheel-page__status'>В этом источнике пока нет фильмов.</p>{{/each}}
+          </div>
+          <button class='wheel-page__add' type='button' data-select>+ Добавить фильм из каталога</button>
+          <div class='wheel-page__preferences'>
+            <label>Режим<select name='variant'><option value='classic'>Классика</option><option
+                  value='elimination'
+                >Выбывание</option></select></label>
+            <label>Скорость<select name='speed'><option value='fast'>Быстро · 2 с</option><option
+                  value='medium'
+                  selected
+                >Средне · 4 с</option><option value='long'>Долго · 7 с</option></select></label>
+          </div>
+        </section>
+        <section class='wheel-page__visual' aria-label='Колесо выбора'>
+          <div class='wheel-page__summary'>
+            <div><span class='wheel-page__source-label'>{{sourceLabel}}</span><h2>{{count}}
+                {{plural count 'фильм' 'фильма' 'фильмов'}}
+                на вечер</h2></div>
+            <button type='button' data-settings-open aria-haspopup='dialog'>{{icon
+                'settings'
+              }}Настроить</button>
+          </div>
+          <div class='wheel-page__stage'>
+            <div class='wheel-page__wheel'>
+              <img class='wheel-page__ring' src='{{assets.ring}}' alt='' />
+              {{#each lamps}}<img
+                  class='wheel-page__lamp'
+                  src='{{src}}'
+                  style='left: {{x}}px; top: {{y}}px'
+                  alt=''
+                />{{/each}}
+              <svg
+                class='wheel-page__sectors'
+                viewBox='0 0 488 488'
+                role='img'
+                aria-label='Шансы участников пропорциональны размерам секторов'
+              >
+                <defs>{{#each participants}}<clipPath id='{{clipId}}'><path
+                        d='{{path}}'
+                      ></path></clipPath>{{/each}}</defs>
+                <g class='wheel-page__rotor'>
+                  {{#each participants}}
+                    <path d='{{path}}' fill='{{color}}' stroke='#171a21' stroke-width='2'></path>
+                    <text
+                      class='wheel-page__sector-title'
+                      data-has-poster='{{hasPoster}}'
+                      x='{{labelX}}'
+                      y='{{labelY}}'
+                      transform='rotate({{rotation}} {{labelX}} {{labelY}})'
+                      text-anchor='middle'
+                      dominant-baseline='middle'
+                    >{{label}}</text>
+                    {{#if film.poster}}<g clip-path='url(#{{clipId}})'><image
+                          class='wheel-page__sector-poster'
+                          href='{{film.poster}}'
+                          x='{{posterX}}'
+                          y='{{posterY}}'
+                          width='{{posterWidth}}'
+                          height='{{posterHeight}}'
+                          preserveAspectRatio='xMidYMid slice'
+                        ></image></g>{{/if}}
+                  {{/each}}
+                </g>
+              </svg>
+              <img class='wheel-page__vignette' src='{{assets.vignette}}' alt='' />
+              <img class='wheel-page__hub' src='{{assets.hub}}' alt='' />
+              <button
+                class='wheel-page__hub-trigger'
+                type='button'
+                data-spin
+                aria-label='Крутить колесо'
+              ></button>
+              <img class='wheel-page__hub-button' src='{{assets.button}}' alt='' />
+              <img class='wheel-page__play' src='{{assets.play}}' alt='' />
+              <img class='wheel-page__pointer' src='{{assets.pointer}}' alt='' />
+              <img class='wheel-page__glint' src='{{assets.glint}}' alt='' />
+            </div>
+          </div>
+          <div class='wheel-page__controls'>
+            {{#if enough}}<button class='wheel-page__primary' type='button' data-spin><img
+                  src='{{assets.spin}}'
+                  alt=''
+                />Крутить колесо</button>{{else}}<button
+                class='wheel-page__primary'
+                type='button'
+                data-select
+              >Добавить фильмы</button>{{/if}}
+            <p class='wheel-page__spin-status' role='status' data-spin-status>{{#unless enough}}Для
+                вращения нужны хотя бы два фильма{{/unless}}</p>
+            <div class='wheel-page__secondary'><button
+                class='wheel-page__posters'
+                type='button'
+                data-posters-toggle
+              >Постеры на колесе</button><button type='button' data-settings-open>{{modeLabel}}
+                ·
+                {{variantLabel}}</button></div>
+          </div>
+        </section>
+      </div>
+      <dialog
+        class='modal wheel-page__settings'
+        data-settings
+        aria-labelledby='wheel-settings-title'
+      ><div class='modal__header'><h2 class='modal__title' id='wheel-settings-title'>Настройка
+            колеса</h2><button
+            class='modal__close'
+            type='button'
+            data-settings-close
+            aria-label='Готово'
+          >{{icon 'close'}}</button></div><div data-settings-panel></div><div
+          class='modal__actions'
+        ><button
+            class='modal__button modal__button--primary'
+            type='button'
+            data-settings-close
+          >Готово</button></div></dialog>
+      <dialog class='modal wheel-page__picker' data-picker aria-labelledby='wheel-picker-title'>
+        <div class='wheel-page__picker-heading'><h2 id='wheel-picker-title'>Добавить фильмы</h2><button
+            type='button'
+            data-picker-close
+            aria-label='Готово'
+          >Готово</button></div>
+        <label>Название<input type='search' data-picker-search autocomplete='off' /></label>
+        <p data-picker-count>Выбрано: {{count}}</p>
+        <p class='wheel-page__picker-empty' data-picker-empty role='status' hidden>Ничего не
+          найдено. Попробуйте другое название.</p>
+        <div class='wheel-page__picker-list'>
+          {{#each films}}<label data-picker-film data-title='{{searchTitle}}'><input
+                type='checkbox'
+                data-pick='{{id}}'
+              />{{#if poster}}<img src='{{poster}}' alt='' loading='lazy' />{{/if}}<span
+              >{{title}}<small>{{year}}</small></span></label>{{/each}}
+        </div>
+      </dialog>
+    {{/if}}
+  {{/if}}
+</div>

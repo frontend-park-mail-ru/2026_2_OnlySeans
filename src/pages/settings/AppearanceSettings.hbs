@@ -1,0 +1,84 @@
+<div class='settings-appearance'>
+  <section class='settings-page__card' aria-labelledby='appearance-title'>
+    <div class='settings-page__theme-head'>
+      <div><h2 id='appearance-title'>Тема оформления</h2><p>Как сайт выглядит на этом устройстве</p></div>
+      <div class='settings-page__preview' aria-hidden='true'>
+        <div class='settings-page__preview-sidebar'><span></span><span></span><span></span></div>
+        <div class='settings-page__preview-content'><i></i><div>{{#each posters}}<img
+                src='{{this}}'
+                alt=''
+              />{{/each}}</div><b></b></div>
+      </div>
+    </div>
+    <fieldset class='settings-page__palette'><legend>Акцентный цвет</legend><p>Кнопки, ссылки,
+        активные элементы</p><div class='settings-page__swatches'>
+        {{#each accents}}<label class='settings-page__swatch'><input
+              type='radio'
+              name='accent'
+              value='{{value}}'
+            /><span class='settings-page__color' style='--swatch: {{color}}'></span><span
+            >{{label}}</span></label>{{/each}}
+      </div></fieldset>
+    <fieldset class='settings-page__palette'><legend>Фон</legend><p>Однотонный или кино-тема</p><div
+        class='settings-page__swatches'
+      >
+        {{#each backgrounds}}<label
+            class='settings-page__swatch settings-page__swatch--background'
+          ><input type='radio' name='background' value='{{value}}' /><span
+              class='settings-page__color'
+              style='--swatch: {{color}}'
+            ></span><span>{{label}}</span></label>{{/each}}
+      </div></fieldset>
+    <div class='settings-page__cinema'><p>Кино-темы</p><button
+        data-cinema
+        type='button'
+        aria-pressed='{{eq value.cinema "coraline"}}'
+        title='Включить или выключить тему Коралина'
+      ><img src='{{coraline}}' alt='Предпросмотр темы Коралина' /></button><span
+      >Коралина</span></div>
+  </section>
+  <section class='settings-page__card' aria-labelledby='interface-title'>
+    <h2 id='interface-title'>Интерфейс</h2>
+    <label class='settings-page__row'><span>Зернистость фона<small>Плёночное зерно поверх фона, как
+          на кинокадре</small></span><input
+        class='settings-page__switch'
+        type='checkbox'
+        role='switch'
+        name='grain'
+      /></label>
+    <div class='settings-page__row'><span id='size-label'>Размер текста</span><div
+        class='settings-page__segmented'
+        role='group'
+        aria-labelledby='size-label'
+      >{{#each sizes}}<label><input type='radio' name='textSize' value='{{value}}' /><span
+            >{{label}}</span></label>{{/each}}</div></div>
+    <div class='settings-page__row'><label for='settings-transparency'>Прозрачность блоков<small
+        >Насколько сквозь карточки и панели виден фон</small></label><div
+        class='settings-page__range'
+      ><span>Плотные</span><input
+          id='settings-transparency'
+          name='transparency'
+          type='range'
+          min='0'
+          max='80'
+          step='1'
+          value='{{value.transparency}}'
+        /><span>Стеклянные</span><output for='settings-transparency'>{{value.transparency}}
+          %</output></div></div>
+    <label class='settings-page__row'><span>Компактный каталог<small>Меньше отступов между
+          карточками</small></span><input
+        class='settings-page__switch'
+        role='switch'
+        type='checkbox'
+        name='compact'
+      /></label>
+    <label class='settings-page__row'><span>Уменьшить анимацию<small>Отключает увеличение постеров и
+          плавные переходы</small></span><input
+        class='settings-page__switch'
+        role='switch'
+        type='checkbox'
+        name='reduceMotion'
+      /></label>
+  </section>
+
+</div>

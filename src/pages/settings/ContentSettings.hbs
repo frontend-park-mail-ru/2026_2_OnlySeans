@@ -1,0 +1,48 @@
+<div>
+  <section class='settings-page__card' aria-labelledby='content-title'>
+    <h2 id='content-title'>Контент</h2>
+    <label class='settings-page__row'><span>Скрывать просмотренное в рекомендациях</span><input
+        class='settings-page__switch'
+        type='checkbox'
+        role='switch'
+        name='hideWatchedRecommendations'
+      /></label>
+    <label class='settings-page__row'><span>Скрывать фильмы для взрослых (18+)<small>В каталоге,
+          поиске и подборках на этом устройстве</small></span><input
+        class='settings-page__switch'
+        type='checkbox'
+        role='switch'
+        name='hideAdults'
+      /></label>
+    <label class='settings-page__row'>
+      <span>Скрывать спойлеры в отзывах<small>Текст с пометкой «спойлер» будет размыт до клика</small></span>
+      <input class='settings-page__switch' type='checkbox' role='switch' name='hideSpoilers' />
+    </label>
+  </section>
+  <section class='settings-page__card' aria-labelledby='display-title'>
+    <h2 id='display-title'>Отображение</h2>
+    <div class='settings-page__row'>
+      <span id='titles-label'>Названия фильмов</span>
+      <div class='settings-page__segmented' role='group' aria-labelledby='titles-label'>
+        {{#each titles}}
+          <label><input type='radio' name='titles' value='{{value}}' /><span
+            >{{label}}</span></label>
+        {{/each}}
+      </div>
+    </div>
+    <div class='settings-page__row'>
+      <span id='view-label'>Вид каталога по умолчанию</span>
+      <div class='settings-page__segmented' role='group' aria-labelledby='view-label'>
+        {{#each views}}
+          <label><input type='radio' name='view' value='{{value}}' /><span>{{label}}</span></label>
+        {{/each}}
+      </div>
+    </div>
+    <label class='settings-page__row'>
+      <span>Сортировка по умолчанию</span>
+      <select class='settings-page__select' name='sort'>
+        {{#each sorts}}<option value='{{value}}'>{{label}}</option>{{/each}}
+      </select>
+    </label>
+  </section>
+</div>

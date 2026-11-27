@@ -1,0 +1,37 @@
+<dialog class='modal wheel-share' aria-labelledby='wheel-share-title'><div class='modal__header'><h2
+      class='modal__title'
+      id='wheel-share-title'
+    >Поделиться результатом</h2><button
+      class='modal__close'
+      type='button'
+      data-close
+      aria-label='Закрыть'
+    >{{icon 'close'}}</button></div><div class='wheel-share__preview'><div><span>ВЕЧЕР РЕШЁН</span><h3
+      >{{film.title}}</h3><p>Колесо выбрало из {{result.entries.length}} фильмов</p><strong
+      >Frame</strong></div>{{#if film.poster}}<img
+        src='{{film.poster}}'
+        alt=''
+      />{{/if}}</div><label class='wheel-winner__share'>Ссылка<input
+      data-url
+      readonly
+      value='{{url}}'
+    /></label><div class='modal__actions'><button
+      class='modal__button modal__button--primary'
+      type='button'
+      data-copy
+    >Копировать</button><button class='modal__button' type='button' data-download>Скачать картинку</button></div><nav
+    class='wheel-share__services'
+    aria-label='Поделиться в сервисе'
+  ><a href='{{telegram}}' target='_blank' rel='noopener noreferrer'>Telegram</a><a
+      href='{{whatsapp}}'
+      target='_blank'
+      rel='noopener noreferrer'
+    >WhatsApp</a><a href='{{vk}}' target='_blank' rel='noopener noreferrer'>VK</a></nav><label
+    class='wheel-page__exclude'
+  ><input name='participants' type='checkbox' />Показать все фильмы и шансы</label><div
+    data-participants
+    hidden
+  >{{#each participants}}<p>{{title}} · {{chance}} %</p>{{/each}}</div><p
+    role='status'
+    data-status
+  ></p></dialog>
