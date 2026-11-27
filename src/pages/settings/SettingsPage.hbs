@@ -1,0 +1,23 @@
+<div class='settings-page'>
+  <div class='settings-page__mobile-toolbar'><a
+      href='{{backHref}}'
+      data-link
+      aria-label='Назад'
+    >{{icon 'arrow-left'}}</a><span>Настройки</span></div>
+  <div data-slot='heading'></div>
+  <p class='settings-page__intro'>Изменения применяются сразу и сохраняются на этом устройстве</p>
+  <nav class='settings-page__sections' aria-label='Разделы настроек'>
+    {{#each sections}}
+      {{#if enabled}}
+        <a class='settings-page__section' aria-current='{{current}}' href='{{href}}' data-link>
+          <img src='{{this.icon}}' alt='' />{{label}}
+        </a>
+      {{else}}
+        <button type='button' class='settings-page__section' disabled title='Скоро'>
+          <img src='{{this.icon}}' alt='' />{{label}}
+        </button>
+      {{/if}}
+    {{/each}}
+  </nav>
+  <div data-slot='panel'></div>
+</div>

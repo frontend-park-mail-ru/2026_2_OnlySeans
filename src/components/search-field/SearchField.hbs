@@ -1,0 +1,25 @@
+<form class='search-field' role='search'>
+  <button class='search-field__submit' type='submit' aria-label='Найти'>{{icon 'search'}}</button>
+  <input
+    class='search-field__input'
+    type='search'
+    name='q'
+    value='{{query}}'
+    placeholder='Поиск фильмов и актёров'
+    aria-label='Поиск фильмов и актёров'
+    maxlength='200'
+    autocomplete='off'
+    role='combobox'
+    aria-autocomplete='list'
+    aria-haspopup='listbox'
+    aria-expanded='false'
+    aria-controls='{{popupId}}'
+  />
+  <button
+    class='search-field__clear'
+    type='button'
+    data-search-clear
+    aria-label='Очистить поиск'
+  >{{icon 'close'}}</button>
+  <div class='search-field__suggestions' data-suggestions hidden></div>
+</form>

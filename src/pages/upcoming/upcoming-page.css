@@ -1,0 +1,208 @@
+.upcoming-page {
+  padding-top: 24px;
+}
+.upcoming-page__notice {
+  margin: 20px 0;
+  color: var(--text-muted);
+}
+.upcoming-page__regions,
+.upcoming-page__regions nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.upcoming-page__regions {
+  gap: 12px;
+  margin-top: 16px;
+}
+.upcoming-page__regions > span {
+  color: var(--text-muted);
+  font-size: var(--text-meta);
+}
+.upcoming-page__regions nav {
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid var(--border-glass);
+  border-radius: 999px;
+  background: var(--bg-input);
+}
+.upcoming-page__toolbar,
+.upcoming-page__months,
+.upcoming-page__toolbar nav {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.upcoming-page__toolbar {
+  margin: 24px 0 12px;
+  gap: 16px;
+}
+.upcoming-page__months h2 {
+  margin: 0;
+  font-size: 22px;
+  text-transform: capitalize;
+}
+.upcoming-page__toolbar nav {
+  margin-left: auto;
+}
+.upcoming-page__toolbar a,
+.upcoming-page__regions a,
+.upcoming-page__picker input {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid var(--border-glass);
+  border-radius: 999px;
+  background: var(--bg-input);
+  color: var(--text-main);
+  font: inherit;
+  text-decoration: none;
+}
+.upcoming-page__toolbar [aria-current='page'] {
+  background: var(--euphoria-amber);
+  color: var(--on-accent);
+}
+.upcoming-page__regions a {
+  min-width: 100px;
+  border-color: transparent;
+  background: transparent;
+  font-size: var(--text-meta);
+}
+.upcoming-page__regions [aria-current='page'] {
+  color: var(--on-accent);
+  background: var(--euphoria-amber);
+}
+.upcoming-page__calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid var(--border-glass);
+  border-radius: 24px;
+  background: var(--bg-card);
+}
+.upcoming-page__weekday {
+  padding: 0 8px 8px;
+  color: var(--text-muted);
+  font-size: 13px;
+}
+.upcoming-page__day {
+  min-height: 48px;
+  padding: 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: var(--bg-input);
+  font-size: 13px;
+}
+.upcoming-page__day[data-current='false'] {
+  opacity: 0.35;
+}
+.upcoming-page__day[data-today='true'] {
+  border-color: var(--euphoria-amber);
+  color: var(--euphoria-amber);
+}
+[data-month-error] {
+  color: var(--color-danger);
+}
+@media (max-width: 767px) {
+  .upcoming-page {
+    padding-top: 12px;
+  }
+  .upcoming-page__toolbar {
+    gap: 12px;
+  }
+  .upcoming-page__months {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .upcoming-page__picker {
+    flex: 1;
+    min-width: 0;
+  }
+  .upcoming-page__picker input {
+    width: 100%;
+    min-width: 0;
+    font-size: 13px;
+  }
+  .upcoming-page__toolbar nav {
+    gap: 0;
+  }
+  .upcoming-page__toolbar nav a {
+    padding: 10px;
+    font-size: 13px;
+  }
+  .upcoming-page__calendar {
+    gap: 6px;
+    padding: 8px;
+  }
+  .upcoming-page__day {
+    min-height: 36px;
+    padding: 8px 4px;
+    text-align: center;
+  }
+  .upcoming-page__weekday {
+    padding: 4px 0;
+    text-align: center;
+  }
+}
+
+[data-month-error]:empty {
+  display: none;
+}
+.upcoming-page > .empty-state {
+  min-height: 0;
+  margin-top: 24px;
+  padding: 24px 16px;
+}
+.upcoming-page > .empty-state .empty-state__token {
+  display: none;
+}
+.upcoming-page > .empty-state::before {
+  display: none;
+}
+
+.upcoming-page__release {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 6px;
+  border-radius: 8px;
+  color: var(--text-main);
+  background: var(--bg-card);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+.upcoming-page__release img {
+  width: 32px;
+  height: 48px;
+  flex-shrink: 0;
+  object-fit: cover;
+  border-radius: 4px;
+}
+.upcoming-page__release:hover,
+.upcoming-page__release:focus-visible {
+  outline: 1px solid var(--euphoria-amber);
+}
+.upcoming-page__list section {
+  margin-block: 24px;
+}
+.upcoming-page__list .upcoming-page__release {
+  padding: 12px;
+}
+@media (max-width: 767px) {
+  .upcoming-page__calendar .upcoming-page__release {
+    flex-direction: column;
+    padding: 2px;
+    font-size: 10px;
+  }
+  .upcoming-page__calendar .upcoming-page__release img {
+    width: 24px;
+    height: 36px;
+  }
+}

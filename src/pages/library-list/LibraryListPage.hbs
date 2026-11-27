@@ -1,9 +1,33 @@
-<div class="library-list-page">
+<div class='library-list-page'>
   {{#if user}}
-    <div data-slot="feed"></div>
+    <div data-slot='feed'></div>
   {{else}}
-    <div data-slot="heading"></div>
-    <p class="library-list-page__note">{{guestText}}</p>
-    <a class="library-list-page__login" href="{{loginHref}}" data-link>Войти {{icon "arrow-right"}}</a>
+    <div data-slot='heading'></div>
+    {{#if watchlater}}<section class='library-list-page__guest'>
+        <div class='library-list-page__guest-art' aria-hidden='true'>
+          <img class='library-list-page__guest-orbit' src='{{guestOrbit}}' alt='' />
+          <i class='library-list-page__guest-card library-list-page__guest-card--left'></i><i
+            class='library-list-page__guest-card library-list-page__guest-card--right'
+          ></i>
+          <img class='library-list-page__guest-glow' src='{{guestGlow}}' alt='' />
+          <img class='library-list-page__guest-disc' src='{{guestDisc}}' alt='' />
+          <img class='library-list-page__guest-clock' src='{{guestClock}}' alt='' />
+          <img class='library-list-page__guest-lock-disc' src='{{guestLockDisc}}' alt='' />
+          <img class='library-list-page__guest-lock' src='{{guestLock}}' alt='' />
+          <img class='library-list-page__guest-spark-one' src='{{guestSparkOne}}' alt='' /><img
+            class='library-list-page__guest-spark-two'
+            src='{{guestSparkTwo}}'
+            alt=''
+          /><img class='library-list-page__guest-spark-three' src='{{guestSparkThree}}' alt='' />
+        </div>
+        <h2>Войдите, чтобы откладывать фильмы</h2><p>Список «Смотреть позже» хранится в аккаунте —
+          он будет с вами на телефоне и компьютере.</p>
+        <div class='library-list-page__guest-actions'><a href='{{loginHref}}' data-link>Войти</a><a
+            href='{{registerHref}}'
+            data-link
+          >Создать аккаунт</a></div>
+      </section>{{else}}
+      <div data-slot='guest'></div>
+    {{/if}}
   {{/if}}
 </div>

@@ -1,0 +1,52 @@
+import './pagination.css';
+import templateSource from './Pagination.hbs';
+import { Component } from '../../core/component.js';
+import { loadAssets } from '../../core/assets.js';
+
+const template = await loadAssets({ template: templateSource });
+
+function paginationItems(current: number, total: number) {
+  const nearby = Array.from({ length: 5 }, (_, offset) => current + offset - 2);
+  const pages = [...new Set([1, ...nearby, total])]
+    .filter((page) => page >= 1 && page <= total)
+    .sort((a, b) => a - b);
+  const items: (number | 'gap')[] = [];
+  for (const page of pages) {
+    const previous = items.at(-1);
+    if (typeof previous === 'number' && page - previous === 2) items.push(previous + 1);
+    if (typeof previous === 'number' && page - previous > 2) items.push('gap');
+    items.push(page);
+  }
+  return items;
+}
+
+export function currentPageNumber(query: URLSearchParams = new URLSearchParams()) {
+  const value = Number(query.get('page'));
+  return Number.isSafeInteger(value) && value > 0 ? value : 1;
+}
+
+function pageHref(number: number, anchor?: string) {
+  const url = new URL(location.href);
+  url.searchParams.delete('page');
+  if (number > 1) url.searchParams.set('page', String(number));
+  return `${url.pathname}${url.search}${anchor ? `#${anchor}` : ''}`;
+}
+
+export class Pagination extends Component {
+  static template = template;
+
+  context() {
+    const { current, total, label = 'Страницы', anchor } = this.props;
+    const href = (number: number) => pageHref(number, anchor);
+    return {
+      label,
+      previous: current > 1 ? href(current - 1) : null,
+      next: current < total ? href(current + 1) : null,
+      items: paginationItems(current, total).map((item) =>
+        item === 'gap'
+          ? { gap: true }
+          : { number: item, href: href(item), current: item === current },
+      ),
+    };
+  }
+}

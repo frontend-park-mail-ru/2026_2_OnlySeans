@@ -1,0 +1,192 @@
+.auth-page[data-layout='centered'] {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  place-items: center;
+  min-height: 100dvh;
+  height: auto;
+  padding: 40px 16px;
+  overflow: hidden;
+}
+.auth-page[data-layout='centered']::after {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: '';
+  background: radial-gradient(ellipse at center, #0a0d0f00 35%, #0a0d0fd9 100%), #0b0c108c;
+  pointer-events: none;
+}
+.auth-page[data-layout='centered'] .auth-page__panel {
+  width: 464px;
+  max-width: 100%;
+  min-height: 677px;
+  padding: 39px;
+  overflow: visible;
+  border: 1px solid color-mix(in srgb, var(--euphoria-amber) 28%, transparent);
+  border-radius: 28px;
+  background: #14161dd1;
+  box-shadow:
+    0 30px 60px #0009,
+    0 0 80px color-mix(in srgb, var(--euphoria-amber) 16%, transparent);
+}
+@supports (backdrop-filter: blur(1px)) {
+  .auth-page[data-layout='centered']::after {
+    backdrop-filter: blur(7px);
+  }
+  .auth-page[data-layout='centered'] .auth-page__panel {
+    backdrop-filter: blur(12px);
+  }
+}
+.auth-page[data-layout='centered'] .auth-page__brand {
+  margin-bottom: 35px;
+}
+.auth-page__centered-logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 13.36px;
+}
+.auth-page__centered-logo > img,
+.auth-page__centered-logo span > img {
+  display: block;
+  flex: none;
+}
+.auth-page__centered-logo span {
+  display: flex;
+  align-items: baseline;
+  gap: 3.28px;
+}
+.auth-page[data-layout='centered'] .auth-page__tabs {
+  flex-direction: row-reverse;
+  height: 50px;
+  margin-bottom: 24px;
+}
+.auth-page[data-layout='centered'] .auth-page__tabs::before {
+  transform: translateX(100%);
+}
+.auth-page[data-layout='centered'] .auth-page__tabs[data-active='login']::before {
+  transform: none;
+}
+.auth-page[data-layout='centered'] .auth-page__tab {
+  font-size: 15px;
+  line-height: 22px;
+}
+.auth-page[data-layout='centered'] .auth-form__title {
+  margin-bottom: 22px;
+  font-size: 22px;
+  line-height: 27.5px;
+  letter-spacing: 0;
+}
+.auth-page[data-layout='centered'] .auth-form__subtitle {
+  margin-bottom: 16px;
+  font-size: 15px;
+  line-height: 22px;
+}
+.auth-page[data-layout='centered'] .text-field {
+  margin-bottom: 15px;
+}
+.auth-page[data-layout='centered'] .text-field__label {
+  margin-bottom: 6px;
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 20px;
+  letter-spacing: 0;
+}
+.auth-page[data-layout='centered'] .text-field__input {
+  height: 45px;
+  font-size: 15px;
+}
+.auth-page[data-layout='centered'] .auth-form__submit {
+  height: 46px;
+  margin-top: 7px;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+.auth-page[data-layout='centered'] .auth-form__switch {
+  margin-top: 14px;
+  font-size: 15px;
+  line-height: 22px;
+}
+.auth-centered-scene {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  overflow: hidden;
+}
+.auth-centered-scene__canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1440px;
+  height: 1405.945px;
+  transform: translate(-50%, -50%);
+}
+.auth-scene--frame .auth-centered-scene__canvas {
+  transform: translate(-50%, -50%) scale(0.64014);
+}
+.auth-scene--frame .auth-scene__copy {
+  bottom: 53.5px;
+}
+.auth-scene--frame .auth-scene__rec {
+  margin-bottom: 10.6px;
+  font-size: 15px;
+  line-height: 20px;
+  letter-spacing: 0;
+  font-weight: 600;
+}
+.auth-scene--frame .auth-scene__title {
+  font-size: 22px;
+  line-height: 27.5px;
+  letter-spacing: 0;
+}
+.auth-scene--frame .auth-scene__description {
+  width: 276.8px;
+  margin-top: 71px;
+  font-size: 15px;
+  line-height: 22px;
+}
+.auth-centered-scene__strip,
+.auth-centered-scene__poster {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.auth-centered-scene__strip {
+  width: 660.176px;
+  height: 2215.746px;
+}
+.auth-centered-scene__strip img {
+  flex: none;
+  transform: rotate(-8deg);
+}
+.auth-centered-scene__poster {
+  width: 351.987px;
+  height: 540.783px;
+}
+.auth-centered-scene__poster img {
+  width: 284.313px;
+  height: 506.14px;
+  object-fit: contain;
+  border-radius: 3.124px;
+  transform: rotate(-8deg);
+}
+.auth-centered-scene__caption {
+  position: absolute;
+}
+@media (max-width: 767px) {
+  .auth-page[data-layout='centered'] {
+    padding: 24px 16px;
+  }
+  .auth-page[data-layout='centered'] .auth-page__panel {
+    padding: 32px 24px;
+    min-height: 0;
+  }
+  .auth-page[data-layout='centered'] .text-field__input {
+    font-size: 16px;
+  }
+  .auth-page[data-layout='centered'] .auth-page__tab {
+    min-height: 40px;
+  }
+}

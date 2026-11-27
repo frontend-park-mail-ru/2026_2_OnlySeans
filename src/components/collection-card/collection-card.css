@@ -1,130 +1,126 @@
 .collection-card {
   position: relative;
   display: flex;
-  align-items: center;
-  gap: 16px;
+  flex-direction: column;
   min-width: 0;
-  min-height: 174px;
-  padding: 22px 24px;
-  overflow: hidden;
+  overflow: visible;
   border: 1px solid var(--border-subtle);
-  border-radius: 14px;
-  color: var(--text-main);
+  border-radius: 20px;
   background: var(--bg-card);
-  text-decoration: none;
-  transition:
-    transform 280ms ease,
-    border-color 280ms ease,
-    box-shadow 280ms ease;
 }
-
-.collection-card::before {
-  content: '';
-  position: absolute;
-  top: -90px;
-  right: -90px;
-  width: 180px;
-  height: 180px;
-  background: radial-gradient(
-    circle,
-    color-mix(in srgb, var(--euphoria-amber) 16%, transparent),
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 280ms ease;
-  pointer-events: none;
-}
-
-.collection-card:hover {
-  border-color: var(--border-active);
-  box-shadow: var(--shadow-surface-hover);
-  transform: translateY(-4px);
-}
-
-.collection-card:hover::before {
-  opacity: 1;
-}
-
-.collection-card:focus-visible {
-  outline: 2px solid var(--euphoria-amber);
-  outline-offset: 3px;
-}
-
-.collection-card__text {
-  position: relative;
-  z-index: 1;
+.collection-card__link {
+  display: flex;
   flex: 1;
-  min-width: 0;
+  flex-direction: column;
+  color: var(--text-main);
+  text-decoration: none;
 }
-
+.collection-card__art {
+  position: relative;
+  min-height: 208px;
+  display: grid;
+  place-items: center;
+  background: var(--surface-hero);
+  overflow: hidden;
+  border-radius: 19px 19px 0 0;
+}
+.collection-card .poster-stack {
+  height: 184px;
+}
+.collection-card .poster-stack__frame {
+  width: 96px;
+  height: 144px;
+}
+.collection-card .poster-stack__frame:not(:last-child) {
+  margin-right: -32px;
+}
 .collection-card__count {
-  display: block;
-  margin-bottom: 10px;
-  color: var(--text-muted);
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background: var(--bg-card);
   font-size: var(--text-meta);
-  font-weight: 700;
-  line-height: 15px;
-  letter-spacing: 1px;
+}
+.collection-card__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+}
+.collection-card__kind {
+  color: var(--euphoria-amber);
+  font-size: 12px;
   text-transform: uppercase;
 }
-
 .collection-card__title {
-  margin: 0 0 6px;
-  font-size: var(--text-title);
-  font-weight: 700;
-  line-height: 28px;
-}
-
-.collection-card__description {
   margin: 0;
+  min-height: 54px;
+  font-size: var(--text-heading);
+  line-height: 1.25;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+.collection-card__description {
+  margin: 0 0 8px;
   color: var(--text-muted);
   font-size: var(--text-meta);
-  line-height: 23.4px;
+  overflow-wrap: anywhere;
 }
-
-.collection-card .poster-stack {
-  position: relative;
-  z-index: 1;
+.collection-card__meta {
+  margin-top: auto;
+  color: var(--text-muted);
+  font-size: var(--text-meta);
 }
-
-.collection-card:hover .poster-stack__frame:first-child {
-  transform: rotate(-11deg) translate(-6px, 0);
-}
-
-.collection-card:hover .poster-stack__frame:nth-child(2) {
-  transform: translateY(-5px);
-}
-
-.collection-card:hover .poster-stack__frame:last-child {
-  transform: rotate(11deg) translate(5px, 0);
-}
-
-.collection-card__arrow {
+.collection-card__save {
   position: absolute;
-  right: 15px;
-  bottom: 10px;
-  color: var(--euphoria-amber);
-  opacity: 0;
-  transform: translate(-5px, 5px) rotate(-45deg);
-  transition:
-    opacity 240ms ease,
-    transform 240ms ease;
+  top: 12px;
+  right: 12px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border-glass);
+  border-radius: 50%;
+  color: var(--text-main);
+  background: var(--bg-card);
+  cursor: pointer;
 }
-
-.collection-card__arrow .icon {
+.collection-card__save[aria-pressed='true'] {
+  color: var(--euphoria-amber);
+}
+.collection-card__save .icon {
   width: 18px;
   height: 18px;
 }
-
-.collection-card:hover .collection-card__arrow,
-.collection-card:focus-visible .collection-card__arrow {
-  opacity: 1;
-  transform: rotate(-45deg);
+.collection-card__random {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 20px 16px;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .collection-card,
-  .collection-card:hover .poster-stack__frame {
-    transform: none;
+.collection-card__random button {
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 1px solid var(--border-glass);
+  border-radius: 22px;
+  background: var(--bg-input);
+  color: var(--text-main);
+  cursor: pointer;
+}
+.collection-card__random a {
+  color: var(--euphoria-amber);
+  overflow-wrap: anywhere;
+}
+@media (hover: hover) and (pointer: fine) {
+  .collection-card__random {
+    opacity: 0;
+    transition: opacity 160ms ease;
+  }
+  .collection-card:hover .collection-card__random,
+  .collection-card:focus-within .collection-card__random {
+    opacity: 1;
   }
 }

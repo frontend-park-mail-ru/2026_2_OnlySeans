@@ -1,0 +1,24 @@
+<aside class='{{sceneClass}}' aria-hidden='true'>
+  <div class='auth-centered-scene__canvas'>
+    {{#each strips}}<div
+        class='auth-centered-scene__strip'
+        style='left: {{left}}px; top: {{top}}px'
+      ><img src='{{src}}' alt='' /></div>{{/each}}
+    {{#each posters}}<div
+        class='auth-centered-scene__poster'
+        style='left: {{left}}px; top: {{top}}px'
+      >{{#if src}}<img src='{{src}}' alt='' />{{/if}}</div>{{/each}}
+    {{#each captions}}<img
+        class='auth-centered-scene__caption'
+        style='left: {{left}}px; top: {{top}}px'
+        src='{{src}}'
+        alt=''
+      />{{/each}}
+  </div>
+  {{#if split}}<div class='auth-scene__shade'></div><div class='auth-scene__copy'><p
+        class='auth-scene__rec'
+      ><span class='auth-scene__rec-dot'>● REC</span> 00:00:01:15</p><h2
+        class='auth-scene__title'
+      >Кино, которое<br />попало в кадр.</h2><p class='auth-scene__description'>Подборки, оценки и
+        свои списки: всё о фильмах в одном месте.</p></div>{{/if}}
+</aside>

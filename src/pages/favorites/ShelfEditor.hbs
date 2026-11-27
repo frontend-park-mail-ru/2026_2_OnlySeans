@@ -1,0 +1,42 @@
+<dialog class='modal shelf-editor' aria-labelledby='shelf-editor-title'>
+  <div class='shelf-editor__handle' aria-hidden='true'></div>
+  <div class='modal__header'><h2 class='modal__title' id='shelf-editor-title'>{{#if edit}}Изменить
+        полку{{else}}Новая полка{{/if}}</h2><button
+      class='modal__close'
+      type='button'
+      data-close
+      aria-label='Закрыть'
+    ><img class='shelf-editor__close-desktop' src='{{closeDesktop}}' alt='' /><img
+        class='shelf-editor__close-mobile'
+        src='{{closeMobile}}'
+        alt=''
+      /></button></div>
+  <form novalidate>
+    <label class='shelf-editor__field'>Название<input
+        name='name'
+        type='text'
+        maxlength='80'
+        value='{{shelf.name}}'
+        placeholder='Например, «Для свидания»'
+        autocomplete='off'
+        aria-describedby='shelf-editor-error'
+      /></label>
+    <div class='shelf-editor__validation'><p
+        id='shelf-editor-error'
+        data-error
+        role='status'
+      ></p><span data-count>0 / 40</span></div>
+    <p class='modal__text'>До 40 символов, без повторов. Полку видите только вы на этом устройстве.</p>
+    <div class='modal__actions'>{{#if edit}}<button
+          class='modal__button modal__button--danger'
+          type='button'
+          data-delete
+        >Удалить полку</button>{{/if}}<button
+        class='modal__button'
+        type='button'
+        data-close
+      >Отмена</button><button class='modal__button modal__button--primary' type='submit'>{{#if
+          edit
+        }}Сохранить{{else}}Создать полку{{/if}}</button></div>
+  </form>
+</dialog>

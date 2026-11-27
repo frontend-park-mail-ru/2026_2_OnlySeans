@@ -1,0 +1,22 @@
+<dialog class='modal favorite-share' aria-labelledby='favorite-share-title'>
+  <div class='modal__header'><h2 class='modal__title' id='favorite-share-title'>Поделиться списком</h2><button
+      class='modal__close'
+      type='button'
+      data-close
+      aria-label='Закрыть'
+    >{{icon 'close'}}</button></div>
+  <p class='modal__text'>В ссылке
+    {{count}}
+    {{plural count 'фильм' 'фильма' 'фильмов'}}. Это снимок текущего списка: последующие изменения
+    не передаются.</p>
+  <label class='shelf-editor__field'>Ссылка<input type='url' readonly value='{{url}}' /></label>
+  <div class='modal__actions'><button
+      class='modal__button'
+      type='button'
+      data-close
+    >Закрыть</button><button
+      class='modal__button modal__button--primary'
+      type='button'
+      data-copy
+    >Копировать</button></div>
+</dialog>

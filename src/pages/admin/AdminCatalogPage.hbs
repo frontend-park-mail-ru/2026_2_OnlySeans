@@ -1,0 +1,49 @@
+<div class='admin-page'>
+  <div class='admin-page__toolbar'><span>Каталог / Администрирование</span><a
+      class='admin-button'
+      href='/'
+      data-link
+    >Открыть сайт</a></div>
+  <header class='admin-page__heading'><div><h1>Управление каталогом</h1><p>Фильмы и сериалы, которые
+        видят пользователи.</p></div><a
+      class='admin-button admin-button--primary'
+      href='/admin/films/new'
+      data-link
+    >Добавить фильм</a></header>
+  <form class='admin-filters' data-filters novalidate role='search' aria-label='Поиск по каталогу'>
+    <label class='admin-filters__search'><span class='visually-hidden'>Название фильма или ID</span><input
+        name='q'
+        type='search'
+        placeholder='Название фильма или ID'
+        maxlength='255'
+      /><button class='admin-button admin-button--icon' aria-label='Найти' type='submit'>{{icon
+          'search'
+        }}</button></label>
+    <label><span class='visually-hidden'>Тип</span><select name='type'><option value=''>Тип: все</option><option
+          value='movie'
+        >Фильмы</option><option value='series'>Сериалы</option></select></label>
+    <label><span class='visually-hidden'>Год выпуска</span><input
+        name='year'
+        aria-describedby='admin-filter-error'
+        type='text'
+        inputmode='numeric'
+        placeholder='Год'
+        pattern='[0-9]{4}'
+        maxlength='4'
+        title='Введите год четырьмя цифрами'
+      /></label>
+    <label><span class='visually-hidden'>Наличие постера</span><select name='poster'><option
+          value=''
+        >Любой постер</option><option value='yes'>С постером</option><option value='no'>Без постера</option></select></label>
+    <label><span class='visually-hidden'>Сортировка</span><select name='sort'><option
+          value=''
+        >Порядок каталога</option><option value='title'>По названию</option><option
+          value='year'
+        >Сначала новые</option></select></label>
+    <button class='admin-button' type='button' data-reset>Сбросить</button>
+  </form>
+  <p class='admin-field-error' id='admin-filter-error' data-filter-error role='alert'></p>
+  <p class='admin-page__note'>Изменения доступны администратору. Поиск и фильтры проверяют весь
+    каталог; при первом запросе потребуется загрузить его записи.</p>
+  <div data-slot='feed'></div>
+</div>

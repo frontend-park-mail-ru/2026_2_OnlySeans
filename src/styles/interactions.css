@@ -1,0 +1,163 @@
+.appearance-fade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  pointer-events: none;
+}
+a {
+  transition:
+    color 220ms ease,
+    border-color 220ms ease,
+    background-color 220ms ease;
+}
+
+@keyframes control-selected {
+  0% {
+    transform: scale(0.92);
+  }
+  65% {
+    transform: scale(1.04);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+input[type='checkbox']:checked,
+button[aria-pressed='true'],
+.settings-page__segmented input:checked + span {
+  animation: control-selected 240ms var(--ease-out);
+}
+
+:where(button, .button, .admin-button, a[role='button'], input, select, textarea) {
+  transition:
+    color 220ms ease,
+    background-color 220ms ease,
+    border-color 220ms ease,
+    box-shadow 220ms ease,
+    transform 180ms var(--ease-out),
+    opacity 180ms ease;
+}
+:where(button, .button, .admin-button, a[role='button']):not(:disabled):active {
+  transform: translateY(1px) scale(0.98);
+}
+:where(input[type='checkbox'], input[type='radio']) {
+  transition:
+    background-color 200ms ease,
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    transform 200ms var(--ease-out);
+}
+:where(input[type='checkbox'], input[type='radio']):not(:disabled):active {
+  transform: scale(0.94);
+}
+:where(input[type='checkbox'], input[type='radio'])::before,
+:where(input[type='checkbox'], input[type='radio'])::after {
+  transition:
+    transform 220ms var(--ease-out),
+    background-color 220ms ease,
+    opacity 180ms ease;
+}
+.settings-page__color,
+.settings-page__segmented span,
+.settings-page__switch,
+.settings-page__switch::before,
+.settings-page__switch::after,
+.settings-page__cinema img {
+  transition:
+    transform 260ms var(--ease-out),
+    color 260ms ease,
+    background-color 260ms ease,
+    border-color 260ms ease,
+    box-shadow 260ms ease,
+    outline-color 260ms ease;
+}
+.settings-page__swatch input:checked + .settings-page__color {
+  transform: scale(1.06);
+}
+.settings-page__cinema button[aria-pressed='true'] {
+  outline: 2px solid var(--euphoria-amber);
+  outline-offset: 4px;
+}
+.settings-page__cinema button[aria-pressed='true'] img {
+  transform: scale(1.025);
+}
+.app-layout::after,
+.sidebar,
+:where(
+  .settings-page__card,
+  .profile-page__card,
+  .collection-card,
+  .collection-hero,
+  .modal,
+  .movie-card__cover,
+  .empty-state,
+  .movie-actions__button
+) {
+  transition:
+    color 280ms ease,
+    background-color 280ms ease,
+    border-color 280ms ease,
+    box-shadow 220ms ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  :where(button, .button, .admin-button, a[role='button']):not(:disabled):hover {
+    box-shadow: var(--shadow-button-hover);
+  }
+  .settings-page__swatch:hover .settings-page__color {
+    transform: translateY(-2px);
+  }
+  .settings-page__cinema button:hover img {
+    transform: scale(1.025);
+  }
+}
+
+.settings-page__sections,
+.favorites-page__shelves,
+.wheel-page__sources,
+.search-page__tabs,
+.search-page__tools {
+  padding-block: 6px;
+}
+.settings-page__card,
+.profile-page__card,
+.collection-hero {
+  overflow: visible;
+}
+.spotlight {
+  overflow: visible;
+}
+.spotlight__atmosphere {
+  border-radius: inherit;
+}
+.spotlight .button,
+.spotlight__about,
+.auth-form__submit--ready,
+.empty-state__button,
+.wheel-page__primary,
+.wheel-page .wheel-page__primary {
+  box-shadow: var(--shadow-button);
+}
+.auth-form__switch-link:hover {
+  text-shadow: none;
+}
+
+body:has(.map-page) .site-header > .search-field,
+body:has(.map-page) .site-header__search {
+  display: none;
+}
+body:has(.map-page) .site-header__actions {
+  margin-left: auto;
+}
+.map-page__toolbar input:disabled {
+  opacity: 0.65;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings-page__swatch:hover .settings-page__color {
+    transform: none;
+  }
+}
+:root[data-reduce-motion='true'] .settings-page__swatch:hover .settings-page__color {
+  transform: none;
+}

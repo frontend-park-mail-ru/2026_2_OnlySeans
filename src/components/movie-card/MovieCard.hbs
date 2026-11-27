@@ -1,15 +1,36 @@
-<article class="movie-card">
-  <a class="movie-card__link" href="/film/{{film.id}}" data-link aria-label="О фильме: {{film.title}}">
-    <span class="movie-card__cover">
+<article class='movie-card'>
+  <a
+    class='movie-card__link'
+    href='/film/{{film.id}}'
+    data-link
+    aria-label='О фильме: {{film.title}}'
+  >
+    <span class='movie-card__cover'>
+      <span class='movie-card__rating' data-rating role='img' hidden><span aria-hidden='true'>{{icon
+            'rating-star'
+          }}</span><span data-rating-label aria-hidden='true'></span></span>
       {{#if film.poster}}
-        <img class="movie-card__poster" src="{{film.poster}}" alt="" loading="lazy" decoding="async" />
+        <img
+          class='movie-card__poster'
+          src='{{film.poster}}'
+          alt='{{film.title}}'
+          width='208'
+          height='312'
+          loading='lazy'
+          decoding='async'
+        />
       {{else}}
-        <span class="movie-card__no-poster">Нет постера</span>
+        <span class='movie-card__no-poster'>Нет постера</span>
       {{/if}}
     </span>
-    <span class="movie-card__title" title="{{film.title}}">{{film.title}}</span>
-    <span class="movie-card__meta">{{film.year}} · {{#if film.isSeries}}Сериал{{else}}Фильм{{/if}}{{#unless (eq film.ageLimit null)}} · {{film.ageLimit}}+{{else}} · Возраст не указан{{/unless}}</span>
-    <span class="movie-card__description">{{film.description}}</span>
+    <span class='movie-card__title' title='{{film.title}}'>{{film.title}}</span>
+    {{#if originalTitle}}<span class='movie-card__meta'>{{originalTitle}}</span>{{/if}}
+    <span class='movie-card__meta'>{{film.year}}
+      ·
+      {{#if film.isSeries}}Сериал{{else}}Фильм{{/if}}{{#unless (eq film.ageLimit null)}}
+        ·
+        {{film.ageLimit}}+{{else}} · Возраст не указан{{/unless}}</span>
+    <span class='movie-card__description'>{{film.description}}</span>
   </a>
-  <div data-slot="actions"></div>
+  <div data-slot='actions'></div>
 </article>

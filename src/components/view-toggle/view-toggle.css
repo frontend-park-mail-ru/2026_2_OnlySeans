@@ -43,3 +43,31 @@
   outline: 2px solid var(--euphoria-amber);
   outline-offset: 2px;
 }
+
+@media (pointer: coarse) {
+  .view-toggle__button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+@media (max-width: 767px) {
+  .view-toggle {
+    gap: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 24px;
+    background: var(--bg-input);
+  }
+
+  .view-toggle__button {
+    width: 44px;
+    min-height: 44px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  .view-toggle__button span {
+    display: none;
+  }
+}

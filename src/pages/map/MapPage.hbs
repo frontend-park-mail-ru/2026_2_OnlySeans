@@ -1,0 +1,45 @@
+<section class='map-page' aria-labelledby='map-title'>
+  <h1 id='map-title' class='visually-hidden'>Карта съёмок</h1>
+  <div class='map-page__toolbar'><label>{{icon 'search'}}<span class='visually-hidden'>Поиск места
+        или фильма</span><input
+        type='search'
+        placeholder='Место или фильм'
+        disabled
+        title='Поиск появится после подключения мест съёмок'
+      /></label><button type='button' disabled aria-label='Фильтры мест съёмок'>{{icon
+        'catalog-filter'
+      }}<span class='map-page__filter-label'>Фильтры</span></button><a
+      href='/settings?section=map'
+      data-link
+      aria-label='Настройки карты'
+    >{{icon 'settings'}}</a></div>
+  <div
+    class='map-page__viewport'
+    tabindex='0'
+    role='region'
+    aria-label='Карта мира. Для перемещения прокручивайте карту'
+  >
+    <img
+      class='map-page__world'
+      src='/src/assets/images/map/world.png'
+      alt='Географическая карта мира без отметок мест съёмок'
+      draggable='false'
+    />
+  </div>
+  <p class='map-page__image-error' data-map-image-error role='status' hidden>Не удалось загрузить
+    изображение карты. Обновите страницу.</p>
+  <div class='map-page__controls' aria-label='Масштаб карты'><button
+      type='button'
+      data-map-plus
+      aria-label='Увеличить карту'
+    ><img src='/src/assets/images/map/plus.svg' alt='' /></button><output
+      data-map-zoom
+      aria-live='polite'
+    >100 %</output><button type='button' data-map-minus aria-label='Уменьшить карту'><img
+        src='/src/assets/images/map/minus.svg'
+        alt=''
+      /></button><button type='button' data-map-reset>Сбросить</button></div>
+  <div class='map-page__notice' role='status'><h2>Места съёмок пока недоступны</h2><p>Локации
+      появятся после подключения данных.</p><a href='/films' data-link>Выбрать фильм
+      {{icon 'arrow-right'}}</a></div>
+</section>

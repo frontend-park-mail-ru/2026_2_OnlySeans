@@ -1,0 +1,55 @@
+<div class='favorite-results'>
+  {{#if empty}}<p class='favorites-page__empty' role='status'>Ничего не найдено. Измените поиск, тип
+      или выберите другую полку.</p>{{else}}
+    {{#if table}}
+      <p class='favorites-page__table-hint'>Прокрутите таблицу вправо, чтобы увидеть оценки и
+        действия.</p>
+      <div
+        class='favorites-table-wrap'
+        tabindex='0'
+        aria-label='Таблица избранного с горизонтальной прокруткой'
+      >
+        <table class='favorites-table'>
+          <thead><tr><th scope='col'>Название</th>{{#unless shared}}<th scope='col'>Моя оценка</th>{{/unless}}<th
+                scope='col'
+              >Добавлено</th><th scope='col'><span
+                  class='visually-hidden'
+                >Действия</span></th></tr></thead>
+          <tbody>{{#each rows}}
+              <tr>
+                <td><a class='favorites-table__film' href='/film/{{film.id}}' data-link>{{#if
+                      film.poster
+                    }}<img src='{{film.poster}}' alt='' loading='lazy' />{{/if}}<span><strong
+                      >{{film.title}}</strong><small>{{film.originalTitle}}
+                        ·
+                        {{film.year}}
+                        ·
+                        {{#if film.isSeries}}Сериал{{else}}Фильм{{/if}}
+                        ·
+                        {{join film.genres ', '}}</small></span></a></td>
+                {{#unless @root.shared}}<td><button
+                      type='button'
+                      class='favorites-table__rate'
+                      data-rate='{{film.id}}'
+                      aria-label='Изменить оценку: {{film.title}}'
+                    >{{#if score}}<span class='favorites-table__score'>{{icon
+                            'rating-star'
+                          }}{{score}}</span>{{else}}Оценить{{/if}}</button></td>{{/unless}}
+                <td><span
+                    title='Дата добавления недоступна'
+                    aria-label='Дата добавления неизвестна'
+                  >—</span></td>
+                <td><div class='favorites-table__actions'><div
+                      data-actions='{{film.id}}'
+                    ></div>{{#unless @root.shared}}<button
+                        type='button'
+                        data-shelf-picker='{{film.id}}'
+                      >На полку</button>{{/unless}}</div></td>
+              </tr>
+            {{/each}}</tbody>
+        </table>
+      </div>
+    {{else}}<div class='movie-grid favorites-page__grid' data-grid></div>{{/if}}
+  {{/if}}
+  {{#if more}}<button class='favorites-page__more' type='button' data-more>Показать ещё</button>{{/if}}
+</div>

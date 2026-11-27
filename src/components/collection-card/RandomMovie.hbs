@@ -1,0 +1,32 @@
+<dialog class='modal random-movie' aria-labelledby='random-movie-title'><div
+    class='modal__header'
+  ><h2 class='modal__title' id='random-movie-title'>Случайный фильм из подборки</h2><button
+      class='modal__close'
+      type='button'
+      data-close
+      aria-label='Закрыть'
+    >{{icon 'close'}}</button></div><p class='modal__text'>{{title}}</p>{{#if film}}<div
+      class='random-movie__film'
+    >{{#if film.poster}}<img src='{{film.poster}}' alt='' />{{/if}}<div><h3>{{film.title}}</h3><p
+        >{{film.year}}
+          ·
+          {{join film.genres ', '}}{{#if film.duration}} · {{film.duration}} мин{{/if}}</p><p><span
+            data-rating
+          >Загружаем рейтинг…</span>
+          ·
+          {{position}}
+          из
+          {{count}}
+          в подборке</p></div></div><div class='modal__actions'><a
+        class='modal__button modal__button--primary'
+        href='/film/{{film.id}}'
+        data-link
+      >О фильме</a><button class='modal__button' type='button' data-next>Ещё раз</button><button
+        class='modal__button'
+        type='button'
+        data-exclude
+      >Не этот</button></div>{{else}}<p class='modal__text'>Все фильмы этой подборки исключены.</p><button
+      class='modal__button'
+      type='button'
+      data-reset
+    >Начать заново</button>{{/if}}</dialog>

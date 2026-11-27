@@ -1,0 +1,12 @@
+<div class='favorite-card'>
+  <div data-slot='movie'></div>
+  {{#if score}}<span class='favorite-card__score' aria-label='Моя оценка: {{score}} из 10'>{{icon
+        'rating-star'
+      }}{{score}}</span>{{/if}}
+  {{#unless shared}}<button
+      class='favorite-card__shelf'
+      type='button'
+      data-shelf-picker
+      aria-label='На полку: {{film.title}}'
+    >На полку</button>{{/unless}}
+</div>

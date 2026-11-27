@@ -1,9 +1,33 @@
-<a class="collection-card" href="{{href}}" data-link>
-  <div class="collection-card__text">
-    <span class="collection-card__count">{{count}}</span>
-    <h3 class="collection-card__title">{{title}}</h3>
-    {{#if description}}<p class="collection-card__description">{{description}}</p>{{/if}}
-  </div>
-  <div data-slot="posters"></div>
-  <span class="collection-card__arrow">{{icon "arrow-right"}}</span>
-</a>
+<article class='collection-card' data-size='{{size}}'>
+  {{#if compact}}
+    <a class='collection-card__link' href='{{href}}' data-link>
+      <div class='collection-card__art'><div data-slot='posters'></div></div>
+      <div class='collection-card__text'><span class='collection-card__count'>{{count}}</span><h3
+          class='collection-card__title'
+        >{{title}}</h3><p class='collection-card__description'>{{description}}</p></div>
+    </a>
+  {{else}}
+    <a class='collection-card__link' href='{{href}}' data-link><div
+        class='collection-card__art'
+      ><div data-slot='posters'></div><span
+          class='collection-card__count'
+        >{{count}}</span></div><div class='collection-card__text'><span
+          class='collection-card__kind'
+        >{{#if local}}Мои · на устройстве{{else}}Подборка каталога{{/if}}</span><h3
+          class='collection-card__title'
+        >{{title}}</h3><p class='collection-card__description'>{{description}}</p><span
+          class='collection-card__meta'
+        >{{count}} · ≈ {{hours}} ч фильмов</span></div></a>
+    <button
+      class='collection-card__save'
+      type='button'
+      data-save
+      aria-label='Сохранить подборку: {{title}}'
+      aria-pressed='{{saved}}'
+    >{{icon 'heart'}}</button>
+    {{#if films.length}}<div class='collection-card__random'><button
+          type='button'
+          data-random
+        >Случайный фильм</button><a href='#' data-link data-random-link hidden></a></div>{{/if}}
+  {{/if}}
+</article>

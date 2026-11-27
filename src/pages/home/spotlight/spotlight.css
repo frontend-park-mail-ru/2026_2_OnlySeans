@@ -1,13 +1,13 @@
 .spotlight {
   position: relative;
   isolation: isolate;
-  padding: 24px 28px 12px;
+  min-height: 304px;
+  padding: 20px 28px 8px;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--euphoria-amber) 24%, transparent);
+  border: 1px solid var(--border-subtle);
   border-radius: 16px;
   color: var(--text-main);
   background: var(--bg-card);
-  box-shadow: 0 14px 50px rgba(0, 0, 0, 0.09);
 }
 
 .spotlight__atmosphere {
@@ -15,16 +15,8 @@
   inset: 0;
   z-index: -1;
   overflow: hidden;
-  opacity: 0.32;
+  opacity: 0.3;
   pointer-events: none;
-}
-
-.spotlight__atmosphere::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, var(--bg-card), transparent 85%);
-  opacity: 0.75;
 }
 
 .spotlight__backdrop {
@@ -33,8 +25,7 @@
   width: 140%;
   height: 140%;
   object-fit: cover;
-  object-position: 70% 40%;
-  filter: blur(38px) saturate(1.3);
+  filter: blur(19px);
 }
 
 .spotlight__slide {
@@ -42,7 +33,7 @@
   grid-template-columns: 116px minmax(0, 1fr);
   align-items: center;
   gap: 24px;
-  min-height: 174px;
+  min-height: 224px;
 }
 
 .spotlight__poster {
@@ -50,9 +41,11 @@
   display: block;
   width: 116px;
   height: 174px;
+  align-self: start;
+  margin-top: 18px;
   overflow: hidden;
   border: 1px solid var(--border-subtle);
-  border-radius: 5px;
+  border-radius: 6px;
   background: var(--surface-poster);
 }
 
@@ -61,37 +54,34 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 450ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  transition: transform var(--dur-base) var(--ease-out);
 }
 
 .spotlight__poster:hover .spotlight__poster-image {
-  transform: scale(1.04);
+  transform: scale(1.03);
 }
 
 .spotlight__text {
+  align-self: start;
   min-width: 0;
   padding-right: 144px;
 }
 
 .spotlight__eyebrow {
-  margin: 0 0 6px;
+  margin: 0 0 2px;
   color: var(--euphoria-amber);
-  font-size: var(--text-meta);
-  font-weight: 700;
-  line-height: 15px;
-  letter-spacing: 1.2px;
+  font-size: var(--text-body);
+  font-weight: 600;
+  line-height: 20px;
   text-transform: uppercase;
 }
 
 .spotlight__title {
-  margin: 0 0 2px;
-  overflow: hidden;
-  font-size: var(--text-size-26);
+  margin: 0 0 6px;
+  font-size: var(--text-heading);
   font-weight: 800;
-  line-height: 32px;
-  letter-spacing: -0.5px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
 }
 
 .spotlight__title-link {
@@ -105,25 +95,32 @@
 
 .spotlight__original,
 .spotlight__meta {
-  margin: 0 0 8px;
-  overflow: hidden;
+  margin: 0 0 3px;
   color: var(--text-muted);
-  font-size: var(--text-meta);
-  line-height: 17px;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  font-size: var(--text-body);
+  line-height: 22px;
 }
 
 .spotlight__meta {
-  margin-bottom: 10px;
+  margin-bottom: 7px;
+}
+
+.spotlight__mobile-meta {
+  display: none;
+}
+.spotlight__rating {
+  display: none;
+}
+.spotlight .movie-actions__spotlight-plus {
+  display: none;
 }
 
 .spotlight__description {
   display: -webkit-box;
-  height: 44px;
+  min-height: 44px;
   margin: 0 0 12px;
   overflow: hidden;
-  font-size: var(--text-small);
+  font-size: var(--text-body);
   line-height: 22px;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -132,15 +129,15 @@
 .spotlight__about {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   min-height: 40px;
   padding: 6px 16px;
   border: 1px solid var(--border-active);
   border-radius: 7px;
   color: var(--text-main);
   box-shadow: var(--control-raised);
-  font-size: var(--text-small);
-  line-height: 20px;
+  font-size: var(--text-body);
+  line-height: 22px;
   text-decoration: none;
 }
 
@@ -150,7 +147,6 @@
 }
 
 .spotlight__about:hover {
-  border-color: var(--euphoria-amber);
   background: var(--bg-input);
 }
 
@@ -163,26 +159,22 @@
 .spotlight__rubrics {
   display: flex;
   gap: 6px;
-  margin-top: 14px;
-  padding: 13px 0 3px;
+  padding: 8px 0 4px;
   overflow-x: auto;
-  overscroll-behavior-x: contain;
-  scrollbar-width: none;
 }
 
 .spotlight__rubric {
   position: relative;
   flex: none;
-  min-height: 34px;
-  padding: 7px 10px;
+  min-height: 36px;
+  padding: 6px 10px;
   overflow: hidden;
   border: 1px solid transparent;
   border-radius: 7px;
   color: var(--text-muted);
   background: transparent;
-  font: inherit;
-  font-size: var(--text-meta);
-  line-height: 18px;
+  font-size: var(--text-body);
+  line-height: 22px;
   white-space: nowrap;
   cursor: pointer;
 }
@@ -196,11 +188,6 @@
   border-color: var(--border-active);
   color: var(--euphoria-amber);
   background: color-mix(in srgb, var(--euphoria-amber) 12%, transparent);
-}
-
-.spotlight :focus-visible {
-  outline: 2px solid var(--euphoria-amber);
-  outline-offset: 3px;
 }
 
 .spotlight__rubric:focus-visible {
@@ -222,19 +209,102 @@
 }
 
 .spotlight__rubric[aria-pressed='true'] .spotlight__progress {
-  opacity: 0.55;
+  opacity: 0.6;
 }
 
 .spotlight.is-paused .spotlight__progress {
   opacity: 0.25;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .spotlight__poster-image {
-    transition: none;
+@media (max-width: 767px) {
+  .spotlight {
+    min-height: 194px;
+    padding: 16px;
+    border-color: var(--border-active);
+    border-radius: 20px;
   }
 
-  .spotlight__poster:hover .spotlight__poster-image {
-    transform: none;
+  .spotlight__slide {
+    grid-template-columns: 104px minmax(0, 1fr);
+    align-items: start;
+    gap: 14px;
+    min-height: 156px;
+  }
+
+  .spotlight__poster {
+    width: 104px;
+    height: 156px;
+    margin-top: 0;
+    border: 0;
+    border-radius: 12px;
+  }
+
+  .spotlight__text {
+    padding-right: 0;
+  }
+
+  .spotlight__eyebrow {
+    margin-bottom: 6px;
+    font-size: var(--text-meta);
+    line-height: 18px;
+  }
+
+  .spotlight__title {
+    margin-bottom: 6px;
+  }
+
+  .spotlight__original,
+  .spotlight__meta,
+  .spotlight__description,
+  .spotlight__rubrics {
+    display: none;
+  }
+
+  .spotlight__mobile-meta {
+    display: block;
+    margin: 0 0 6px;
+    color: var(--text-muted);
+    font-size: var(--text-meta);
+    font-weight: 600;
+    line-height: 18px;
+  }
+  .spotlight__rating:not([hidden]) {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+    line-height: 18px;
+  }
+  .spotlight__mobile-meta:has(+ .spotlight__rating[hidden]) {
+    margin-bottom: 14px;
+  }
+
+  .spotlight__about {
+    min-height: 44px;
+    padding: 10px 14px;
+    border: 0;
+    border-radius: 24px;
+    color: var(--on-accent);
+    background: linear-gradient(180deg, var(--gradient-amber-from), var(--gradient-amber-to));
+    font-weight: 600;
+  }
+
+  .spotlight__about .icon {
+    display: none;
+  }
+
+  .spotlight__actions {
+    position: static;
+    display: inline-flex;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .spotlight .movie-actions__button--watchlater .icon {
+    display: none;
+  }
+  .spotlight .movie-actions__spotlight-plus {
+    display: block;
   }
 }

@@ -1,0 +1,65 @@
+<div class='settings-extra'>
+  {{#if notifications}}
+    <p class='settings-page__intro' role='status'>Уведомления пока не подключены. Подписки и
+      напоминания станут доступны позже.</p>
+    <section class='settings-page__card'><div class='settings-extra__notification-head'><h2>О чём
+          сообщать</h2><span>Сайт</span><span>Почта</span><span>Push</span></div>
+      {{#each events}}<div class='settings-extra__notification-row'><div><strong>{{name}}</strong><p
+            >{{text}}</p></div>{{#each channels}}<input
+              type='checkbox'
+              disabled
+              aria-label='{{label}}'
+            />{{/each}}</div>{{/each}}
+    </section>
+    <section class='settings-page__card'><h2>Время</h2><fieldset
+        disabled
+        class='settings-extra__disabled'
+      ><legend>Напоминать о премьере</legend><div class='settings-page__segmented'><label><input
+              type='radio'
+              name='reminder'
+            /><span>За неделю</span></label><label><input type='radio' name='reminder' /><span>За
+              день</span></label><label><input type='radio' name='reminder' /><span>В день выхода</span></label></div></fieldset><label
+        class='settings-page__row'
+      ><span>Тихие часы<small>Расписание уведомлений пока недоступно</small></span><input
+          class='settings-page__switch'
+          type='checkbox'
+          role='switch'
+          disabled
+        /></label></section>
+  {{else if map}}
+    <section class='settings-page__card'><h2>Карта съёмок</h2><p role='status'>Маршруты и расстояния
+        появятся после подключения мест съёмок.</p>
+      <label class='settings-page__row'><span>Маршрут открывать в</span><select disabled><option
+          >Пока недоступно</option></select></label>
+      <fieldset disabled class='settings-extra__disabled'><legend>Единицы расстояния</legend><div
+          class='settings-page__segmented'
+        ><label><input type='radio' name='distance' /><span>Километры</span></label><label><input
+              type='radio'
+              name='distance'
+            /><span>Мили</span></label></div></fieldset>
+      <label class='settings-page__row'><span>Показывать места рядом со мной<small>Потребуется
+            доступ к геолокации</small></span><input
+          class='settings-page__switch'
+          type='checkbox'
+          role='switch'
+          disabled
+        /></label>
+      <a class='settings-extra__link' href='/map' data-link>Открыть карту {{icon 'arrow-right'}}</a>
+    </section>
+  {{else}}
+    <section class='settings-page__card'><h2>Регион и покупки</h2><p role='status'>Региональные
+        премьеры и покупки пока недоступны.</p>
+      <label class='settings-page__row'><span>Страна и город</span><select disabled><option>Не
+            выбраны</option></select></label>
+      <label class='settings-page__row'><span>Валюта</span><select disabled><option>Не выбрана</option></select></label>
+      <label class='settings-page__row'><span>Размер обуви</span><select disabled><option>Не выбран</option></select></label>
+      <label class='settings-page__row'><span>Только «как в кадре»<small>Показывать точные модели
+            вещей</small></span><input
+          class='settings-page__switch'
+          type='checkbox'
+          role='switch'
+          disabled
+        /></label>
+    </section>
+  {{/if}}
+</div>

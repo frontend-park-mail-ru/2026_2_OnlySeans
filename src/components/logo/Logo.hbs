@@ -1,4 +1,16 @@
-<a class="logo" href="/" data-link aria-label="Frame, на главную">
-  <img class="logo__mark" src="{{mark}}" width="40" height="40" alt="" />
-  <span class="logo__word"><span class="logo__accent">F</span>rame</span>
+<a class='logo' href='/' data-link aria-label='Frame, на главную'>
+  {{#if coraline}}
+    <img class='logo__mark' src='{{mark}}' alt='' /><span class='logo__word'><img
+        src='{{letter}}'
+        alt=''
+      /><img src='{{word}}' alt='' /></span>
+  {{else if compact}}
+    <img class='logo__mobile' src='{{mobile}}' width='108' height='30' alt='' />
+  {{else}}
+    <img class='logo__mark' src='{{mark}}' width='30' height='30' alt='' />
+    <span class='logo__word'>
+      <img src='{{letter}}' width='11' height='18' alt='' />
+      <img src='{{word}}' width='57' height='15' alt='' />
+    </span>
+  {{/if}}
 </a>

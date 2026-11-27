@@ -1,0 +1,28 @@
+<div class='genres-page'>
+  {{#if selected}}
+    <div data-slot='detail'></div>
+  {{else}}
+    <div data-slot='heading'></div>
+    {{#if loaded}}
+      <p class='genres-page__note'>{{genres.length}}
+        жанров ·
+        {{total}}
+        фильмов и сериалов в каталоге</p>
+      <div class='genres-page__grid'>
+        {{#each genres}}
+          <a class='genre-tile' href='{{href}}' data-link>
+            {{#if poster}}<img
+                class='genre-tile__image'
+                src='{{poster}}'
+                alt=''
+                loading='lazy'
+              />{{/if}}
+            <span class='genre-tile__text'><strong>{{name}}</strong><span>{{count}}</span></span>
+          </a>
+        {{/each}}
+      </div>
+    {{else}}
+      <div data-slot='genres'></div>
+    {{/if}}
+  {{/if}}
+</div>

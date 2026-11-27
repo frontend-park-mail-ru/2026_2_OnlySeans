@@ -1,0 +1,46 @@
+<section class='empty-state {{modifier}}' aria-live='polite'>
+  {{#if requestError}}<span class='empty-state__error-token' aria-hidden='true'><img
+        class='empty-state__desktop-icon'
+        src='{{requestErrorIcon}}'
+        alt=''
+      /><img class='empty-state__mobile-icon' src='{{requestErrorMobile}}' alt='' /></span>{{else if
+    token
+  }}<span class='empty-state__token'><img
+        class='empty-state__illustration'
+        src='{{illustration}}'
+        width='{{illustrationSize}}'
+        height='{{illustrationSize}}'
+        alt=''
+      /></span>{{else}}<img
+      class='empty-state__illustration'
+      src='{{illustration}}'
+      width='140'
+      height='120'
+      alt=''
+    />{{/if}}
+  {{#if unit}}<span class='empty-state__zero' aria-hidden='true'>0</span><span
+      class='empty-state__unit'
+    >{{unit}}</span><span class='empty-state__accent' aria-hidden='true'></span>{{/if}}
+  {{#if secondary}}<h2 class='empty-state__title'>{{title}}</h2>{{else}}<h1
+      class='empty-state__title'
+    >{{title}}</h1>{{/if}}
+  <p class='empty-state__text'>{{text}}</p>
+  <div class='empty-state__links {{linksClass}}'>
+    {{#if canRetry}}<button class='empty-state__button' type='button'>{{#if requestError}}<img
+            class='empty-state__desktop-icon'
+            src='{{requestRetryIcon}}'
+            alt=''
+          /><img class='empty-state__mobile-icon' src='{{requestRetryMobile}}' alt='' />{{/if}}{{#if
+          button
+        }}{{button}}{{else}}Обновить{{/if}}</button>{{/if}}
+    {{#if personState}}<div class='empty-state__actions'><a
+          class='empty-state__home empty-state__home--primary'
+          href='{{href}}'
+          data-link
+        >{{linkText}}</a><a class='empty-state__home' href='/' data-link>На главную</a></div>{{else}}
+      {{#if homeLink}}<a class='empty-state__home' href='/' data-link>На главную</a>{{/if}}
+      {{#if href}}<a class='empty-state__home' href='{{href}}' data-link>{{linkText}}</a>{{/if}}
+    {{/if}}
+  </div>
+  {{#if code}}<p class='empty-state__code'>Код ошибки {{code}}</p>{{/if}}
+</section>

@@ -1,10 +1,59 @@
-<section class="film-feed" id="{{anchor}}">
-  <div data-slot="heading"></div>
-  {{#if note}}<p class="film-feed__note">{{note}}</p>{{/if}}
+<section class='film-feed' id='{{anchor}}'>
+  {{#if withHeading}}<div data-slot='heading'></div>{{/if}}
+  {{#if note}}<p class='film-feed__note'>{{note}}</p>{{/if}}
+  {{#if filters}}
+    <div class='film-feed__filters' role='group' aria-label='Категории ленты'>
+      {{#each categories}}<button
+          class='film-feed__filter'
+          type='button'
+          data-filter='{{value}}'
+          aria-pressed='{{active}}'
+        >{{label}}</button>{{/each}}
+      <a class='film-feed__filter' href='/films?sort=rating&top=250' data-link>Топ-250</a>
+    </div>
+  {{/if}}
   {{#if empty}}
-    <div data-slot="empty"></div>
+    <div data-slot='empty'></div>
   {{else}}
-    <div data-slot="grid"></div>
-    <div data-slot="pagination"></div>
+    <div data-slot='grid'></div>
+    {{#if infinite}}
+      <div class='film-feed__more'>
+        <div
+          class='film-feed__loading'
+          data-loading
+          hidden
+          role='status'
+          aria-label='Загружаем продолжение'
+        >
+          <div class='film-feed__skeletons' aria-hidden='true'>{{#each placeholders}}<div
+                class='film-feed__placeholder'
+              ><div></div><i></i><i></i></div>{{/each}}</div>
+          <span class='film-feed__spinner'><img src='{{feedSpinner}}' alt='' /></span>
+        </div>
+        <div class='film-feed__error' data-more-error hidden role='alert'>
+          <img src='{{feedError}}' alt='' />
+          <div><strong>Не удалось загрузить продолжение</strong><p>Проверьте соединение —
+              загруженные фильмы никуда не делись</p></div>
+          <button type='button' data-more-retry><img src='{{feedRetry}}' alt='' />Повторить</button>
+        </div>
+        <button type='button' data-more>Показать ещё</button>
+      </div>
+      <p class='visually-hidden film-feed__announcement' role='status' aria-live='polite'></p>
+      {{#if endLabel}}<div class='film-feed__finish' hidden><div
+            class='film-feed__divider'
+            aria-hidden='true'
+          ><img src='{{feedEnd}}' alt='' /></div><p
+            class='film-feed__end'
+            data-end
+            role='status'
+            hidden
+          >{{endLabel}}</p></div>{{/if}}
+      <button class='film-feed__top' type='button' data-top><img
+          src='{{feedTop}}'
+          alt=''
+        />Наверх</button>
+    {{else}}
+      <div data-slot='pagination'></div>
+    {{/if}}
   {{/if}}
 </section>

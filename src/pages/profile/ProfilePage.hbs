@@ -1,130 +1,337 @@
-<div class="profile-page">
-    <div class="profile-page__content">
-        <div class="profile-page__avatar">
-            <span data-profile-avatar-placeholder aria-hidden="true">—</span>
-            <img data-profile-avatar-image alt="Фото профиля" width="144" height="144" hidden>
-        </div>
-
-        <div data-profile-view>
-            <section class="profile-page__hero" aria-labelledby="profile-title">
-                <div class="profile-page__intro">
-                    <p class="profile-page__eyebrow" data-profile-since>Профиль · Frame</p>
-                    <h1 id="profile-title" data-profile-username>—</h1>
-                    <p class="profile-page__email" data-profile-email>—</p>
-                    <div class="profile-page__buttons">
-                        <button class="button profile-page__button" type="button" data-profile-edit>Редактировать</button>
-                        <button class="button button--secondary profile-page__button" type="button" data-profile-logout>Выйти</button>
-                    </div>
-                </div>
-
-                <div class="profile-page__slate">
-                    <div class="profile-page__slate-arm profile-page__slate-arm--top" aria-hidden="true"></div>
-                    <div class="profile-page__slate-arm profile-page__slate-arm--bottom" aria-hidden="true"></div>
-                    <dl class="profile-page__slate-board">
-                        <div class="profile-page__slate-row profile-page__slate-row--wide">
-                            <dt>Режиссёр</dt>
-                            <dd data-profile-director>—</dd>
-                        </div>
-                        <div class="profile-page__slate-row"><dt>Оценок</dt><dd data-profile-rating-total>—</dd></div>
-                        <div class="profile-page__slate-row"><dt>Отзывов</dt><dd data-profile-review-total>—</dd></div>
-                        <div class="profile-page__slate-row"><dt>Избранное</dt><dd data-profile-favorite-total>—</dd></div>
-                        <div class="profile-page__slate-row profile-page__slate-row--wide">
-                            <dt>Дата</dt>
-                            <dd data-profile-date>—</dd>
-                        </div>
-                    </dl>
-                </div>
-            </section>
-
-            <section class="profile-page__favorites" aria-labelledby="profile-favorites-title">
-                <div class="profile-page__section-heading">
-                    <h2 id="profile-favorites-title">Избранное</h2>
-                    <span data-profile-favorite-count></span>
-                </div>
-                <p data-profile-library-status role="status">Загружаем списки…</p>
-                <div class="profile-page__film-grid" data-profile-favorites-list></div>
-                <div class="profile-page__empty" data-profile-favorites-empty hidden>
-                    <img src="/src/assets/profile/spark-empty.svg" alt="" width="36" height="36">
-                    <h3>В избранном пока пусто</h3>
-                    <p>Нажмите «В избранное» у фильма в каталоге — он появится здесь.</p>
-                    <a class="button button--secondary profile-page__button" href="/films" data-link>К каталогу</a>
-                </div>
-            </section>
-            <section class="profile-page__ratings" data-profile-ratings hidden aria-labelledby="profile-ratings-title">
-                <div class="profile-page__section-heading"><h2 id="profile-ratings-title">Мои оценки</h2><span data-profile-rating-count></span></div>
-                <div data-profile-ratings-list></div>
-            </section>
-        </div>
-
-        <section class="profile-page__settings" aria-labelledby="profile-settings-title">
-            <div class="profile-page__section-heading">
-                <h1 id="profile-settings-title">Настройки профиля</h1>
-                <a href="/profile" data-profile-back data-link>← К профилю</a>
-            </div>
-            <div class="profile-page__settings-grid">
-                <form class="profile-page__card profile-page__form" data-profile-form novalidate hidden>
-                    <h2>Данные профиля</h2>
-                    <div class="profile-page__form-grid">
-                        <div class="profile-page__photo">
-                            <label class="profile-page__photo-control" for="profile-avatar">
-                                <span>Сменить фото</span>
-                                <input id="profile-avatar" name="avatar" type="file" accept="image/jpeg,image/png" aria-describedby="profile-avatar-hint">
-                            </label>
-                            <p id="profile-avatar-hint" aria-live="polite">PNG или JPEG до 5 МБ</p>
-                        </div>
-                        <div class="profile-page__fields">
-                            <div class="profile-page__field">
-                                <label for="profile-username">Имя пользователя</label>
-                                <input id="profile-username" name="username" type="text" autocomplete="username" maxlength="32" aria-describedby="profile-username-error" required>
-                                <p class="profile-page__field-error" id="profile-username-error" aria-live="polite"></p>
-                            </div>
-                            <div class="profile-page__field">
-                                <label for="profile-email">Email</label>
-                                <input id="profile-email" name="email" type="email" autocomplete="email" maxlength="254" aria-describedby="profile-email-error" required>
-                                <p class="profile-page__field-error" id="profile-email-error" aria-live="polite"></p>
-                            </div>
-                        </div>
-                    </div>
-                    <p class="profile-page__status" data-profile-status role="status"></p>
-                    <div class="profile-page__buttons">
-                        <button class="button profile-page__button" type="submit" disabled>Сохранить</button>
-                        <button class="button button--secondary profile-page__button" type="button" data-profile-cancel>Отмена</button>
-                    </div>
-                </form>
-
-                <form class="profile-page__card profile-page__password" data-profile-password aria-labelledby="profile-password-title" novalidate>
-                    <h2 id="profile-password-title">Смена пароля</h2>
-                    <div class="profile-page__fields">
-                        <div class="profile-page__field profile-page__field--password">
-                            <label for="profile-current-password">Текущий пароль</label>
-                            <input id="profile-current-password" type="password" autocomplete="current-password" aria-describedby="profile-current-password-error" required>
-                            <button class="profile-page__password-toggle" type="button" data-password-toggle="profile-current-password" aria-label="Показать пароль" aria-pressed="false"></button>
-                            <p class="profile-page__field-error" id="profile-current-password-error" aria-live="polite"></p>
-                        </div>
-                        <div>
-                            <div class="profile-page__field profile-page__field--password">
-                                <label for="profile-new-password">Новый пароль</label>
-                                <input id="profile-new-password" type="password" autocomplete="new-password" aria-describedby="profile-new-password-error" required>
-                            <button class="profile-page__password-toggle" type="button" data-password-toggle="profile-new-password" aria-label="Показать пароль" aria-pressed="false"></button>
-                            <p class="profile-page__field-error" id="profile-new-password-error" aria-live="polite"></p>
-                            </div>
-                            <ul class="profile-page__password-rules" aria-label="Требования к паролю">
-                                <li>8–32 символа</li><li>Заглавная буква</li><li>Цифра</li>
-                            </ul>
-                        </div>
-                        <div class="profile-page__field profile-page__field--password">
-                            <label for="profile-repeat-password">Повторите пароль</label>
-                            <input id="profile-repeat-password" type="password" autocomplete="new-password" aria-describedby="profile-repeat-password-error" required>
-                            <button class="profile-page__password-toggle" type="button" data-password-toggle="profile-repeat-password" aria-label="Показать пароль" aria-pressed="false"></button>
-                            <p class="profile-page__field-error" id="profile-repeat-password-error" aria-live="polite"></p>
-                        </div>
-                    </div>
-                    <div class="profile-page__buttons">
-                        <button class="button button--secondary profile-page__button" type="submit" disabled>Обновить пароль</button>
-                    </div>
-                    <p class="profile-page__status" data-profile-password-status role="status"></p>
-                </form>
-            </div>
-        </section>
+<div class='profile-page'>
+  <div class='profile-page__content'>
+    <div class='profile-page__avatar'>
+      <span data-profile-avatar-placeholder aria-hidden='true'>—</span>
+      <img data-profile-avatar-image alt='Фото профиля' width='144' height='144' hidden />
     </div>
+
+    <div data-profile-view>
+      <section class='profile-page__hero' aria-labelledby='profile-title'>
+        <div class='profile-page__intro'>
+          <p class='profile-page__eyebrow' data-profile-since>Профиль · Frame</p>
+          <h1 id='profile-title' data-profile-username>—</h1>
+          <p class='profile-page__email' data-profile-email>—</p><p data-profile-bio></p>
+          <div class='profile-page__buttons'>
+            <a
+              class='button button--secondary profile-page__button'
+              href='/settings'
+              data-link
+            >Настройки</a>
+            <button class='button profile-page__button' type='button' data-profile-edit><img
+                src='/src/assets/profile/edit.svg'
+                alt=''
+              />Редактировать</button>
+            <button
+              class='button button--secondary profile-page__button'
+              type='button'
+              data-profile-share
+              aria-label='Поделиться избранным'
+            ><img src='/src/assets/profile/share.svg' alt='' /></button>
+          </div>
+        </div>
+
+      </section>
+
+      <p data-profile-library-status role='status'>Загружаем списки…</p>
+      <button class='button button--secondary' type='button' data-profile-retry hidden>Повторить
+        загрузку</button>
+      <div class='profile-page__stats' aria-label='Статистика профиля'>
+        <a href='/watched' data-link><span class='profile-page__stat-icon'><img
+              src='/src/assets/profile/watched.svg'
+              alt=''
+            /></span><strong data-profile-watched-total>—</strong><span>Просмотрено</span></a>
+        <a href='/favorites' data-link><span class='profile-page__stat-icon'><img
+              src='/src/assets/profile/favorite.svg'
+              alt=''
+            /></span><strong data-profile-favorite-total>—</strong><span>Избранное</span></a>
+        <a href='/watch-later' data-link><span class='profile-page__stat-icon'><img
+              src='/src/assets/profile/later.svg'
+              alt=''
+            /></span><strong data-profile-later-total>—</strong><span>Смотреть позже</span></a>
+        <a href='/profile?section=ratings' data-link><span class='profile-page__stat-icon'><img
+              src='/src/assets/profile/rating.svg'
+              alt=''
+            /></span><strong data-profile-rating-total>—</strong><span>Оценок</span></a>
+        <a href='/profile?section=reviews' data-link><span class='profile-page__stat-icon'><img
+              src='/src/assets/profile/review.svg'
+              alt=''
+            /></span><strong data-profile-review-total>—</strong><span>Отзывов</span></a>
+      </div>
+      <div class='profile-page__mobile-stats'><div><strong
+            data-profile-watched-mobile
+          >—</strong><span>просмотрено</span></div><div><strong data-profile-average>—</strong><span
+          >средняя оценка</span></div><div><strong data-profile-hours>—</strong><span>ч фильмов</span></div></div>
+      <nav class='profile-page__mobile-links' aria-label='Моё кино'>
+        <a href='/watch-later' data-link>{{icon 'clock'}}Смотреть позже
+          <span data-profile-mobile-count='watchlater'>—</span>{{icon 'arrow-right'}}</a>
+        <a href='/favorites' data-link>{{icon 'heart'}}Избранное
+          <span data-profile-mobile-count='favorite'>—</span>{{icon 'arrow-right'}}</a>
+        <a href='/watched' data-link>{{icon 'eye'}}Просмотрено
+          <span data-profile-mobile-count='watched'>—</span>{{icon 'arrow-right'}}</a>
+        <a href='/profile?section=reviews' data-link>{{icon 'rating-star'}}Мои отзывы
+          <span data-profile-review-mobile>—</span>
+          {{icon 'arrow-right'}}</a>
+        <a href='/settings' data-link>{{icon 'settings'}}Настройки {{icon 'arrow-right'}}</a>
+        <a href='/admin' data-link>{{icon 'edit'}}Управление каталогом {{icon 'arrow-right'}}</a>
+        <button type='button' data-profile-logout>{{icon 'logout'}}Выйти</button>
+      </nav>
+      <section class='profile-page__recent' data-profile-recent><div
+          class='profile-page__section-heading'
+        ><h2>Недавно просмотрено</h2><a href='/watched' data-link>Все →</a></div><div
+          data-profile-recent-grid
+        ></div></section>
+      <section class='profile-page__reviews' data-profile-reviews><div
+          class='profile-page__section-heading'
+        ><h2>Мои отзывы</h2><button type='button' data-profile-load-reviews>Показать отзывы</button></div><p
+          data-profile-reviews-status
+          role='status'
+        >Отзывы загружаются по запросу.</p><div data-profile-reviews-list></div></section>
+      <section class='profile-page__later' data-profile-later><div
+          class='profile-page__section-heading'
+        ><h2>Смотреть позже</h2><a href='/watch-later' data-link>Все →</a></div><div
+          data-profile-later-grid
+        ></div></section>
+      <span data-profile-date hidden></span>
+      <section class='profile-page__favorites' aria-labelledby='profile-favorites-title'>
+        <div class='profile-page__section-heading'>
+          <h2 id='profile-favorites-title'>Избранное</h2>
+          <span data-profile-favorite-count></span>
+        </div>
+
+        <div class='profile-page__film-grid' data-profile-favorites-list></div>
+        <div class='profile-page__empty' data-profile-favorites-empty hidden>
+          <img src='/src/assets/profile/spark-empty.svg' alt='' width='36' height='36' />
+          <h3>В избранном пока пусто</h3>
+          <p>Нажмите «В избранное» у фильма в каталоге — он появится здесь.</p>
+          <a class='button button--secondary profile-page__button' href='/films' data-link>К
+            каталогу</a>
+        </div>
+      </section>
+      <section
+        class='profile-page__ratings'
+        data-profile-ratings
+        hidden
+        aria-labelledby='profile-ratings-title'
+      >
+        <div class='profile-page__section-heading'><h2 id='profile-ratings-title'>Мои оценки</h2><span
+            data-profile-rating-count
+          ></span></div>
+        <div data-profile-ratings-list></div>
+      </section>
+    </div>
+
+    <section class='profile-page__settings' aria-labelledby='profile-settings-title'>
+      <div class='profile-page__section-heading'>
+        <h1 id='profile-settings-title'><span class='profile-page__edit-desktop-title'>Настройки
+            профиля</span><span class='profile-page__edit-mobile-title'>Редактирование</span></h1>
+        <a href='/profile' data-profile-back data-link>← К профилю</a>
+      </div>
+      <nav class='profile-page__settings-tabs' aria-label='Раздел настроек'><button
+          type='button'
+          data-profile-tab='main'
+        >Профиль</button><button type='button' data-profile-tab='security'>Аккаунт и безопасность</button></nav>
+      <div class='profile-page__settings-grid'>
+        <form class='profile-page__card profile-page__form' data-profile-form novalidate hidden>
+          <h2>Данные профиля</h2>
+          <div class='profile-page__form-grid'>
+            <div class='profile-page__photo'>
+              <label class='profile-page__photo-control' for='profile-avatar'>
+                <span>Сменить фото</span>
+                <input
+                  id='profile-avatar'
+                  name='avatar'
+                  type='file'
+                  accept='image/jpeg,image/png'
+                  aria-describedby='profile-avatar-hint'
+                />
+              </label>
+              <p id='profile-avatar-hint' aria-live='polite'>PNG или JPEG до 5 МБ</p>
+              <button
+                class='button button--secondary profile-page__button'
+                type='button'
+                data-profile-remove-photo
+                hidden
+              >Удалить фото</button>
+            </div>
+            <div class='profile-page__fields'>
+              <div class='profile-page__field'>
+                <label for='profile-username'>Имя пользователя</label>
+                <input
+                  id='profile-username'
+                  name='username'
+                  type='text'
+                  autocomplete='username'
+                  maxlength='32'
+                  aria-describedby='profile-username-error'
+                  required
+                />
+                <p
+                  class='profile-page__field-error'
+                  id='profile-username-error'
+                  aria-live='polite'
+                ></p>
+              </div>
+              <div class='profile-page__field'>
+                <label for='profile-email'>Email</label>
+                <input
+                  id='profile-email'
+                  name='email'
+                  type='email'
+                  autocomplete='email'
+                  maxlength='254'
+                  aria-describedby='profile-email-error'
+                  required
+                />
+                <p
+                  class='profile-page__field-error'
+                  id='profile-email-error'
+                  aria-live='polite'
+                ></p>
+              </div>
+            </div>
+          </div>
+          <div class='profile-page__field'><label for='profile-bio'>О себе · на этом устройстве</label><textarea
+              id='profile-bio'
+              rows='3'
+              maxlength='320'
+              aria-describedby='profile-bio-error'
+            ></textarea><span data-profile-bio-count>0 / 160</span><p
+              class='profile-page__field-error'
+              id='profile-bio-error'
+              aria-live='polite'
+            ></p></div>
+          <fieldset class='profile-page__genres'><legend>Любимые жанры</legend><p>На этом устройстве
+              · до 10 жанров</p><div data-profile-genres></div><p
+              data-profile-genres-status
+              role='status'
+            ></p></fieldset>
+          <label class='profile-page__adult-filter'><span>Скрывать фильмы 18+<small>В каталоге,
+                поиске и рекомендациях</small></span><input
+              type='checkbox'
+              data-profile-hide-adults
+              role='switch'
+            /></label>
+          <p class='profile-page__status' data-profile-status role='status'></p>
+          <div class='profile-page__buttons'>
+            <button class='button profile-page__button' type='submit' disabled>Сохранить</button>
+            <button
+              class='button button--secondary profile-page__button'
+              type='button'
+              data-profile-cancel
+            >Отмена</button>
+          </div>
+        </form>
+
+        <section class='profile-page__card' data-profile-security-info hidden><h2>Вход</h2><p>Email:
+            <span data-profile-security-email></span></p><button
+            class='button profile-page__button'
+            type='button'
+            data-profile-edit-email
+          >Изменить email</button><button
+            class='button profile-page__button'
+            type='button'
+            data-password-open
+          >Сменить пароль</button><p>Текущий аккаунт на этом устройстве</p><button
+            class='button profile-page__button'
+            type='button'
+            data-profile-security-logout
+          >Выйти из аккаунта</button></section>
+        <dialog
+          class='modal profile-page__password-dialog'
+          data-password-dialog
+          aria-labelledby='profile-password-title'
+        ><button class='modal__close' type='button' data-password-close aria-label='Закрыть'>{{icon
+              'close'
+            }}</button><form
+            class='profile-page__card profile-page__password'
+            data-profile-password
+            aria-labelledby='profile-password-title'
+            novalidate
+          >
+            <h2 id='profile-password-title'>Смена пароля</h2>
+            <div class='profile-page__fields'>
+              <div class='profile-page__field profile-page__field--password'>
+                <label for='profile-current-password'>Текущий пароль</label>
+                <input
+                  id='profile-current-password'
+                  type='password'
+                  autocomplete='current-password'
+                  aria-describedby='profile-current-password-error'
+                  required
+                />
+                <button
+                  class='profile-page__password-toggle'
+                  type='button'
+                  data-password-toggle='profile-current-password'
+                  aria-label='Показать пароль'
+                  aria-pressed='false'
+                ></button>
+                <p
+                  class='profile-page__field-error'
+                  id='profile-current-password-error'
+                  aria-live='polite'
+                ></p>
+              </div>
+              <div>
+                <div class='profile-page__field profile-page__field--password'>
+                  <label for='profile-new-password'>Новый пароль</label>
+                  <input
+                    id='profile-new-password'
+                    type='password'
+                    autocomplete='new-password'
+                    aria-describedby='profile-new-password-error'
+                    required
+                  />
+                  <button
+                    class='profile-page__password-toggle'
+                    type='button'
+                    data-password-toggle='profile-new-password'
+                    aria-label='Показать пароль'
+                    aria-pressed='false'
+                  ></button>
+                  <p
+                    class='profile-page__field-error'
+                    id='profile-new-password-error'
+                    aria-live='polite'
+                  ></p>
+                </div>
+                <ul class='profile-page__password-rules' aria-label='Требования к паролю'>
+                  <li>8–32 символа</li><li>Заглавная буква</li><li>Цифра</li>
+                </ul>
+              </div>
+              <div class='profile-page__field profile-page__field--password'>
+                <label for='profile-repeat-password'>Повторите пароль</label>
+                <input
+                  id='profile-repeat-password'
+                  type='password'
+                  autocomplete='new-password'
+                  aria-describedby='profile-repeat-password-error'
+                  required
+                />
+                <button
+                  class='profile-page__password-toggle'
+                  type='button'
+                  data-password-toggle='profile-repeat-password'
+                  aria-label='Показать пароль'
+                  aria-pressed='false'
+                ></button>
+                <p
+                  class='profile-page__field-error'
+                  id='profile-repeat-password-error'
+                  aria-live='polite'
+                ></p>
+              </div>
+            </div>
+            <div class='profile-page__buttons'>
+              <button
+                class='button button--secondary profile-page__button'
+                type='submit'
+                disabled
+              >Обновить пароль</button>
+            </div>
+            <p class='profile-page__status' data-profile-password-status role='status'></p>
+          </form></dialog>
+      </div>
+    </section>
+  </div>
 </div>

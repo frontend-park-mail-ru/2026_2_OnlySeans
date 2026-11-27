@@ -1,0 +1,62 @@
+<div class='search-suggestions' id='{{popupId}}' role='listbox' aria-label='Подсказки поиска'>
+  {{#if loading}}<p class='search-suggestions__status' role='status'>Ищем…</p>{{/if}}
+  {{#if failed}}<p class='search-suggestions__status' role='status'>Часть подсказок недоступна.
+      Попробуйте открыть все результаты.</p>{{/if}}
+  {{#if films.length}}<p class='search-suggestions__caption'>Фильмы и сериалы</p>{{/if}}
+  {{#each films}}
+    <a
+      class='search-suggestions__option'
+      href='/film/{{id}}'
+      role='option'
+      id='{{optionId}}'
+      data-option='{{index}}'
+      aria-selected='false'
+      tabindex='-1'
+    >
+      {{#if poster}}<img class='search-suggestions__poster' src='{{poster}}' alt='' />{{/if}}
+      <span><strong>{{title}}</strong><small>{{year}} · {{join genres ', '}}</small></span>
+    </a>
+  {{/each}}
+  {{#if people.length}}<p class='search-suggestions__caption'>Люди</p>{{/if}}
+  {{#each people}}
+    <a
+      class='search-suggestions__option'
+      href='/person/{{id}}'
+      role='option'
+      id='{{optionId}}'
+      data-option='{{index}}'
+      aria-selected='false'
+      tabindex='-1'
+    >
+      {{#if photo}}<img class='search-suggestions__photo' src='{{photo}}' alt='' />{{/if}}
+      <span><strong>{{name}}</strong>{{#if originalName}}<small
+          >{{originalName}}</small>{{/if}}</span>
+    </a>
+  {{/each}}
+  {{#if query}}
+    {{#if empty}}<p class='search-suggestions__status'>Совпадений не найдено</p>{{/if}}
+    <a
+      class='search-suggestions__all'
+      href='{{allHref}}'
+      role='option'
+      id='{{allId}}'
+      data-option='{{allIndex}}'
+      aria-selected='false'
+      tabindex='-1'
+    >Все результаты по «{{query}}»{{#unless failed}}{{#unless loading}}
+          ·
+          {{total}}{{/unless}}{{/unless}}</a>
+  {{else}}
+    <p class='search-suggestions__caption'>Недавно искали</p>
+    {{#each history}}<a
+        class='search-suggestions__option'
+        href='/search?q={{encode text}}'
+        role='option'
+        id='{{optionId}}'
+        data-option='{{index}}'
+        aria-selected='false'
+        tabindex='-1'
+      >{{icon 'clock'}}<span>{{text}}</span></a>{{else}}<p class='search-suggestions__status'>Здесь
+        появятся ваши запросы.</p>{{/each}}
+  {{/if}}
+</div>

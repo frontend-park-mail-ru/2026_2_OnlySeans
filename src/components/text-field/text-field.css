@@ -37,7 +37,7 @@
 .text-field__input:focus {
   outline: none;
   border-color: var(--euphoria-amber);
-  box-shadow: 0 0 20px var(--euphoria-amber-glow);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--euphoria-amber) 12%, transparent);
 }
 
 .text-field--invalid .text-field__input {
@@ -45,7 +45,7 @@
 }
 
 .text-field--invalid .text-field__input:focus {
-  box-shadow: 0 0 20px var(--euphoria-wine-glow);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-danger) 12%, transparent);
 }
 
 .text-field--password .text-field__input {
@@ -116,4 +116,16 @@
 .text-field__caps .icon {
   width: 18px;
   height: 18px;
+}
+
+@media (pointer: coarse) {
+  .text-field__toggle {
+    width: 44px;
+  }
+  .text-field__caps {
+    right: 50px;
+  }
+  .text-field--password .text-field__input {
+    padding-right: 88px;
+  }
 }

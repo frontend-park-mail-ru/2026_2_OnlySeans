@@ -15,9 +15,11 @@
   pointer-events: none;
 }
 
-.toast-stack:popover-open {
-  display: grid;
-  gap: 10px;
+@supports selector(:popover-open) {
+  .toast-stack:popover-open {
+    display: grid;
+    gap: 10px;
+  }
 }
 
 .toast-stack::backdrop {
@@ -130,7 +132,17 @@
   outline-offset: 3px;
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (pointer: coarse) {
+  .toast__close {
+    flex-basis: 44px;
+    height: 44px;
+  }
+  .toast__action {
+    min-height: 44px;
+  }
+}
+
+@media (--reduced-motion) {
   .toast {
     animation: none;
   }

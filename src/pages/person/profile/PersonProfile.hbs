@@ -1,28 +1,109 @@
-<article class="person-profile">
-  <header class="person-profile__hero">
-    <div class="person-profile__photo">
-      {{#if person.photo}}
-        <img class="person-profile__image" src="{{person.photo}}" alt="Фото: {{person.name}}" />
-      {{else}}
-        <span class="person-profile__initials" aria-hidden="true">{{initials person.name}}</span>
-      {{/if}}
+<article class='person-profile'>
+  <nav class='person-profile__toolbar' aria-label='Навигация по странице человека'>
+    <a href='/films' data-link aria-label='В каталог'><img src='{{back}}' alt='' /></a>
+    <span class='person-profile__toolbar-name'>{{person.name}}</span>
+    <button type='button' data-share-person aria-label='Поделиться страницей'><img
+        src='{{share}}'
+        alt=''
+      /></button>
+  </nav>
+  <header class='person-profile__hero'>
+    <div class='person-profile__atmosphere' aria-hidden='true'>
+      {{#if backdrop}}<img class='person-profile__backdrop' src='{{backdrop}}' alt='' />{{/if}}
     </div>
-    <div class="person-profile__info">
-      {{#if roles}}<p class="person-profile__roles">{{roles}}</p>{{/if}}
-      <h1 class="person-profile__name">{{person.name}}</h1>
-      {{#if person.originalName}}<p class="person-profile__original">{{person.originalName}}</p>{{/if}}
-      {{#if facts.length}}
-        <dl class="person-profile__facts">
-          {{#each facts}}
-            <div class="person-profile__fact">
-              <dt class="person-profile__term">{{term}}</dt>
-              <dd class="person-profile__value">{{value}}</dd>
-            </div>
-          {{/each}}
-        </dl>
-      {{/if}}
+    <div class='person-profile__portrait'>
+      <div class='person-profile__photo'><span
+          class='person-profile__initials'
+          aria-hidden='true'
+        >{{initials person.name}}</span>{{#if person.photo}}<img
+            class='person-profile__image'
+            src='{{person.photo}}'
+            alt='Фото: {{person.name}}'
+          />{{/if}}</div>
+      <div class='person-profile__info'>
+        <p class='person-profile__breadcrumb'>Люди{{#if roles}} / {{roles}}{{/if}}</p>
+        {{#if roles}}<p class='person-profile__roles'>{{roles}}</p>{{/if}}
+        <h1 class='person-profile__name'>{{person.name}}</h1>
+        {{#if person.originalName}}<p
+            class='person-profile__original'
+          >{{person.originalName}}</p>{{/if}}
+        <p class='person-profile__subtitle'>{{subtitle}}</p>
+        {{#if facts.length}}<dl class='person-profile__facts'>{{#each facts}}<div><dt
+                >{{term}}</dt><dd>{{value}}</dd></div>{{/each}}</dl>{{/if}}
+      </div>
+    </div>
+    <div class='person-profile__actions'>
+      <button
+        class='person-profile__follow'
+        type='button'
+        disabled
+        aria-describedby='person-unavailable'
+      ><img src='{{bell}}' alt='' /><span>Следить за ролями</span></button>
+      <button
+        class='person-profile__favorite'
+        type='button'
+        disabled
+        aria-describedby='person-unavailable'
+        aria-label='В избранное'
+      ><img src='{{heart}}' alt='' /><span>В избранное</span></button>
+      <button
+        class='person-profile__share'
+        type='button'
+        data-share-person
+        aria-label='Поделиться страницей'
+      ><img src='{{share}}' alt='' /></button>
+      <p class='person-profile__unavailable' id='person-unavailable'>Подписки и избранное для персон
+        пока недоступны.</p>
     </div>
   </header>
-  {{#if person.biography}}<p class="person-profile__biography">{{person.biography}}</p>{{/if}}
-  <div class="person-profile__works"></div>
+  {{#if partial}}<div class='person-profile__partial' role='status'><p>Показаны основные данные.
+        Биография и фильмография временно недоступны.</p><button
+        type='button'
+        data-retry-person
+      >Повторить загрузку</button></div>{{/if}}
+  <dl class='person-profile__stats person-profile__stats--desktop'>{{#each stats}}<div><dt
+        >{{term}}</dt><dd>{{value}}</dd></div>{{/each}}</dl>
+  <dl class='person-profile__stats person-profile__stats--mobile'>{{#each mobileFacts}}<div><dt
+        >{{term}}</dt><dd>{{value}}</dd></div>{{/each}}</dl>
+  <section class='person-profile__biography' aria-labelledby='person-biography-title'>
+    <h2 id='person-biography-title'>Биография</h2>
+    {{#if person.biography}}<p
+        class='person-profile__biography-text'
+        id='person-biography'
+      >{{person.biography}}</p><button
+        type='button'
+        data-biography-toggle
+        aria-controls='person-biography'
+        aria-expanded='false'
+        hidden
+      >Читать полностью</button>{{else}}<p class='person-profile__no-biography'>{{#if partial}}Не
+          удалось загрузить биографию.{{else}}Биография пока не добавлена.{{/if}}</p>{{/if}}
+  </section>
+  {{#if cards.length}}<section class='person-profile__known' aria-label='{{cardTitle}}'>
+      <div class='person-profile__known-heading'><div data-slot='roles-heading'></div><h2
+          class='person-profile__mobile-heading'
+        ><img src='{{star}}' alt='' />{{cardTitle}}</h2><a
+          href='#person-filmography'
+          aria-label='Вся фильмография'
+        ><span class='person-profile__all-desktop'>Вся фильмография ↓</span><span
+            class='person-profile__all-mobile'
+          >Все</span></a></div>
+      <ul class='person-profile__cards'>{{#each cards}}<li><a
+              class='person-profile__card'
+              href='/film/{{encode film.id}}'
+              data-link
+            ><div class='person-profile__card-image'>{{#if film.poster}}<img
+                    src='{{film.poster}}'
+                    alt=''
+                    loading='lazy'
+                    decoding='async'
+                  />{{/if}}{{#if character}}<span
+                    class='person-profile__character'
+                  >{{character}}</span>{{/if}}</div><span
+                class='person-profile__card-title'
+              >{{film.title}}</span><span
+                class='person-profile__card-year'
+              >{{film.year}}</span></a></li>{{/each}}</ul>
+    </section>{{/if}}
+  <div class='person-profile__filmography'><div data-slot='filmography'></div></div>
 </article>

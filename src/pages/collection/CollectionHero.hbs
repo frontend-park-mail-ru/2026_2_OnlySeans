@@ -1,9 +1,35 @@
-<section class="collection-hero">
-  <div class="collection-hero__text">
-    <p class="collection-hero__eyebrow">Подборки / {{count}}</p>
-    <h1 class="collection-hero__title">{{title}}</h1>
-    {{#if description}}<p class="collection-hero__description">{{description}}</p>{{/if}}
-    <div data-slot="back"></div>
-  </div>
-  <div data-slot="posters"></div>
-</section>
+<section class='collection-hero'><div class='collection-hero__text'><p
+      class='collection-hero__eyebrow'
+    >{{#if featured}}Подборка из каталога{{else if local}}Моя подборка · на устройстве{{else}}Подборка{{/if}}</p><h1
+      class='collection-hero__title'
+    >{{title}}</h1><p
+      class='collection-hero__description'
+      data-expanded='{{expanded}}'
+    >{{description}}</p>{{#if longDescription}}<button
+        class='collection-hero__description-toggle'
+        type='button'
+        data-description-toggle
+        aria-expanded='{{expanded}}'
+      >{{#if expanded}}Свернуть описание{{else}}Читать описание{{/if}}</button>{{/if}}<p
+      class='collection-hero__meta'
+    >{{count}} {{plural count 'фильм' 'фильма' 'фильмов'}} · ≈ {{hours}} ч фильмов</p><div
+      class='collection-hero__actions'
+    >{{#if featured}}<a
+          class='collection-hero__primary'
+          href='/collections/{{id}}'
+          data-link
+        >Открыть подборку {{icon 'arrow-right'}}</a>{{else if films.length}}<a
+          class='collection-hero__primary'
+          href='{{wheelHref}}'
+          data-link
+        >Крутить колесо</a>{{/if}}{{#unless (eq id 'snapshot')}}<button
+          type='button'
+          data-save
+          aria-pressed='{{saved}}'
+        >{{icon 'heart'}}{{#if saved}}Сохранено{{else}}Сохранить{{/if}}</button>{{/unless}}<button
+        type='button'
+        data-share
+        aria-label='Поделиться подборкой'
+      ><img src='/src/assets/profile/share.svg' alt='' /></button></div></div><div
+    data-slot='posters'
+  ></div></section>

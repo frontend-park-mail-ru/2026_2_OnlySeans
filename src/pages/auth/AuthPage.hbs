@@ -1,13 +1,35 @@
-<main class="auth-page">
-  <section class="auth-page__panel" aria-labelledby="auth-title">
-    <div class="auth-page__content">
-      <div class="auth-page__brand"><div data-slot="logo"></div></div>
-      <nav class="auth-page__tabs" aria-label="Авторизация" data-active="{{mode}}">
-        <a class="auth-page__tab" href="{{registerHref}}" data-link data-mode="register">Регистрация</a>
-        <a class="auth-page__tab" href="{{loginHref}}" data-link data-mode="login">Вход</a>
+<main class='auth-page' data-layout='{{layout}}'>
+  {{#unless centered}}<header class='auth-page__mobile-bar'><a
+        href='/'
+        data-link
+        aria-label='На главную'
+      ><img src='{{back}}' alt='' /></a></header>{{/unless}}
+  <section class='auth-page__panel' aria-labelledby='auth-title'>
+    <div class='auth-page__content'>
+      <div class='auth-page__brand'><a
+          class='auth-page__centered-logo'
+          href='/'
+          data-link
+          aria-label='Frame, на главную'
+        ><img src='{{mark}}' alt='' /><span><img src='{{letter}}' alt='' /><img
+              src='{{word}}'
+              alt=''
+            /></span></a>{{#unless centered}}<img
+            class='auth-page__mobile-logo'
+            src='{{mobileLogo}}'
+            alt='Frame'
+          />{{/unless}}</div>
+      <nav class='auth-page__tabs' aria-label='Авторизация' data-active='{{mode}}'>
+        <a
+          class='auth-page__tab'
+          href='{{registerHref}}'
+          data-link
+          data-mode='register'
+        >Регистрация</a>
+        <a class='auth-page__tab' href='{{loginHref}}' data-link data-mode='login'>Вход</a>
       </nav>
-      <div data-slot="form"></div>
+      <div data-slot='form'></div>
     </div>
   </section>
-  <div data-slot="scene"></div>
+  <div data-slot='scene'></div>
 </main>

@@ -1,3 +1,88 @@
-<div class="catalog-page">
-  <div data-slot="feed"></div>
+<div class='catalog-page' data-phase='{{phase}}'>
+  {{#if ready}}
+    <div class='catalog-page__heading'>
+      <div data-slot='heading'></div>
+      <span class='catalog-page__count' data-catalog-count aria-live='polite'>{{count}}</span>
+      <div class='catalog-page__view'><div data-slot='view'></div></div>
+    </div>
+    <p class='catalog-page__note'>{{note}}</p>
+    <div class='catalog-page__toolbar'>
+      <button
+        class='catalog-page__sort'
+        type='button'
+        data-filter-tab='sort'
+        aria-haspopup='dialog'
+        aria-expanded='false'
+      >{{icon 'catalog-sort'}}<span>{{sortLabel}}</span></button>
+      <button
+        class='catalog-page__filters-toggle'
+        type='button'
+        data-filter-tab='all'
+        aria-haspopup='dialog'
+        aria-expanded='false'
+      >{{icon 'catalog-filter'}}Фильтры{{#if activeCount}} · {{activeCount}}{{/if}}</button>
+      <div class='catalog-page__filter-chips'>
+        <button
+          type='button'
+          data-filter-tab='genres'
+          aria-haspopup='dialog'
+          aria-expanded='false'
+        >Жанры {{icon 'catalog-chevron'}}</button>
+        <button
+          type='button'
+          disabled
+          title='Данные о странах пока недоступны'
+          aria-describedby='catalog-country-note'
+        >Страна {{icon 'catalog-chevron'}}</button>
+        <button
+          type='button'
+          data-filter-tab='year'
+          aria-haspopup='dialog'
+          aria-expanded='false'
+        >{{yearLabel}} {{icon 'catalog-chevron'}}</button>
+        <button
+          type='button'
+          data-filter-tab='rating'
+          aria-haspopup='dialog'
+          aria-expanded='false'
+        >{{ratingLabel}} {{icon 'catalog-chevron'}}</button>
+        <button
+          type='button'
+          data-filter-tab='age'
+          aria-haspopup='dialog'
+          aria-expanded='false'
+        >{{ageLabel}} {{icon 'catalog-chevron'}}</button>
+      </div>
+      {{#if activeCount}}<button class='catalog-page__clear' type='button' data-clear>Сбросить всё</button>{{/if}}
+      <span class='visually-hidden' id='catalog-country-note'>Фильтрация по странам пока недоступна.</span>
+    </div>
+    {{#if tags.length}}<div
+        class='catalog-page__tags'
+        role='group'
+        aria-label='Применённые фильтры'
+      >{{#each tags}}<button
+            type='button'
+            class='catalog-page__tag'
+            data-remove-filter='{{key}}'
+            data-excluded='{{excluded}}'
+            aria-label='Убрать фильтр: {{label}}'
+          >{{label}} {{icon 'close'}}</button>{{/each}}</div>{{/if}}
+    <div class='catalog-page__quick-genres' role='group' aria-label='Быстрый выбор жанра'>
+      <button type='button' data-all-genres aria-pressed='{{noGenres}}'>Все</button>
+      {{#each quickGenres}}<button
+          type='button'
+          data-quick-genre='{{name}}'
+          aria-pressed='{{active}}'
+        >{{name}}{{#if active}}{{icon 'close'}}{{/if}}</button>{{/each}}
+    </div>
+    <div data-slot='feed'></div>
+  {{else}}
+    {{#if failed}}
+      <h1 class='catalog-page__error-heading'>{{title}}</h1>
+      <div class='catalog-page__error-background' aria-hidden='true' inert><div
+          data-slot='error-skeleton'
+        ></div></div>
+    {{/if}}
+    <div data-slot='state'></div>
+  {{/if}}
 </div>

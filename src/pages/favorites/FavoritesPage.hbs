@@ -1,0 +1,99 @@
+<div class='favorites-page'>
+  {{#if guest}}
+    <div data-slot='heading'></div><div data-slot='guest'></div>
+  {{else}}
+    {{#if ready}}
+      {{#if empty}}<div data-slot='empty'></div>{{else}}
+        <section class='favorites-page__hero' aria-labelledby='favorites-title'>
+          <div class='favorites-page__posters'><div data-slot='posters'></div></div>
+          <div class='favorites-page__intro'>
+            <h1 id='favorites-title'><img src='{{heart}}' alt='' />{{title}}</h1>
+            <p>{{#if shared}}Снимок списка, переданный по ссылке{{else}}Кино, к которому хочется
+                вернуться.{{/if}}</p>
+            <dl class='favorites-page__stats'><div><dt>тайтлов</dt><dd
+                >{{stats.total}}</dd></div><div><dt>фильмы · сериалы</dt><dd>{{stats.movies}}
+                  ·
+                  {{stats.series}}</dd></div><div title='По фильмам с известной длительностью'><dt>ч
+                  фильмов</dt><dd>{{hours}}</dd></div><div><dt>любимый жанр</dt><dd>{{#if
+                    stats.genre
+                  }}{{stats.genre}}{{else}}—{{/if}}</dd></div></dl>
+            <p class='favorites-page__mobile-summary'>{{stats.total}}
+              тайтлов ·
+              {{hours}}
+              ч фильмов{{#if stats.genre}} · {{stats.genre}}{{/if}}</p>
+            <button class='favorites-page__share' type='button' data-share><img
+                src='{{shareIcon}}'
+                alt=''
+              />Поделиться</button>
+          </div>
+        </section>
+        {{#if missing}}<p class='favorites-page__notice' role='status'>Часть фильмов больше
+            недоступна в каталоге.</p>{{/if}}
+        {{#if shared}}<p class='favorites-page__notice'><a href='/favorites' data-link>Открыть своё
+              избранное</a></p>{{else}}
+          <nav class='favorites-page__shelves' aria-label='Личные полки'>
+            <a href='{{allHref}}' data-link aria-current='{{allCurrent}}'>Всё · {{sourceCount}}</a>
+            {{#each shelves}}<a href='{{href}}' data-link aria-current='{{current}}'>{{name}}
+                ·
+                {{count}}</a>{{/each}}
+            <button type='button' data-create-shelf>+ Новая полка</button>
+            {{#if canEditShelf}}<button type='button' data-edit-shelf>Изменить полку</button>{{/if}}
+          </nav>
+          <p class='favorites-page__local-note'>Полки сохраняются на этом устройстве.</p>
+        {{/if}}
+        <div class='favorites-page__toolbar'>
+          <nav class='favorites-page__types' aria-label='Тип произведения'>{{#each tabs}}<a
+                href='{{href}}'
+                data-link
+                aria-current='{{current}}'
+              >{{label}}</a>{{/each}}</nav>
+          <label class='favorites-page__sort'><span class='visually-hidden'>Сортировка</span><select
+              name='sort'
+            >{{#each sorts}}<option value='{{value}}'>{{label}}</option>{{/each}}</select></label>
+          <div class='favorites-page__tools'><div class='favorites-page__tool-content'>
+              <label class='favorites-page__search'>{{icon 'search'}}<span
+                  class='visually-hidden'
+                >Поиск в списке</span><input
+                  data-favorite-search
+                  type='search'
+                  value='{{search}}'
+                  placeholder='Найти в списке'
+                  maxlength='200'
+                /></label>
+              <p class='favorites-page__result-count'>Показано:
+                <span data-results-count>{{visibleCount}}</span></p>
+              <div data-slot='view'></div>
+              <button
+                type='button'
+                class='favorites-page__more'
+                data-wheel
+                title='В колесо попадут первые 100 фильмов текущего списка'
+              >В колесо</button>
+            </div></div>
+        </div>
+        <div class='favorites-page__status'><span data-rating-status role='status'></span><button
+            type='button'
+            data-retry-ratings
+            hidden
+          >Повторить</button></div>
+        {{#if scoresUnavailable}}<p class='favorites-page__notice' role='status'>Свои оценки пока не
+            удалось загрузить. Фильмы и полки доступны.</p>{{/if}}
+        {{#if shelfMissing}}<p class='favorites-page__notice' role='status'>Полка не найдена.
+            Выберите другую полку или «Всё».</p>{{/if}}
+
+        <div data-slot='results'></div>
+        {{#if recommendations}}
+          <section class='favorites-page__recommendations'>
+            <div class='favorites-page__recommendation-heading'><h2>Похоже на
+                {{#if shared}}этот список{{else}}ваше избранное{{/if}}</h2><button
+                type='button'
+                data-refresh-recommendations
+              >Обновить подборку</button></div>
+            <p class='favorites-page__local-note'>По жанрам: {{genreNote}}</p>
+            <div data-recommendations></div>
+          </section>
+        {{/if}}
+      {{/if}}
+    {{else}}<div data-slot='state'></div>{{/if}}
+  {{/if}}
+</div>

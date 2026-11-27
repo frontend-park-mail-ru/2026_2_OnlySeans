@@ -1,13 +1,29 @@
-<header class="site-header">
-  <div data-slot="logo"></div>
-  <div class="site-header__actions">
+<header class='site-header'>
+  <div class='site-header__brand'><div data-slot='logo'></div></div>
+  <div data-slot='search'></div>
+  <div class='site-header__actions'>
+    <button
+      class='site-header__search'
+      type='button'
+      aria-label='Открыть поиск'
+      aria-expanded='false'
+    >{{icon 'search'}}</button>
     {{#if user}}
-      <a class="site-header__account" href="/profile" data-link title="Мой профиль" {{#if onProfile}}aria-current="page"{{/if}}>
-        <span class="site-header__avatar" aria-hidden="true">{{#if avatar}}<img src="{{avatar}}" alt="" />{{else}}{{initials name}}{{/if}}</span>
-        <span class="site-header__name">{{name}}</span>
+      <a
+        class='site-header__account'
+        href='/profile'
+        data-link
+        title='Мой профиль'
+        aria-current='{{current}}'
+      >
+        <span class='site-header__avatar' aria-hidden='true'>{{#if avatar}}<img
+              src='{{avatar}}'
+              alt=''
+            />{{else}}{{initials name}}{{/if}}</span>
+        <span class='site-header__name'>{{name}}</span>
       </a>
     {{else}}
-      <a class="site-header__login" href="{{loginHref}}" data-link>Войти</a>
+      <a class='site-header__login' href='{{loginHref}}' data-link>Войти</a>
     {{/if}}
   </div>
 </header>

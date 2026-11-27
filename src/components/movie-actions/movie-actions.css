@@ -7,6 +7,7 @@
 .movie-actions__button {
   position: relative;
   display: inline-flex;
+  flex-shrink: 0;
   align-items: center;
   justify-content: center;
   gap: 9px;
@@ -47,8 +48,9 @@
 }
 
 .movie-actions--card {
+  flex-wrap: wrap;
   margin-top: auto;
-  padding-top: 7px;
+  padding-top: 12px;
 }
 
 .movie-actions--card .movie-actions__button {
@@ -78,14 +80,17 @@
 }
 
 .movie-actions--hero .movie-actions__button--watchlater {
-  width: auto;
-  padding: 0 22px;
-  border-color: var(--border-active);
-  border-radius: 28px;
-  color: var(--on-accent);
-  background: linear-gradient(120deg, var(--euphoria-amber), var(--accent-deep));
-  font-size: var(--text-small);
-  font-weight: 700;
+  width: 46px;
+}
+
+.movie-actions--hero .movie-actions__label,
+.movie-actions__plus,
+.movie-actions__share {
+  display: none;
+}
+
+.movie-actions__button:disabled {
+  cursor: progress;
 }
 
 .movie-actions--hero .movie-actions__button--watchlater[aria-pressed='true'] {
@@ -93,7 +98,7 @@
   background: var(--bg-input);
 }
 
-@media (prefers-reduced-motion: reduce) {
+@media (--reduced-motion) {
   .movie-actions__button {
     transition: none;
   }
@@ -113,4 +118,72 @@
 .movie-actions--spotlight .movie-actions__button .icon {
   width: 20px;
   height: 20px;
+}
+
+@media (pointer: coarse) {
+  .movie-actions--card .movie-actions__button,
+  .movie-actions--spotlight .movie-actions__button {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+@media (max-width: 767px) {
+  .movie-actions--hero {
+    gap: 10px;
+  }
+
+  .movie-actions--hero .movie-actions__button {
+    flex: none;
+    width: 44px;
+    height: 44px;
+    border-color: var(--border-glass);
+  }
+
+  .movie-actions--hero .movie-actions__button--watchlater {
+    flex: 1;
+    order: -1;
+    width: auto;
+    min-width: 0;
+    padding: 0 12px;
+    border-color: var(--border-active);
+    border-radius: 100px;
+    color: var(--on-accent);
+    background: linear-gradient(180deg, var(--gradient-amber-from), var(--gradient-amber-to));
+    font-size: var(--text-meta);
+    font-weight: 600;
+  }
+
+  .movie-actions--hero .movie-actions__button--watchlater .icon {
+    display: none;
+  }
+
+  .movie-actions--hero .movie-actions__label,
+  .movie-actions__plus,
+  .movie-actions__share {
+    display: inline-flex;
+  }
+  .movie-actions--card .movie-actions__button,
+  .movie-actions--spotlight .movie-actions__button {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+  }
+
+  .movie-actions--spotlight .movie-actions__button--favorite,
+  .movie-actions--spotlight .movie-actions__button--watched {
+    display: none;
+  }
+}
+
+@media (max-width: 767px) {
+  .movie-actions--hero {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .movie-actions--hero .movie-actions__button--watchlater {
+    min-height: 48px;
+    flex-basis: 148px;
+    white-space: nowrap;
+  }
 }
