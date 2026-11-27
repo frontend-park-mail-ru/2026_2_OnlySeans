@@ -15,6 +15,22 @@ import type { Route } from './router.js';
 const GUEST_ONLY = { layout: 'bare', access: 'guest' };
 
 export const routes: Route[] = [
+  {
+    path: '/admin',
+    access: 'user',
+    load: () =>
+      import('../pages/admin/AdminCatalogPage.js').then((module) => module.AdminCatalogPage),
+  },
+  {
+    path: '/admin/films/new',
+    access: 'user',
+    load: () => import('../pages/admin/AdminFilmPage.js').then((module) => module.AdminFilmPage),
+  },
+  {
+    path: '/admin/films/:id/edit',
+    access: 'user',
+    load: () => import('../pages/admin/AdminFilmPage.js').then((module) => module.AdminFilmPage),
+  },
   { path: '/', page: HomePage },
   { path: '/discover', redirect: '/' },
   { path: '/films', page: CatalogPage, props: { type: 'movie' } },

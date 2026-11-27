@@ -36,6 +36,7 @@ const GROUPS: {
       { href: '/watch-later', text: 'Смотреть позже', icon: Icon.CLOCK, count: 'watchlater' },
       { href: '/watched', text: 'Просмотрено', icon: Icon.EYE },
       { href: '/favorites', text: 'Избранное', icon: Icon.HEART, count: 'favorite' },
+      { href: '/admin', text: 'Управление каталогом', icon: Icon.SETTINGS },
     ],
   },
   {

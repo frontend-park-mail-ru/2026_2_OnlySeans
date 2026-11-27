@@ -1,0 +1,22 @@
+<dialog
+  class='modal admin-delete'
+  aria-labelledby='admin-delete-title'
+  aria-describedby='admin-delete-description'
+>
+  <h2 id='admin-delete-title'>Удалить фильм?</h2>
+  <p id='admin-delete-description'>Фильм исчезнет из каталога. Это действие нельзя отменить.</p>
+  <div class='admin-delete__film'>
+    <div class='admin-delete__poster'>{{#if film.poster}}<img
+          src='{{film.poster}}'
+          alt=''
+        />{{else}}{{icon 'films'}}{{/if}}</div>
+    <div><h3>{{film.title}}</h3><p>{{film.originalTitle}}</p><p>{{film.year}}
+        · ID
+        {{film.id}}</p></div>
+  </div>
+  <p class='admin-delete__error' data-error role='alert'></p>
+  <div class='admin-delete__actions'>
+    <button class='modal__button' type='button' data-cancel>Отмена</button>
+    <button class='modal__button modal__button--danger' type='button' data-delete>Удалить фильм</button>
+  </div>
+</dialog>

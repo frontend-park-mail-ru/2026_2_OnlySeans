@@ -1,0 +1,112 @@
+<div class='admin-page'>
+  <div class='admin-page__toolbar'><span>Каталог / Администрирование</span><a
+      class='admin-button'
+      href='/'
+      data-link
+    >Открыть сайт</a></div>
+  <a class='admin-button admin-page__back' href='/admin' data-link>{{icon 'arrow-left'}}
+    Назад к каталогу</a>
+  <header class='admin-page__heading'><div><h1>{{#if editing}}Редактирование фильма{{else}}Новый
+          фильм{{/if}}</h1><p data-film-reference>{{#if film}}{{film.title}}
+          · ID
+          {{id}}{{else}}Добавьте историю, которую увидят пользователи.{{/if}}</p></div></header>
+  {{#if loading}}<div class='admin-state' role='status'>Загружаем данные фильма…</div>
+  {{else if loadError}}<div class='admin-state'><h2>Не удалось открыть фильм</h2><p
+        role='alert'
+      >{{loadError}}</p><button
+        class='admin-button'
+        type='button'
+        data-retry
+      >Повторить</button></div>
+  {{else}}
+    <form novalidate>
+      <fieldset class='admin-form'>
+        <div class='admin-form__heading'><h2>Основная информация</h2>{{#if film}}<button
+              class='admin-button admin-button--danger'
+              type='button'
+              data-delete-film
+            >Удалить фильм</button>{{/if}}</div>
+        <p class='admin-page__note'>* Обязательные поля</p>
+        <div class='admin-form__layout'>
+          <div class='admin-form__poster-column'>
+            <span>Постер</span>
+            <div class='admin-form__poster'><img
+                data-poster-preview
+                alt='Предпросмотр постера'
+                hidden
+              /><span data-poster-placeholder>{{icon 'films'}}<span>Нет постера</span></span></div>
+            <label class='admin-button admin-form__upload'>Выбрать постер<input
+                class='visually-hidden'
+                name='poster'
+                type='file'
+                accept='image/jpeg,image/png'
+                aria-describedby='poster-hint poster-error'
+              /></label>
+            <button
+              class='admin-button admin-button--danger'
+              type='button'
+              data-remove-poster
+              hidden
+            >Удалить постер</button>
+            <p class='admin-page__note' id='poster-hint' data-poster-caption></p>
+            <p class='admin-field-error' id='poster-error' data-poster-error role='alert'></p>
+          </div>
+          <div class='admin-form__fields'>
+            <div data-slot='title'></div>
+            <div data-slot='original_title'></div>
+            <div class='admin-form__pair'>
+              <label class='admin-field'>Тип *<select
+                  name='film_type'
+                  aria-describedby='film-type-error'
+                ><option value='movie'>Фильм</option><option
+                    value='series'
+                  >Сериал</option></select><span
+                  class='admin-field-error'
+                  id='film-type-error'
+                  data-error-for='film_type'
+                ></span></label>
+              <div data-slot='release_year'></div>
+            </div>
+            <div class='admin-form__pair'>
+              <div><div data-slot='duration_min'></div><p
+                  class='admin-page__note'
+                  data-duration-note
+                  hidden
+                >У сериала длительность не указывается.</p></div>
+              <label class='admin-field'>Возраст *<select
+                  name='age_limit'
+                  aria-describedby='age-error'
+                ><option value=''>Выберите</option><option value='0'>0+</option><option
+                    value='6'
+                  >6+</option><option value='12'>12+</option><option value='16'>16+</option><option
+                    value='18'
+                  >18+</option></select><span
+                  class='admin-field-error'
+                  id='age-error'
+                  data-error-for='age_limit'
+                ></span></label>
+            </div>
+            <label class='admin-field'>Описание<textarea
+                name='description'
+                rows='5'
+                maxlength='10000'
+                aria-describedby='description-error'
+              ></textarea><span
+                class='admin-field-error'
+                id='description-error'
+                data-error-for='description'
+              ></span></label>
+          </div>
+        </div>
+      </fieldset>
+      <p class='admin-field-error admin-form__error' data-save-error role='alert' tabindex='-1'></p>
+      <div class='admin-form__actions'><a
+          class='admin-button'
+          href='/admin'
+          data-link
+        >Отмена</a><button class='admin-button admin-button--primary' type='submit' data-save>{{#if
+            editing
+          }}Сохранить изменения{{else}}Создать фильм{{/if}}</button></div>
+    </form>
+  {{/if}}
+</div>

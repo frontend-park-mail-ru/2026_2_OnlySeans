@@ -32,6 +32,7 @@ export class AppLayout extends Component {
   }
 
   show(page: Component, { toTop = false } = {}) {
+    this.element.dataset.admin = String(location.pathname.startsWith('/admin'));
     if (
       this.#page?.constructor === page.constructor &&
       'updateRoute' in this.#page &&

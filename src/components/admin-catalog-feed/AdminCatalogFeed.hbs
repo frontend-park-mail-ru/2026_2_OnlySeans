@@ -1,0 +1,62 @@
+<section class='admin-feed' aria-label='Фильмы каталога' aria-busy='{{loading}}'>
+  {{#if films.length}}
+    <div class='admin-feed__table' role='table' aria-label='Каталог'>
+      <div class='admin-feed__head' role='row'><span role='columnheader'>ID</span><span
+          role='columnheader'
+        >Название</span><span role='columnheader'>Тип</span><span
+          role='columnheader'
+        >Год</span><span role='columnheader'>Возраст</span><span
+          role='columnheader'
+        >Длительность</span><span role='columnheader'>Действия</span></div>
+      {{#each films}}
+        <div class='admin-feed__row' role='row'>
+          <span class='admin-feed__id' role='cell'>#{{id}}</span>
+          <a class='admin-feed__film' href='/admin/films/{{id}}/edit' data-link role='cell'>
+            <span class='admin-feed__poster'>{{#if poster}}<img
+                  src='{{poster}}'
+                  alt=''
+                  loading='lazy'
+                />{{else}}{{icon 'films'}}{{/if}}</span>
+            <span class='admin-feed__names'><strong>{{title}}</strong><span
+              >{{originalTitle}}</span></span>
+          </a>
+          <span class='admin-feed__type' role='cell'>{{#if
+              isSeries
+            }}Сериал{{else}}Фильм{{/if}}</span>
+          <span class='admin-feed__year' role='cell'>{{year}}</span>
+          <span class='admin-feed__age' role='cell'>{{#if
+              (eq ageLimit null)
+            }}—{{else}}{{ageLimit}}+{{/if}}</span>
+          <span class='admin-feed__duration' role='cell'>{{#if duration}}{{duration}}
+              мин{{else}}—{{/if}}</span>
+          <span class='admin-feed__actions' role='cell'>
+            <a
+              class='admin-button admin-button--icon'
+              href='/admin/films/{{id}}/edit'
+              data-link
+              aria-label='Редактировать {{title}}'
+            >{{icon 'edit'}}</a>
+            <button
+              class='admin-button admin-button--icon admin-button--danger'
+              type='button'
+              data-delete-id='{{id}}'
+              aria-label='Удалить {{title}}'
+            >{{icon 'trash'}}</button>
+          </span>
+        </div>
+      {{/each}}
+    </div>
+  {{/if}}
+  {{#if skeleton.length}}<div class='admin-feed__skeleton' aria-label='Загрузка каталога'>{{#each
+        skeleton
+      }}<div></div>{{/each}}</div>{{/if}}
+  {{#if empty}}<div class='admin-state'><h2>{{#if filtered}}Ничего не найдено{{else}}Каталог пока
+          пуст{{/if}}</h2><p>{{#if filtered}}Измените запрос или сбросьте фильтры.{{else}}Добавьте
+          первый фильм в каталог.{{/if}}</p></div>{{/if}}
+  <div class='admin-feed__footer' data-sentinel>
+    <p role='{{messageRole}}'>{{message}}</p>
+    <p>Показано {{films.length}} · Загружено {{received}} из {{total}}</p>
+    {{#if canMore}}<button class='admin-button' type='button' data-more>{{#if error}}Повторить
+          загрузку{{else}}Загрузить ещё{{/if}}</button>{{/if}}
+  </div>
+</section>
