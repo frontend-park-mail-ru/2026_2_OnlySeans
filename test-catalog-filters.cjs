@@ -34,12 +34,12 @@ test('жанры включаются, исключаются и сочетаю�
   assert.deepEqual(ids(state), [1, 2, 3, 5]);
 });
 
-test('диапазон лет и возраст не включают неизвестный возраст', () => {
+test('диапазон лет и возраст сохраняют фильмы с неизвестным возрастом', () => {
   const state = filters.defaultCatalogFilters();
   state.yearFrom = '2010';
   state.yearTo = '2024';
   state.ages = [16];
-  assert.deepEqual(ids(state), [3]);
+  assert.deepEqual(ids(state), [3, 5]);
   assert.ok(filters.catalogYearError({ yearFrom: '2024', yearTo: '1990' }));
   assert.ok(filters.catalogYearError({ yearFrom: '20x0', yearTo: '2020' }));
 });
@@ -76,6 +76,16 @@ test('ссылка сохраняет параметры, а некоррект�
       new URLSearchParams('yearFrom=no&ratingFrom=NaN&age=99&sort=unknown'),
     ),
     filters.defaultCatalogFilters(),
+  );
+});
+
+test('теги сохраняют подписи жанров из API и прямых ссылок', () => {
+  const state = filters.readCatalogFilters(new URLSearchParams('genre=драма'));
+  assert.equal(filters.catalogFilterTags(state, ['Драма'])[0].label, '+ Драма');
+  filters.selectGenre(state, 'Научная фантастика', -1);
+  const restored = filters.readCatalogFilters(filters.catalogQuery(state));
+  assert.ok(
+    filters.catalogFilterTags(restored).some((tag) => tag.label === '⦸ Научная фантастика'),
   );
 });
 

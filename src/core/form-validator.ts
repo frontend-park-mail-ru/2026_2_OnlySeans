@@ -1,12 +1,23 @@
+interface ValidatedField {
+  value: string;
+  setError(message: string): void;
+}
+interface Rule {
+  field: ValidatedField;
+  check(value: string): string;
+  active?: () => boolean;
+}
+
+/** Проверяет активные поля; сообщения показывает после касания или отправки формы. */
 export class FormValidator {
   #rules;
   #touched = new Set();
 
-  constructor(rules) {
+  constructor(rules: Rule[]) {
     this.#rules = rules;
   }
 
-  touch(field) {
+  touch(field: ValidatedField) {
     this.#touched.add(field);
   }
 

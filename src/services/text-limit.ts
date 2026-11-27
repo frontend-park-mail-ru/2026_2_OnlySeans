@@ -1,7 +1,11 @@
-const length = (value) => Array.from(value).length;
-const head = (value, max) => Array.from(value).slice(0, Math.max(0, max)).join('');
+const length = (value: string) => Array.from(value).length;
+const head = (value: string, max: number) => Array.from(value).slice(0, Math.max(0, max)).join('');
 
-export const limitTextInput = (input: HTMLInputElement | HTMLTextAreaElement, max: number, { onLimit }: { onLimit?: () => void } = {}) => {
+export const limitTextInput = (
+  input: HTMLInputElement | HTMLTextAreaElement,
+  max: number,
+  { onLimit }: { onLimit?: () => void } = {},
+) => {
   input.dataset.maxChars = String(max);
 
   input.maxLength = max * 2;

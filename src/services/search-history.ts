@@ -23,3 +23,10 @@ export function rememberSearch(query: string) {
 export function clearSearchHistory() {
   writeJson(HISTORY_KEY, []);
 }
+
+export function removeSearchHistory(query: string) {
+  writeJson(
+    HISTORY_KEY,
+    searchHistory().filter((item) => item !== query),
+  );
+}

@@ -4,6 +4,7 @@ export type GenreSelection = -1 | 0 | 1;
 export type CatalogSort = 'catalog' | 'popular' | 'rating' | 'newest' | 'title';
 export interface CatalogFilters {
   genres: Record<string, GenreSelection>;
+  genreLabels: Record<string, string>;
   anyGenre: boolean;
   allGenres: boolean;
   yearFrom: string;
@@ -32,6 +33,7 @@ const NON_FICTION = /документал|короткометраж|ток[- ]?
 export function defaultCatalogFilters(): CatalogFilters {
   return {
     genres: {},
+    genreLabels: {},
     anyGenre: false,
     allGenres: false,
     yearFrom: '',
@@ -55,12 +57,13 @@ export function readCatalogFilters(query: URLSearchParams): CatalogFilters {
       .filter((value) => value.trim() && value.length <= 100)
       .forEach((value) => {
         state.genres[normalize(value)] = selection;
+        state.genreLabels[normalize(value)] = value.trim();
       });
   }
   state.anyGenre = query.get('genreMode') === 'any';
   state.allGenres = query.get('allGenres') === '1';
-  state.yearFrom = /^\d{4}$/.test(query.get('yearFrom') || '') ? query.get('yearFrom') : '';
-  state.yearTo = /^\d{4}$/.test(query.get('yearTo') || '') ? query.get('yearTo') : '';
+  state.yearFrom = /^\d{4}$/.test(query.get('yearFrom') || '') ? query.get('yearFrom') || '' : '';
+  state.yearTo = /^\d{4}$/.test(query.get('yearTo') || '') ? query.get('yearTo') || '' : '';
   if (catalogYearError(state)) {
     state.yearFrom = '';
     state.yearTo = '';
@@ -89,7 +92,7 @@ export function catalogQuery(state: CatalogFilters): URLSearchParams {
       if (selection === 0 && (state.allGenres || !NON_FICTION.test(name))) return;
       query.append(
         selection === 1 ? 'genre' : selection === -1 ? 'excludeGenre' : 'neutralGenre',
-        name,
+        state.genreLabels[name] || name,
       );
     });
   if (state.anyGenre) query.set('genreMode', 'any');
@@ -113,6 +116,7 @@ export function genreSelection(state: CatalogFilters, name: string): GenreSelect
 
 export function selectGenre(state: CatalogFilters, name: string, selection: GenreSelection) {
   state.genres[normalize(name)] = selection;
+  state.genreLabels[normalize(name)] = name;
 }
 
 export function catalogYearError(state: Pick<CatalogFilters, 'yearFrom' | 'yearTo'>): string {
@@ -151,7 +155,8 @@ export function filterCatalog(
       return false;
     if (state.yearFrom && film.year < Number(state.yearFrom)) return false;
     if (state.yearTo && film.year > Number(state.yearTo)) return false;
-    if (state.ages.length && !state.ages.includes(film.ageLimit)) return false;
+    if (state.ages.length && film.ageLimit !== null && !state.ages.includes(film.ageLimit))
+      return false;
     const rating = ratings.get(film.id);
     return !state.ratingFrom || Boolean(rating?.votes && rating.average >= state.ratingFrom);
   });
@@ -161,7 +166,8 @@ export function filterCatalog(
       if (state.sort === 'newest') return b.year - a.year || a.id - b.id;
       const first = ratings.get(a.id);
       const second = ratings.get(b.id);
-      const score = (rating: CatalogRating) => (rating?.votes > 0 ? rating.average : -1);
+      const score = (rating: CatalogRating | undefined) =>
+        rating && rating.votes > 0 ? rating.average : -1;
       return (
         (state.sort === 'popular'
           ? (second?.votes || 0) - (first?.votes || 0)
@@ -183,12 +189,13 @@ export function catalogFilterCount(state: CatalogFilters): number {
   );
 }
 
-export function catalogFilterTags(state: CatalogFilters) {
+export function catalogFilterTags(state: CatalogFilters, genres: string[] = []) {
+  const labels = new Map(genres.map((name) => [normalize(name), name]));
   const tags = Object.entries(state.genres)
     .filter(([name, selection]) => selection !== 0 || (!state.allGenres && NON_FICTION.test(name)))
     .map(([name, selection]) => ({
       key: `genre:${name}`,
-      label: `${selection === -1 ? '⦸' : selection === 1 ? '+' : 'Без исключения:'} ${name}`,
+      label: `${selection === -1 ? '⦸' : selection === 1 ? '+' : 'Без исключения:'} ${labels.get(name) || state.genreLabels[name] || name}`,
       excluded: selection === -1,
     }));
   if (state.allGenres) tags.push({ key: 'artistic', label: 'Все жанры', excluded: false });

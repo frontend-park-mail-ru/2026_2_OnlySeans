@@ -2,17 +2,17 @@ import { Handlebars } from './handlebars.js';
 
 const styles = new Map();
 
-export async function loadText(url) {
+export async function loadText(url: string | URL) {
   const response = await fetch(url);
   if (!response.ok) throw new Error(`Не удалось загрузить ${url}`);
   return response.text();
 }
 
-export async function loadTemplate(source) {
+export async function loadTemplate(source: string) {
   return Handlebars.compile(source);
 }
 
-export function loadStyles(url) {
+export function loadStyles(url: string | URL) {
   const href = String(url);
   if (styles.has(href)) return;
   const link = document.createElement('link');
@@ -28,8 +28,8 @@ export function loadStyles(url) {
   document.head.append(link);
 }
 
-export async function loadAssets({ template }: { template?: string } = {}) {
-  return template ? loadTemplate(template) : null;
+export async function loadAssets({ template }: { template: string }) {
+  return loadTemplate(template);
 }
 
 export const stylesReady = () => Promise.all(styles.values());

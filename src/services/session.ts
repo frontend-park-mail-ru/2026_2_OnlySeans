@@ -12,7 +12,7 @@ let lastCheck = 0;
 let pending: Promise<void> | null = null;
 let revision = 0;
 
-const sameUser = (a, b) =>
+const sameUser = (a: Account | null, b: Account | null) =>
   (a?.id ?? null) === (b?.id ?? null) && a?.username === b?.username && a?.email === b?.email;
 
 async function setUser(user: Account | null) {
@@ -53,7 +53,7 @@ export function refreshSession({ maxAge = 0 } = {}) {
   return pending;
 }
 
-export function watchSessionOnReturn(onChange) {
+export function watchSessionOnReturn(onChange: () => void) {
   document.addEventListener('visibilitychange', async () => {
     if (document.hidden) return;
     const before = store.get('user');
@@ -62,11 +62,11 @@ export function watchSessionOnReturn(onChange) {
   });
 }
 
-export async function login(credentials) {
+export async function login(credentials: Parameters<typeof authApi.login>[0]) {
   await authenticate(() => authApi.login(credentials));
 }
 
-export async function register(data) {
+export async function register(data: Parameters<typeof authApi.register>[0]) {
   await authenticate(() => authApi.register(data));
 }
 
@@ -91,4 +91,5 @@ async function authenticate(action: () => Promise<Account | null>) {
   if (current === revision) lastCheck = Date.now();
 }
 
-export const displayName = (user) => user?.username || user?.email || 'Пользователь';
+export const displayName = (user: Account | null) =>
+  user?.username || user?.email || 'Пользователь';

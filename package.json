@@ -11,10 +11,15 @@
     "typecheck": "tsc --noEmit && tsc -p tsconfig.worker.json",
     "test:sw": "npm run build && node test-service-worker.cjs",
     "test:offline": "npm run test:sw && node test-offline-edits.cjs",
-    "test:catalog": "node --test test-catalog-filters.cjs",
+    "test:catalog": "node --test test-catalog-filters.cjs test-catalog-ratings.cjs test-catalog-pager.cjs",
     "test:auth": "node --test test-auth.cjs",
     "test:film": "node --test test-film.cjs",
-    "test:person": "node --test test-person.cjs"
+    "test:person": "node --test test-person.cjs",
+    "test:router": "node --test test-router.cjs",
+    "test:wheel": "node --test test-wheel.cjs",
+    "test:search": "node --test test-search.cjs",
+    "test:favorites": "node --test test-favorites.cjs",
+    "test:virtual-feed": "node --test test-virtual-feed.cjs"
   },
   "license": "ISC",
   "type": "commonjs",

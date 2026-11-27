@@ -2,7 +2,7 @@ import { ApiError, assetUrl, request, requestPages } from './http.js';
 import { getFilm, toFilm, type FilmResponse } from './films.js';
 import { HttpStatus } from './errors.js';
 
-export const ROLE_LABELS = {
+export const ROLE_LABELS: Record<string, string> = {
   actor: 'Актёр',
   director: 'Режиссёр',
   writer: 'Сценарист',

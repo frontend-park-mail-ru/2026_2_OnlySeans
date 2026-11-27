@@ -164,7 +164,7 @@ export class AuthForm extends Component {
     this.#setSending(true);
     this.#refreshSubmit();
     try {
-      await (registering ? register(data) : login(data));
+      await (registering ? register({ ...data, username: this.username.value }) : login(data));
       if (this.element) this.props.navigate(getReturnPath() || '/', { replace: true });
     } catch (error) {
       if (!this.element) return;

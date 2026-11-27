@@ -1,4 +1,10 @@
 import { eventBus } from '../core/event-bus.js';
+export interface Notice {
+  message: string;
+  type: 'info' | 'success' | 'error';
+  duration?: number;
+  action?: { label: string; run?: () => void; href?: string };
+}
 
 export const notify = (
   message: string,

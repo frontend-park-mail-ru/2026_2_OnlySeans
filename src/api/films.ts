@@ -19,6 +19,17 @@ export interface FilmResponse {
 export type Film = ReturnType<typeof toFilm>;
 type FilmList = { films: FilmResponse[]; total: number };
 
+/** Одна порция каталога; offset считается по исходным записям, до фильтрации на клиенте. */
+export async function getFilmsPage(offset: number, { signal }: { signal?: AbortSignal } = {}) {
+  const data = await request<FilmList>('/films', {
+    params: { details: true, limit: 20, offset },
+    signal,
+  });
+  if (!Array.isArray(data.films) || !Number.isSafeInteger(data.total) || data.total < 0)
+    throw new Error('Некорректный ответ каталога');
+  return { films: data.films.map(toFilm), total: data.total };
+}
+
 export const toFilm = (film: FilmResponse) => ({
   id: film.id,
   title: film.title,
@@ -45,7 +56,9 @@ export async function getFilms({ signal }: { signal?: AbortSignal } = {}) {
 }
 
 export const getFilm = async (id: number | string, { signal }: { signal?: AbortSignal } = {}) =>
-  toFilm((await request<{ film: FilmResponse }>(`/films/${encodeURIComponent(id)}`, { signal })).film);
+  toFilm(
+    (await request<{ film: FilmResponse }>(`/films/${encodeURIComponent(id)}`, { signal })).film,
+  );
 
 export async function getFilmPosters(limit: number, { signal }: { signal?: AbortSignal } = {}) {
   const { films } = await request<FilmList>('/films', { params: { limit }, signal });

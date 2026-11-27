@@ -19,7 +19,7 @@ export class AppLayout extends Component {
   mobileNav: MobileNav;
 
   context() {
-    return { collapsed: readJson(StorageKey.SIDEBAR_COLLAPSED, false) === true };
+    return { collapsed: readJson<boolean>(StorageKey.SIDEBAR_COLLAPSED, false) === true };
   }
 
   onRender() {

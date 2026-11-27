@@ -1,3 +1,4 @@
+/** Статусы, для которых интерфейс различает отсутствие данных, доступ и конфликт записи. */
 export const HttpStatus = Object.freeze({
   NO_CONTENT: 204,
   BAD_REQUEST: 400,
@@ -16,16 +17,19 @@ export const ServerError = Object.freeze({
   REVIEW_NOT_FOUND: 'review not found',
 });
 
-const SERVER_ERROR_TEXT = {
+export const REVIEW_CONFLICT_MESSAGE = 'Отзыв изменён в другой вкладке. Обновите страницу.';
+
+const SERVER_ERROR_TEXT: Record<string, string> = {
   [ServerError.ADMIN_REQUIRED]: 'Это действие доступно только администратору.',
   [ServerError.FILM_NOT_FOUND]: 'Фильм не найден.',
   [ServerError.PERSON_NOT_FOUND]: 'Человек не найден.',
-  [ServerError.REVIEW_CHANGED]: 'Отзыв изменён в другой вкладке. Обновите страницу.',
+  [ServerError.REVIEW_CHANGED]: REVIEW_CONFLICT_MESSAGE,
+  [REVIEW_CONFLICT_MESSAGE]: REVIEW_CONFLICT_MESSAGE,
   [ServerError.REVIEW_EXISTS]: 'Вы уже написали отзыв на этот фильм. Обновите страницу.',
   [ServerError.REVIEW_NOT_FOUND]: 'Отзыв не найден. Обновите страницу.',
 };
 
-const STATUS_TEXT = {
+const STATUS_TEXT: Record<number, string> = {
   [HttpStatus.BAD_REQUEST]: 'Проверьте заполнение полей.',
   [HttpStatus.UNAUTHORIZED]: 'Сессия завершилась. Войдите снова, чтобы продолжить.',
   [HttpStatus.FORBIDDEN]: 'Недостаточно прав для этого действия.',
@@ -33,7 +37,13 @@ const STATUS_TEXT = {
   [HttpStatus.CONFLICT]: 'Это действие уже выполнено. Обновите страницу.',
 };
 
-export const errorMessage = (error) =>
-  (error.status !== HttpStatus.UNAUTHORIZED && SERVER_ERROR_TEXT[error.message]) ||
-  STATUS_TEXT[error.status] ||
-  'Не удалось связаться с сервером. Попробуйте ещё раз.';
+export function errorMessage(error: unknown): string {
+  const details = error instanceof Error ? error : null;
+  const status =
+    details && 'status' in details && typeof details.status === 'number' ? details.status : 0;
+  return (
+    (status !== HttpStatus.UNAUTHORIZED && details && SERVER_ERROR_TEXT[details.message]) ||
+    STATUS_TEXT[status] ||
+    'Не удалось связаться с сервером. Попробуйте ещё раз.'
+  );
+}

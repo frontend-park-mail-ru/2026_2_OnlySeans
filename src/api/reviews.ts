@@ -74,8 +74,23 @@ export async function findMyReview(
   return findMyReview(filmId, userId, options, page + 1, nextOffset);
 }
 
-export const createReview = (filmId: number, values: ReviewValues) =>
-  request(filmReviews(filmId), { method: 'POST', body: toBody(values) });
+/** Сохраняет id ответа POST; текущий API не возвращает дату создания и полную запись. */
+export async function createReview(filmId: number, values: ReviewValues, authorId: number) {
+  const data = await request<{ id: number; review?: ReviewResponse }>(filmReviews(filmId), {
+    method: 'POST',
+    body: toBody(values),
+  });
+  if (data.review) return toReview(data.review);
+  if (!Number.isInteger(data.id) || data.id <= 0)
+    throw new Error('Сервер не вернул идентификатор отзыва. Обновите страницу.');
+  return toReview({
+    ...toBody(values),
+    id: data.id,
+    author_id: authorId,
+    version: 1,
+    created_at: '',
+  });
+}
 
 export async function updateReview(id: number, values: ReviewValues, version: number) {
   const data = await request<{ review: ReviewResponse }>(review(id), {

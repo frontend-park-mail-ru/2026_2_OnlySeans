@@ -225,3 +225,24 @@ test('401 авторизации означает гостя, ошибка се�
   status = 503;
   await assert.rejects(api.fetchCurrentUser(), (error) => error.status === 503);
 });
+
+test('неразобранный JSON не превращается в успешный пустой ответ API', async (context) => {
+  const previousFetch = global.fetch;
+  const previousWindow = global.window;
+  context.after(() => {
+    global.fetch = previousFetch;
+    global.window = previousWindow;
+  });
+  global.window = { location: { origin: 'https://frontend.test' } };
+  let status = 200;
+  global.fetch = async () =>
+    new Response('{broken', { status, headers: { 'Content-Type': 'application/json' } });
+  const { request } = load('api/http.ts', {
+    './errors.js': { HttpStatus: { NO_CONTENT: 204 } },
+    '../config.js': { API_URL: 'https://backend.test' },
+    '../services/offline-storage.js': { offlineAccount: () => null },
+  });
+  await assert.rejects(request('/films/1/rating'), (error) => error.status === 502);
+  status = 401;
+  await assert.rejects(request('/authorised'), (error) => error.status === 401);
+});

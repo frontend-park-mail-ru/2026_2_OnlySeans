@@ -16,7 +16,7 @@ import {
 
 let loading: { filmId: number; user: Account | null; promise: Promise<void> } | null = null;
 
-function ensureUser(id: number | undefined) {
+function ensureUser(id: number | undefined): asserts id is number {
   if (!id || store.get('user')?.id !== id) throw new ApiError(401, 'unauthorized');
 }
 
@@ -69,7 +69,7 @@ async function fetchMine(filmId: number, user: Account | null) {
 
 export function loadMyReview(filmId: number) {
   const user = store.get('user');
-  const request = { filmId, user, promise: null as Promise<void> };
+  const request = { filmId, user, promise: Promise.resolve() };
   request.promise = fetchMine(filmId, user)
     .then((state) => {
       if (loading === request && user === store.get('user'))
@@ -85,7 +85,7 @@ export function loadMyReview(filmId: number) {
 
 async function loaded(filmId: number) {
   if (loading?.filmId !== filmId || loading.user !== store.get('user')) loadMyReview(filmId);
-  await loading.promise;
+  await loading?.promise;
 }
 
 export async function setScore(filmId: number, score: number) {
@@ -129,8 +129,7 @@ export async function saveReview(filmId: number, values: ReviewValues) {
         ensureUser(userId);
         remember(filmId, { review });
       } else {
-        await createReview(filmId, values);
-        const review = await findMyReview(filmId, userId);
+        const review = await createReview(filmId, values, userId);
         ensureUser(userId);
         remember(filmId, { review });
       }
@@ -145,7 +144,7 @@ export async function saveReview(filmId: number, values: ReviewValues) {
   queueFilmEdit(filmId, {
     kind: 'review',
     values,
-    previous: current && { id: current.id, version: current.version },
+    previous: current ? { id: current.id, version: current.version } : undefined,
   });
   return true;
 }

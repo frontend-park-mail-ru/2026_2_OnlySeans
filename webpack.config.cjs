@@ -22,37 +22,38 @@ module.exports = (_, argv) => {
       filename: 'assets/[name].[contenthash].js',
       assetModuleFilename: 'assets/[name].[contenthash][ext]',
       publicPath: '/',
-      clean: true
+      clean: true,
     },
     resolve: {
       extensions: ['.ts', '.js'],
       extensionAlias: { '.js': ['.ts', '.js'] },
-      alias: { handlebars: 'handlebars/dist/handlebars.js' }
+      alias: { handlebars: 'handlebars/dist/handlebars.js' },
     },
+    optimization: { runtimeChunk: 'single' },
     module: {
       rules: [
         {
           test: /\.[cm]?[jt]s$/,
           exclude: /node_modules/,
           type: 'javascript/auto',
-          use: 'babel-loader'
+          use: 'babel-loader',
         },
         {
           test: /\.css$/,
           use: [
             production ? MiniCssExtractPlugin.loader : 'style-loader',
             'css-loader',
-            path.resolve(__dirname, 'build/postcss-loader.cjs')
-          ]
+            path.resolve(__dirname, 'build/postcss-loader.cjs'),
+          ],
         },
         { test: /\.hbs$/, type: 'asset/source' },
-        { test: /\.(svg|png|jpe?g|webp|gif|woff2?|mp4|webm|mp3)$/, type: 'asset/resource' }
-      ]
+        { test: /\.(svg|png|jpe?g|webp|gif|woff2?|mp4|webm|mp3)$/, type: 'asset/resource' },
+      ],
     },
     plugins: [
       new webpack.DefinePlugin({
         __SW_ENABLED__: JSON.stringify(production),
-        __API_ORIGIN__: JSON.stringify(apiOrigin)
+        __API_ORIGIN__: JSON.stringify(apiOrigin),
       }),
       ...(production ? [new ServiceWorkerPlugin({ apiOrigin })] : []),
       new HtmlWebpackPlugin({ template: './index.html', scriptLoading: 'defer' }),
@@ -60,9 +61,9 @@ module.exports = (_, argv) => {
       new CopyWebpackPlugin({
         patterns: [
           { from: 'src/assets', to: 'src/assets' },
-          { from: 'src/assets/images/logo-mark.svg', to: 'assets/logo-mark.svg' }
-        ]
-      })
+          { from: 'src/assets/images/logo-mark.svg', to: 'assets/logo-mark.svg' },
+        ],
+      }),
     ],
     devtool: production ? false : 'source-map',
     devServer: {
@@ -73,10 +74,10 @@ module.exports = (_, argv) => {
         {
           context: ['/api', '/static', '/avatars'],
           target: process.env.API_PROXY_TARGET || 'http://127.0.0.1:8080',
-          changeOrigin: true
-        }
-      ]
+          changeOrigin: true,
+        },
+      ],
     },
-    performance: { maxEntrypointSize: 650000, maxAssetSize: 650000 }
+    performance: { maxEntrypointSize: 650000, maxAssetSize: 650000 },
   };
 };

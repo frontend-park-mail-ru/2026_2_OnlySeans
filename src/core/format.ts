@@ -1,4 +1,4 @@
-export const pluralize = (count, [one, few, many]) => {
+export const pluralize = (count: number, [one, few, many]: readonly string[]) => {
   const tens = Math.abs(count) % 100;
   const units = tens % 10;
   if (tens > 10 && tens < 20) return many;
@@ -7,7 +7,8 @@ export const pluralize = (count, [one, few, many]) => {
   return many;
 };
 
-export const countLabel = (count, forms) => `${count} ${pluralize(count, forms)}`;
+export const countLabel = (count: number, forms: readonly string[]) =>
+  `${count} ${pluralize(count, forms)}`;
 
 export const initials = (name = '') =>
   name
@@ -17,7 +18,7 @@ export const initials = (name = '') =>
     .map((part) => part[0].toUpperCase())
     .join('');
 
-export function relativeDate(value, now = Date.now()) {
+export function relativeDate(value: string, now = Date.now()) {
   const date = new Date(value);
   const difference = Math.max(0, now - date.getTime());
   if (!Number.isFinite(date.getTime()) || difference < 60_000) return 'Только что';

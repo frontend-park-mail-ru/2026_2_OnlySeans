@@ -2,6 +2,7 @@ import { ApiError, request } from './http.js';
 import { HttpStatus } from './errors.js';
 import type { Account } from '../services/offline-storage.js';
 
+/** 401 означает гостя; ошибка сети остаётся ошибкой и не должна завершать локальную сессию. */
 export async function fetchCurrentUser() {
   try {
     const data = await request<{ user?: Account }>('/authorised');
@@ -21,7 +22,12 @@ export const login = async ({ email, password }: Credentials) =>
   (await request<{ user: Account }>('/login', { method: 'POST', body: { email, password } })).user;
 
 export const register = async ({ email, username, password }: Credentials & { username: string }) =>
-  (await request<{ user: Account }>('/register', { method: 'POST', body: { email, username, password } })).user;
+  (
+    await request<{ user: Account }>('/register', {
+      method: 'POST',
+      body: { email, username, password },
+    })
+  ).user;
 
 export const logout = () => request('/logout', { method: 'POST' });
 

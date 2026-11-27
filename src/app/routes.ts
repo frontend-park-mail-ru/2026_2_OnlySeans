@@ -11,10 +11,11 @@ import { NotFoundPage } from '../pages/not-found/NotFoundPage.js';
 import { SearchPage } from '../pages/search/SearchPage.js';
 import { GenresPage } from '../pages/genres/GenresPage.js';
 import { UpcomingPage } from '../pages/upcoming/UpcomingPage.js';
+import type { Route } from './router.js';
 
 const GUEST_ONLY = { layout: 'bare', access: 'guest' };
 
-export const routes = [
+export const routes: Route[] = [
   { path: '/', page: HomePage },
   { path: '/discover', redirect: '/' },
   { path: '/films', page: CatalogPage, props: { type: 'movie' } },

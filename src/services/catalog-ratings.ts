@@ -24,20 +24,20 @@ export async function loadCatalogRatings(
           result.set(film.id, saved.value);
           continue;
         }
-        const data = await request<{ rating: { average_score: number; votes: number } }>(
+        const data = await request<{ rating?: { average_score?: number; votes?: number } | null }>(
           `/films/${film.id}/rating`,
           { signal },
         );
         const { average_score: average, votes } = data.rating || {};
-        if (
-          !Number.isFinite(average) ||
-          average < 0 ||
-          average > 10 ||
-          !Number.isInteger(votes) ||
-          votes < 0
-        )
-          throw new Error('Некорректный ответ рейтинга.');
-        const value = { average, votes };
+        const valid =
+          typeof average === 'number' &&
+          Number.isFinite(average) &&
+          average >= 0 &&
+          average <= 10 &&
+          typeof votes === 'number' &&
+          Number.isInteger(votes) &&
+          votes > 0;
+        const value = valid ? { average, votes } : { average: 0, votes: 0 };
         cache.set(film.id, { at: Date.now(), value });
         result.set(film.id, value);
       } catch (error) {

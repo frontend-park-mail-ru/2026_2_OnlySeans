@@ -12,13 +12,14 @@ async function testServiceWorker() {
   const deletedCaches = [];
   let offline = false;
   let claimed = false;
+  let skippedWaiting = false;
   let responseStatus = 200;
   let lastFetch;
   let cacheWriteBarrier;
 
   const origin = 'https://example.test';
   const apiOrigin = process.env.API_ORIGIN || origin;
-  const toURL = (input) => typeof input === 'string' ? new URL(input, origin).href : input.url;
+  const toURL = (input) => (typeof input === 'string' ? new URL(input, origin).href : input.url);
   const caches = {
     async open(name) {
       if (!storage.has(name)) storage.set(name, new Map());
@@ -32,27 +33,50 @@ async function testServiceWorker() {
             entries.set(request.url, new Response(url));
           }
         },
-        async match(input) { return entries.get(toURL(input))?.clone(); },
+        async match(input) {
+          return entries.get(toURL(input))?.clone();
+        },
         async put(input, response) {
           await cacheWriteBarrier;
           entries.set(toURL(input), response);
         },
-        async delete(input) { return entries.delete(toURL(input)); },
-        async keys() { return [...entries.keys()]; },
+        async delete(input) {
+          return entries.delete(toURL(input));
+        },
+        async keys() {
+          return [...entries.keys()];
+        },
       };
     },
-    async keys() { return ['unrelated-cache', 'onlyseans-ui-old', ...storage.keys()]; },
-    async delete(name) { deletedCaches.push(name); },
+    async keys() {
+      return ['unrelated-cache', 'onlyseans-ui-old', ...storage.keys()];
+    },
+    async delete(name) {
+      deletedCaches.push(name);
+    },
   };
 
   const context = {
-    URL, Response, caches,
+    URL,
+    Response,
+    caches,
     Request: class extends Request {
-      constructor(url, options) { super(new URL(url, origin), options); }
+      constructor(url, options) {
+        super(new URL(url, origin), options);
+      }
     },
     location: { origin },
-    clients: { claim: async () => { claimed = true; } },
-    addEventListener: (name, handler) => { events[name] = handler; },
+    clients: {
+      claim: async () => {
+        claimed = true;
+      },
+    },
+    skipWaiting: async () => {
+      skippedWaiting = true;
+    },
+    addEventListener: (name, handler) => {
+      events[name] = handler;
+    },
     fetch: async (request, options) => {
       lastFetch = { request, options };
       if (offline) throw new Error('offline');
@@ -67,7 +91,11 @@ async function testServiceWorker() {
 
   async function lifecycle(name) {
     let promise;
-    events[name]({ waitUntil: pending => { promise = pending; } });
+    events[name]({
+      waitUntil: (pending) => {
+        promise = pending;
+      },
+    });
     await promise;
   }
 
@@ -77,10 +105,18 @@ async function testServiceWorker() {
     events.fetch({
       request: {
         url: new URL(path, /^\/(api|static|avatars)(\/|$)/.test(path) ? apiOrigin : origin).href,
-        method, mode, cache, headers: new Headers(headers), signal: new AbortController().signal
+        method,
+        mode,
+        cache,
+        headers: new Headers(headers),
+        signal: new AbortController().signal,
       },
-      respondWith: promise => { response = promise; },
-      waitUntil: promise => { background.push(promise); },
+      respondWith: (promise) => {
+        response = promise;
+      },
+      waitUntil: (promise) => {
+        background.push(promise);
+      },
     });
     return { response, background: Promise.all(background) };
   }
@@ -92,6 +128,7 @@ async function testServiceWorker() {
   }
 
   await lifecycle('install');
+  assert(skippedWaiting);
   await lifecycle('activate');
   assert(claimed);
   assert.deepEqual(deletedCaches, ['onlyseans-ui-old']);
@@ -104,34 +141,47 @@ async function testServiceWorker() {
   assert.equal(await request('https://other.test/api/films'), undefined);
   assert.equal(await (await request('/profile', 'GET', 'navigate')).text(), 'network');
 
-  const publicPaths = ['/api/films?limit=100', '/api/films/1', '/api/people/2',
-    '/api/films/1/people', '/api/films/1/reviews?offset=0', '/api/films/1/rating', '/api/persons/1', '/api/persons?limit=100'];
+  const publicPaths = [
+    '/api/films?limit=100',
+    '/api/films/1',
+    '/api/people/2',
+    '/api/films/1/people',
+    '/api/films/1/reviews?offset=0',
+    '/api/films/1/rating',
+    '/api/persons/1',
+    '/api/persons?limit=100',
+  ];
   for (const path of publicPaths) {
     assert.equal((await request(path)).status, 200);
     assert.equal(lastFetch.options.credentials, 'omit');
   }
   let releaseCacheWrite;
-  cacheWriteBarrier = new Promise(resolve => { releaseCacheWrite = resolve; });
+  cacheWriteBarrier = new Promise((resolve) => {
+    releaseCacheWrite = resolve;
+  });
   const backgroundPath = '/api/films/25';
   const { response, background } = dispatchRequest(backgroundPath);
   try {
     const received = await Promise.race([
       response,
-      new Promise(resolve => setImmediate(() => resolve(null))),
+      new Promise((resolve) => setImmediate(() => resolve(null))),
     ]);
     assert.equal(received?.status, 200);
-    assert(![...storage.values()].some(entries => entries.has(apiOrigin + backgroundPath)));
+    assert(![...storage.values()].some((entries) => entries.has(apiOrigin + backgroundPath)));
   } finally {
     releaseCacheWrite();
   }
   await background;
-  assert([...storage.values()].some(entries => entries.has(apiOrigin + backgroundPath)));
+  assert([...storage.values()].some((entries) => entries.has(apiOrigin + backgroundPath)));
 
   const precache = [...storage.values()][0];
-  const asset = new URL([...precache.keys()].find(key => key.endsWith('.js'))).pathname;
+  const asset = new URL([...precache.keys()].find((key) => key.endsWith('.js'))).pathname;
   offline = true;
   assert.equal(await request(asset, 'GET', 'cors', { Range: 'bytes=0-7' }), undefined);
-  assert.equal(await request('/static/posters/example.jpg', 'GET', 'cors', { Range: 'bytes=0-7' }), undefined);
+  assert.equal(
+    await request('/static/posters/example.jpg', 'GET', 'cors', { Range: 'bytes=0-7' }),
+    undefined,
+  );
   assert.equal(await (await request(asset)).text(), asset);
   for (const path of ['/films', '/film/1', '/person/2', '/profile']) {
     assert.equal(await (await request(path, 'GET', 'navigate')).text(), '/index.html');
@@ -140,7 +190,10 @@ async function testServiceWorker() {
     assert.deepEqual(await (await request(path)).json(), { url: apiOrigin + path });
   }
   assert.equal((await request('/api/films?limit=10')).status, 503);
-  assert.equal((await request(publicPaths[4], 'GET', 'cors', { 'X-Frame-Fresh': '1' })).status, 503);
+  assert.equal(
+    (await request(publicPaths[4], 'GET', 'cors', { 'X-Frame-Fresh': '1' })).status,
+    503,
+  );
   assert.equal((await request(publicPaths[4], 'GET', 'cors', {}, 'reload')).status, 503);
 
   offline = false;
@@ -149,16 +202,21 @@ async function testServiceWorker() {
   const uncached = await request('/api/films/500');
   assert.equal(uncached.status, 502);
   assert.deepEqual(await uncached.json(), { url: apiOrigin + '/api/films/500' });
-  assert.equal((await request('/api/films/1', 'GET', 'cors', { 'X-Frame-Fresh': '1' })).status, 502);
+  assert.equal(
+    (await request('/api/films/1', 'GET', 'cors', { 'X-Frame-Fresh': '1' })).status,
+    502,
+  );
   responseStatus = 404;
   assert.equal((await request('/api/films/1')).status, 404);
   offline = true;
   assert.equal((await request('/api/films/1')).status, 503);
 
-  console.log('Passed: offline SPA navigation, background caching, reload on install, Range bypass, and original server errors.');
+  console.log(
+    'Passed: offline SPA navigation, background caching, reload on install, Range bypass, and original server errors.',
+  );
 }
 
-testServiceWorker().catch(error => {
+testServiceWorker().catch((error) => {
   console.error(error);
   process.exitCode = 1;
 });

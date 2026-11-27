@@ -1,17 +1,28 @@
 type Template = (context: object) => string;
 
+/** Возвращает обязательный узел шаблона или сообщает об ошибке разметки. */
+export function requireElement<T extends Element = HTMLElement>(
+  root: ParentNode,
+  selector: string,
+): T {
+  const element = root.querySelector<T>(selector);
+  if (!element) throw new Error(`Не найден элемент шаблона: ${selector}`);
+  return element;
+}
+
+/** Компонент шаблона: при перерисовке снимает обработчики и уничтожает дочерние компоненты. */
 export class Component<Props extends object = Record<string, any>> {
-  static template: Template = null;
+  static template: Template;
 
   props: Props;
-  element: HTMLElement;
+  element!: HTMLElement;
+  destroyed = false;
 
   #cleanups: (() => void)[] = [];
   #children: Component[] = [];
 
   constructor(props = {} as Props) {
     this.props = props;
-    this.element = null;
   }
 
   context(): object {
@@ -22,6 +33,7 @@ export class Component<Props extends object = Record<string, any>> {
 
   render() {
     this.#teardown();
+    this.destroyed = false;
     const host = document.createElement('template');
     host.innerHTML = (this.constructor as typeof Component).template(this.context()).trim();
     this.element = host.content.firstElementChild as HTMLElement;
@@ -40,20 +52,27 @@ export class Component<Props extends object = Record<string, any>> {
   refreshContent() {
     const host = document.createElement('template');
     host.innerHTML = (this.constructor as typeof Component).template(this.context()).trim();
-    this.element.replaceChildren(...host.content.firstElementChild.childNodes);
+    const content = host.content.firstElementChild;
+    if (!content) throw new Error('Шаблон компонента пуст.');
+    this.element.replaceChildren(...content.childNodes);
   }
 
+  /** Находит обязательный элемент шаблона. Для условных элементов используется query. */
   find<T extends HTMLElement = HTMLElement>(selector: string) {
-    return this.element.querySelector<T>(selector);
+    return requireElement<T>(this.element, selector);
   }
 
   findAll<T extends HTMLElement = HTMLElement>(selector: string) {
     return [...this.element.querySelectorAll<T>(selector)];
   }
 
+  query<T extends HTMLElement = HTMLElement>(selector: string) {
+    return this.element.querySelector<T>(selector);
+  }
+
   refs(): Record<string, HTMLElement> {
     return Object.fromEntries(
-      this.findAll('[data-ref]').map((element) => [element.dataset.ref, element]),
+      this.findAll('[data-ref]').map((element) => [element.dataset.ref!, element]),
     );
   }
 
@@ -118,8 +137,8 @@ export class Component<Props extends object = Record<string, any>> {
   }
 
   destroy() {
+    this.destroyed = true;
     this.#teardown();
     this.element?.remove();
-    this.element = null;
   }
 }

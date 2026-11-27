@@ -38,6 +38,10 @@ export interface RequestOptions {
   fresh?: boolean;
 }
 
+/**
+ * Отправляет cookies и JSON либо FormData. Ошибки HTTP возвращает как ApiError.
+ * fresh обходит офлайн-снимок; signal отменяет запрос при уходе со страницы.
+ */
 export async function request<T = unknown>(
   path: string,
   { method = 'GET', params, body, signal, fresh = false }: RequestOptions = {},
@@ -96,9 +100,10 @@ async function send<T>(
   try {
     data = text ? JSON.parse(text) : {};
   } catch {
+    if (response.ok) throw new ApiError(502, 'Unexpected API response');
     data = {};
   }
-  if (!response.ok) throw new ApiError(response.status, data.error || `HTTP ${response.status}`);
+  if (!response.ok) throw new ApiError(response.status, data?.error || `HTTP ${response.status}`);
   if (
     response.status !== HttpStatus.NO_CONTENT &&
     !response.headers.get('content-type')?.includes('application/json')
@@ -108,6 +113,7 @@ async function send<T>(
   return data;
 }
 
+/** Собирает страницы по фактическому числу записей, пока не достигнут total или пустой ответ. */
 export async function requestPages<T extends { total: number }>(
   path: string,
   { params, signal, count }: RequestOptions & { count: (data: T) => number },

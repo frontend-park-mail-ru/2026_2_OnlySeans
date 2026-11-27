@@ -1,4 +1,4 @@
-import { getMyAvatar, uploadAvatar } from '../api/profile.js';
+import { getMyAvatar, uploadAvatar, deleteMyAvatar } from '../api/profile.js';
 import { assetUrl } from '../api/http.js';
 import { store } from '../core/store.js';
 
@@ -10,7 +10,7 @@ async function refreshAvatar() {
   if (visit === generation) store.set({ avatarUrl: assetUrl(url) });
 }
 
-let accountId;
+let accountId: number | undefined;
 store.watch('user', (user) => {
   if (user?.id === accountId) return;
   accountId = user?.id;
@@ -19,8 +19,14 @@ store.watch('user', (user) => {
   if (user) void refreshAvatar().catch(() => {});
 });
 
-export async function saveAvatar(file) {
+export async function saveAvatar(file: File) {
   const visit = generation;
   await uploadAvatar(file);
   if (visit === generation) await refreshAvatar();
+}
+
+export async function clearAvatar() {
+  const visit = ++generation;
+  await deleteMyAvatar();
+  if (visit === generation) store.set({ avatarUrl: '' });
 }

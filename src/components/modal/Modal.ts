@@ -1,8 +1,5 @@
 import './modal.css';
 import { Component } from '../../core/component.js';
-import { loadAssets } from '../../core/assets.js';
-
-loadAssets({});
 
 export class Modal extends Component {
   declare element: HTMLDialogElement;

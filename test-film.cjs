@@ -66,3 +66,63 @@ test('ограничение поиска своего отзыва не выд�
   });
   await assert.rejects(api.findMyReview(4, 300, {}, 49), /Не удалось проверить все отзывы/);
 });
+
+test('созданный отзыв сохраняет id ответа POST и повторно отправляется через PUT', async () => {
+  const methods = [];
+  const api = load('api/reviews.ts', {
+    './ratings.js': {},
+    './http.js': {
+      request: async (url, options) => {
+        methods.push(options.method);
+        if (options.method === 'POST') return { id: 41 };
+        assert.equal(url, '/reviews/41');
+        assert.equal(options.body.version, 1);
+        return { review: { ...response(41), author_id: 7, ...options.body, version: 2 } };
+      },
+    },
+  });
+  const state = { user: { id: 7, username: 'Зритель' }, myReview: null };
+  let searches = 0;
+  class ApiError extends Error {}
+  const service = load('services/my-review.ts', {
+    '../api/http.js': { ApiError, isUnavailable: () => false },
+    './offline-film-edits.js': {
+      pendingFilmEdit: () => undefined,
+      clearFilmEdit: () => {},
+      queueFilmEdit: () => assert.fail('не должно быть офлайн-повтора'),
+    },
+    '../core/store.js': {
+      store: { get: (key) => state[key], set: (changes) => Object.assign(state, changes) },
+    },
+    '../api/reviews.js': {
+      ...api,
+      getMyScore: async () => 0,
+      findMyReview: async () => {
+        assert.equal(++searches, 1, 'после POST поиск по листалке не нужен');
+        return null;
+      },
+    },
+  });
+  const previousNavigator = Object.getOwnPropertyDescriptor(global, 'navigator');
+  Object.defineProperty(global, 'navigator', { configurable: true, value: { onLine: true } });
+  try {
+    const values = { title: 'Отзыв', text: 'Текст'.repeat(20), spoiler: false };
+    await service.saveReview(4, values);
+    assert.equal(service.myReview(4).id, 41);
+    assert.equal(service.myReview(4).author.name, 'Зритель');
+    await service.saveReview(4, { ...values, title: 'Обновлённый отзыв' });
+    assert.deepEqual(methods, ['POST', 'PUT']);
+    assert.equal(service.myReview(4).version, 2);
+  } finally {
+    if (previousNavigator) Object.defineProperty(global, 'navigator', previousNavigator);
+    else delete global.navigator;
+  }
+});
+
+test('конфликт офлайн-отзыва отображается по-русски', () => {
+  const { errorMessage, ServerError, REVIEW_CONFLICT_MESSAGE } = load('api/errors.ts');
+  for (const message of [ServerError.REVIEW_CHANGED, REVIEW_CONFLICT_MESSAGE]) {
+    const error = Object.assign(new Error(message), { status: 409 });
+    assert.equal(errorMessage(error), 'Отзыв изменён в другой вкладке. Обновите страницу.');
+  }
+});

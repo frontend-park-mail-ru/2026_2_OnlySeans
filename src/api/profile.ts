@@ -20,20 +20,26 @@ export interface Profile {
   reviews: number;
 }
 
+/** Профиль текущей cookie-сессии вместе с личными списками и оценками. */
 export const getProfile = () => request<Profile>('/me/profile');
 
 export const updateProfile = (username: string, email: string) =>
   request<{ user: Account }>('/me/profile', { method: 'PUT', body: { username, email } });
 
-export const changePassword = (current, next) =>
-  request('/me/password', { method: 'PUT', body: { current_password: current, new_password: next } });
+export const changePassword = (current: string, next: string) =>
+  request('/me/password', {
+    method: 'PUT',
+    body: { current_password: current, new_password: next },
+  });
 
-export const setFavorite = (filmId, saved) =>
+export const setFavorite = (filmId: number, saved: boolean) =>
   request('/me/favorites/' + encodeURIComponent(filmId), { method: saved ? 'PUT' : 'DELETE' });
 
 export const getMyAvatar = () => request<{ url: string }>('/me/avatar');
+export const deleteMyAvatar = () => request('/me/avatar', { method: 'DELETE' });
 
-export function uploadAvatar(file) {
+/** Отправляет подготовленное изображение одним multipart-полем avatar. */
+export function uploadAvatar(file: File) {
   const body = new FormData();
   body.append('avatar', file);
   return request('/me/avatar', { method: 'PUT', body });

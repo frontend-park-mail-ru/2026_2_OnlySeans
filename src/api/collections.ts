@@ -1,4 +1,5 @@
 import { requestPages } from './http.js';
+import { visibleContent } from '../services/content-preferences.js';
 import { getFilm, toFilm, type FilmResponse, type Film } from './films.js';
 
 interface CollectionResponse {
@@ -17,6 +18,7 @@ const toCollection = (collection: CollectionResponse) => ({
   description: collection.description || '',
 });
 
+/** Получает серверные подборки и их состав; пользовательские локальные подборки хранятся отдельно. */
 export async function getCollections({ signal }: { signal?: AbortSignal } = {}) {
   const pages = await requestPages<CollectionList>('/collections', {
     signal,
@@ -26,18 +28,23 @@ export async function getCollections({ signal }: { signal?: AbortSignal } = {}) 
   return Promise.all(ids.map((id) => getCollection(id, { signal })));
 }
 
-export async function getCollection(id: number | string, { signal }: { signal?: AbortSignal } = {}) {
+export async function getCollection(
+  id: number | string,
+  { signal }: { signal?: AbortSignal } = {},
+) {
   const pages = await requestPages<CollectionDetails>(`/collections/${encodeURIComponent(id)}`, {
     params: { details: true },
     signal,
     count: (data) => data.collection.films?.length || 0,
   });
   const films = pages.flatMap((page) => (page.collection.films || []).map(toFilm));
-  const missing = [...new Set(
-    films
-      .filter((film) => !film.description || !film.type || film.ageLimit === null)
-      .map((film) => film.id)
-  )];
+  const missing = [
+    ...new Set(
+      films
+        .filter((film) => !film.description || !film.type || film.ageLimit === null)
+        .map((film) => film.id),
+    ),
+  ];
   const details = new Map<number, Film>();
   for (let index = 0; index < missing.length; index += 6) {
     const batch = await Promise.all(
@@ -47,12 +54,14 @@ export async function getCollection(id: number | string, { signal }: { signal?: 
         } catch {
           return [filmId, null] as const;
         }
-      })
+      }),
     );
-    batch.forEach(([filmId, film]) => details.set(filmId, film));
+    batch.forEach(([filmId, film]) => {
+      if (film) details.set(filmId, film);
+    });
   }
   return {
     ...toCollection(pages[0].collection),
-    films: films.map((film) => ({ ...film, ...(details.get(film.id) || {}) })),
+    films: visibleContent(films.map((film) => ({ ...film, ...(details.get(film.id) || {}) }))),
   };
 }

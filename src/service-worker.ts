@@ -15,7 +15,12 @@ const CACHE_LIMIT = 400;
 
 worker.addEventListener('install', (event) => {
   const requests = PRECACHE_URLS.map((url) => new Request(url, { cache: 'reload' }));
-  event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(requests)));
+  event.waitUntil(
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => cache.addAll(requests))
+      .then(() => worker.skipWaiting()),
+  );
 });
 
 worker.addEventListener('activate', (event) => {

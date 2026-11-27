@@ -1,13 +1,25 @@
 import { fetchCurrentUser } from '../api/auth.js';
-import { errorMessage } from '../api/errors.js';
+import { errorMessage, REVIEW_CONFLICT_MESSAGE } from '../api/errors.js';
 import { ApiError, isUnavailable } from '../api/http.js';
 import {
-  createReview, deleteMyScore, deleteReview, findMyReview, setMyScore, updateReview,
+  createReview,
+  deleteMyScore,
+  deleteReview,
+  findMyReview,
+  setMyScore,
+  updateReview,
   type ReviewValues,
 } from '../api/reviews.js';
 import { store } from '../core/store.js';
 import { notify } from './notice.js';
-import { offlineAccount, offlineKeys, privateKey, readOffline, removeOffline, writeOffline } from './offline-storage.js';
+import {
+  offlineAccount,
+  offlineKeys,
+  privateKey,
+  readOffline,
+  removeOffline,
+  writeOffline,
+} from './offline-storage.js';
 
 type PreviousReview = { id: number; version: number };
 type FilmEdit =
@@ -30,7 +42,8 @@ export function pendingFilmEdit(filmId: number, kind: 'score' | 'review') {
 
 export function queueFilmEdit(filmId: number, edit: FilmEdit) {
   const account = store.get('user');
-  if (!account || offlineAccount()?.id !== account.id) throw new Error('Для работы офлайн сначала войдите.');
+  if (!account || offlineAccount()?.id !== account.id)
+    throw new Error('Для работы офлайн сначала войдите.');
   const key = editKey(account.id, filmId, edit.kind === 'score' ? 'score' : 'review');
   if (!writeOffline(key, { ...edit, filmId, token: crypto.randomUUID() })) {
     throw new Error('Браузер не смог сохранить изменение.');
@@ -47,25 +60,31 @@ export function clearFilmEdit(filmId: number, kind: 'score' | 'review', token?: 
 async function applyEdit(edit: PendingEdit, accountId: number) {
   if (edit.kind === 'score') {
     if (edit.value) await setMyScore(edit.filmId, edit.value);
-    else await deleteMyScore(edit.filmId).catch(error => {
-      if (!(error instanceof ApiError && error.status === 404)) throw error;
-    });
+    else
+      await deleteMyScore(edit.filmId).catch((error) => {
+        if (!(error instanceof ApiError && error.status === 404)) throw error;
+      });
     return;
   }
 
   const current = await findMyReview(edit.filmId, accountId, { fresh: true });
   if (edit.kind === 'delete' && !current) return;
-  if (edit.kind === 'review' && current &&
-      current.title === edit.values.title && current.text === edit.values.text &&
-      current.spoiler === edit.values.spoiler) return;
+  if (
+    edit.kind === 'review' &&
+    current &&
+    current.title === edit.values.title &&
+    current.text === edit.values.text &&
+    current.spoiler === edit.values.spoiler
+  )
+    return;
 
   const previous = edit.previous;
   if (current?.id !== previous?.id || current?.version !== previous?.version) {
-    throw new ApiError(409, 'review was changed by someone else, reload it');
+    throw new ApiError(409, REVIEW_CONFLICT_MESSAGE);
   }
   if (edit.kind === 'delete') await deleteReview(edit.previous.id);
   else if (previous) await updateReview(previous.id, edit.values, previous.version);
-  else await createReview(edit.filmId, edit.values);
+  else await createReview(edit.filmId, edit.values, accountId);
 }
 
 async function sendPendingEdits() {
@@ -85,9 +104,18 @@ async function sendPendingEdits() {
       if (readOffline<PendingEdit>(key)?.token === edit.token) removeOffline(key);
       changed = true;
     } catch (error) {
-      if (isUnavailable(error) || !(error instanceof ApiError) || error.status >= 500 || error.status === 401) break;
-      if (readOffline<PendingEdit>(key)?.token === edit.token) writeOffline(key, { ...edit, conflict: true });
-      notify('Не удалось отправить изменение из офлайна. ' + errorMessage(error), { type: 'error' });
+      if (
+        isUnavailable(error) ||
+        !(error instanceof ApiError) ||
+        error.status >= 500 ||
+        error.status === 401
+      )
+        break;
+      if (readOffline<PendingEdit>(key)?.token === edit.token)
+        writeOffline(key, { ...edit, conflict: true });
+      notify('Не удалось отправить изменение из офлайна. ' + errorMessage(error), {
+        type: 'error',
+      });
     }
   }
   if (changed) notify('Изменения из офлайна отправлены.', { type: 'success' });
@@ -97,10 +125,14 @@ async function sendPendingEdits() {
 let syncing: Promise<boolean> | undefined;
 
 export function syncFilmEdits(): Promise<boolean> {
-  syncing ??= Promise.resolve(navigator.locks
-    ? navigator.locks.request('frame:film-edits', sendPendingEdits)
-    : sendPendingEdits())
+  syncing ??= Promise.resolve(
+    navigator.locks
+      ? navigator.locks.request('frame:film-edits', sendPendingEdits)
+      : sendPendingEdits(),
+  )
     .catch(() => false)
-    .finally(() => { syncing = undefined; });
+    .finally(() => {
+      syncing = undefined;
+    });
   return syncing;
 }
