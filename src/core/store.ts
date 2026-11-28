@@ -2,17 +2,18 @@ import { eventBus } from './event-bus.js';
 import type { Review } from '../api/reviews.js';
 import type { Account } from '../services/offline-storage.js';
 
-interface OnlineConfState {
+export interface OnlineConfState {
   userId: number | null;
   revision: number | null;
   maxLength: number;
   writeEnabled: boolean;
+  watchButtonTheme: 'amber' | 'wine' | null;
   status: 'loading' | 'ready' | 'stale' | 'fallback';
   lastSuccessAt: number | null;
 }
 
 export function initialOnlineConf(userId: number | null): OnlineConfState {
-  return { userId, revision: null, maxLength: 20000, writeEnabled: false, status: 'loading', lastSuccessAt: null };
+  return { userId, revision: null, maxLength: 20000, writeEnabled: false, watchButtonTheme: null, status: 'loading', lastSuccessAt: null };
 }
 
 interface StoreState {

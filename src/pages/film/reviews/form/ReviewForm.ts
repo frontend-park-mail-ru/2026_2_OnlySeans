@@ -4,8 +4,7 @@ import { Component } from '../../../../core/component.js';
 import { eventBus } from '../../../../core/event-bus.js';
 import { store } from '../../../../core/store.js';
 import { errorMessage } from '../../../../api/errors.js';
-import { reviewPolicyErrorMessage } from '../../../../api/reviews.js';
-import { refreshOnlineConf } from '../../../../services/onlineconf.js';
+import { isValidReviewTitle, MAX_REVIEW_TITLE_LENGTH, reviewPolicyErrorMessage } from '../../../../api/reviews.js';
 import { myReview, removeReview, reviewDraft, saveReview } from '../../../../services/my-review.js';
 import { pendingFilmEdit } from '../../../../services/offline-film-edits.js';
 import { limitTextInput } from '../../../../services/text-limit.js';
@@ -16,8 +15,6 @@ import { loadAssets } from '../../../../core/assets.js';
 const template = await loadAssets({ template: templateSource });
 
 const Limit = Object.freeze({
-  TITLE_MIN: 1,
-  TITLE_MAX: 32,
   TEXT_MIN: 50,
   TEXT_HARD_MAX: 20000,
 });
@@ -63,8 +60,8 @@ export class ReviewForm extends Component {
 
   onRender() {
     const { title, text, spoiler } = this.element.elements;
-    limitTextInput(title, Limit.TITLE_MAX, {
-      onLimit: () => notify(`Заголовок не длиннее ${Limit.TITLE_MAX} символов.`),
+    limitTextInput(title, MAX_REVIEW_TITLE_LENGTH, {
+      onLimit: () => notify(`Заголовок не длиннее ${MAX_REVIEW_TITLE_LENGTH} символов.`),
     });
     limitTextInput(text, Limit.TEXT_HARD_MAX, {
       onLimit: () => notify(`Отзыв не длиннее ${Limit.TEXT_HARD_MAX} символов.`),
@@ -128,7 +125,7 @@ export class ReviewForm extends Component {
 
   #canSave(values, textLength = length(values.text)) {
     const { writeEnabled, maxLength } = store.get('onlineconf');
-    return writeEnabled && !this.#busy && length(values.title) >= Limit.TITLE_MIN &&
+    return writeEnabled && !this.#busy && isValidReviewTitle(values.title) &&
       textLength >= Limit.TEXT_MIN && textLength <= maxLength &&
       this.#differs(values, this.#savedValues());
   }
@@ -149,8 +146,11 @@ export class ReviewForm extends Component {
   }
 
   #refresh() {
-    const { counter, save, text } = this.element.elements;
+    const { counter, save, text, title } = this.element.elements;
     const values = this.#values();
+    const invalidTitle = title.value !== '' && !isValidReviewTitle(values.title);
+    this.find('#review-title-hint').hidden = !invalidTitle;
+    title.setAttribute('aria-invalid', String(invalidTitle));
     const textLength = length(values.text);
     const max = store.get('onlineconf').maxLength;
     const count = `${textLength} / ${max}`;
@@ -185,7 +185,6 @@ export class ReviewForm extends Component {
       if (reason) {
         this.#submitError = reason;
         this.#refresh();
-        await refreshOnlineConf();
       } else {
         notify(errorMessage(error), { type: 'error' });
       }

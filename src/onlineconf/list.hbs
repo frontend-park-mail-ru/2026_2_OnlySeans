@@ -1,0 +1,21 @@
+<div class="oc-heading">
+  <h1>{{#if flags}}Флаги{{else}}Конфиги{{/if}}</h1>
+  <div class="oc-actions">
+    {{> button id="oc-scope-new" variant="secondary" type="button" text="Создать область"}}
+    {{> button variant="primary" href=newPath text=newLabel}}
+  </div>
+</div>
+<section class="oc-panel">
+  <form class="oc-filters" role="search">
+    {{> field id="oc-search" name="q" label="Поиск" type="search" placeholder="Ключ или название"}}
+    {{> field id="oc-filter-scope" name="scope" label="Область" select=true placeholder="Все области"}}
+    {{> button variant="secondary" type="submit" text="Найти"}}
+  </form>
+  {{> status id="oc-scope-status"}}
+  <div class="oc-table" data-rows></div>
+  <div class="oc-pagination">
+    {{> button id="oc-prev" variant="secondary" type="button" text="Назад" disabled=true}}
+    {{> status id="oc-list-status"}}
+    {{> button id="oc-next" variant="secondary" type="button" text="Далее" disabled=true}}
+  </div>
+</section>

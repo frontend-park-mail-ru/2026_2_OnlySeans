@@ -131,6 +131,7 @@ async function testServiceWorker() {
   assert.equal(await request('/api/onlineconf/runtime'), undefined);
   assert.equal(await request('/onlineconf', 'GET', 'navigate'), undefined);
   assert.equal(await request('/onlineconf/flags', 'GET', 'navigate'), undefined);
+  assert.equal(await request('/assets/onlineconf/admin.js', 'GET', 'navigate'), undefined);
   assert.equal(await request(asset, 'GET', 'cors', { Range: 'bytes=0-7' }), undefined);
   assert.equal(await request('/static/posters/example.jpg', 'GET', 'cors', { Range: 'bytes=0-7' }), undefined);
   assert.equal(await (await request(asset)).text(), asset);

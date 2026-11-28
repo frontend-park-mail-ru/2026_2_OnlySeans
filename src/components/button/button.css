@@ -35,6 +35,10 @@
   transform: none;
 }
 
+.button[hidden] {
+  display: none;
+}
+
 .button .icon {
   width: 16px;
   height: 16px;
@@ -49,4 +53,10 @@
 .button--secondary:hover {
   filter: brightness(1.2);
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+}
+
+.button--danger {
+  color: var(--on-danger);
+  background: var(--danger-solid);
+  box-shadow: none;
 }

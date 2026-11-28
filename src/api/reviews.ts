@@ -1,6 +1,14 @@
 import { ApiError, request, type RequestOptions } from './http.js';
 import { HttpStatus } from './errors.js';
+import { isReviewLimit } from './onlineconf.js';
 import { countLabel } from '../core/format.js';
+
+export const MAX_REVIEW_TITLE_LENGTH = 255;
+
+export function isValidReviewTitle(title: string) {
+  const size = Array.from(title.trim()).length;
+  return size >= 3 && size <= MAX_REVIEW_TITLE_LENGTH;
+}
 
 export function reviewPolicyErrorMessage(error: unknown): string | undefined {
   if (!(error instanceof ApiError)) return;
@@ -9,7 +17,7 @@ export function reviewPolicyErrorMessage(error: unknown): string | undefined {
   }
   if (error.status === HttpStatus.BAD_REQUEST && error.code === 'review_too_long') {
     const max = error.details?.max_length;
-    if (typeof max === 'number' && Number.isInteger(max) && max >= 50 && max <= 20000) {
+    if (isReviewLimit(max)) {
       return `Отзыв не отправлен. На момент отправки лимит составлял ${countLabel(max, ['символ', 'символа', 'символов'])}.`;
     }
     return 'Отзыв не отправлен. Текст превышает допустимую длину.';

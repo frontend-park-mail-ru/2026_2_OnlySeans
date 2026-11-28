@@ -2,10 +2,11 @@ import { fetchCurrentUser } from '../api/auth.js';
 import { errorMessage } from '../api/errors.js';
 import { ApiError, isUnavailable } from '../api/http.js';
 import {
-  createReview, deleteMyScore, deleteReview, findMyReview, reviewPolicyErrorMessage, setMyScore, updateReview,
+  createReview, deleteMyScore, deleteReview, findMyReview, setMyScore, updateReview,
   type ReviewValues,
 } from '../api/reviews.js';
 import { store } from '../core/store.js';
+import { handleReviewRejection } from './onlineconf.js';
 import { notify } from './notice.js';
 import { offlineAccount, offlineKeys, privateKey, readOffline, removeOffline, writeOffline } from './offline-storage.js';
 
@@ -93,7 +94,7 @@ async function sendPendingEdits() {
     } catch (error) {
       if (isUnavailable(error) || !(error instanceof ApiError) || error.status >= 500 || error.status === 401) break;
       if (readOffline<PendingEdit>(key)?.token !== edit.token) continue;
-      const rejectionReason = edit.kind === 'review' ? reviewPolicyErrorMessage(error) : undefined;
+      const rejectionReason = edit.kind === 'review' ? handleReviewRejection(error, account.id) : undefined;
       writeOffline(key, { ...edit, conflict: true, rejectionReason });
       notify(rejectionReason ?? ('Не удалось отправить изменение из офлайна. ' + errorMessage(error)), { type: 'error' });
     }

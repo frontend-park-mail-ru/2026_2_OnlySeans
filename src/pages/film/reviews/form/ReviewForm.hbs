@@ -1,7 +1,8 @@
 <form class="review-form" novalidate>
   <span class="review-form__label">{{#if editing}}Ваш отзыв{{else}}Написать отзыв{{/if}}</span>
-  <input class="review-form__title" name="title" type="text" aria-label="Заголовок отзыва"
+  <input class="review-form__title" name="title" type="text" aria-label="Заголовок отзыва" aria-describedby="review-title-hint"
     placeholder="Заголовок" value="{{title}}" />
+  <p class="review-form__sync" id="review-title-hint" hidden>Введите заголовок длиной от 3 до 255 символов.</p>
   <textarea class="review-form__text" name="text" rows="5" aria-label="Текст отзыва" aria-describedby="review-length-hint"
     placeholder="Что вы думаете об этом {{what}}е?">{{text}}</textarea>
   <div class="review-form__bar">

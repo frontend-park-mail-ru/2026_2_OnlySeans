@@ -7,8 +7,9 @@ const path = require('node:path');
 const port = Number(process.env.PORT) || 8000;
 const root = path.join(__dirname, 'dist');
 const index = path.join(root, 'index.html');
+const adminIndex = path.join(root, 'onlineconf', 'index.html');
 const backend = new URL(process.env.API_PROXY_TARGET || 'http://127.0.0.1:8080');
-const proxyRequest = backend.protocol === 'https:' ? httpsRequest : httpRequest;
+const onlineconf = new URL(process.env.ONLINECONF_PROXY_TARGET || 'http://127.0.0.1:8081');
 
 const types = {
   '.html': 'text/html; charset=utf-8',
@@ -28,11 +29,12 @@ if (!existsSync(index)) {
   process.exit(1);
 }
 
-function proxy(req, res, pathname, search) {
-  const upstream = proxyRequest(new URL(backend.origin), {
+function proxy(req, res, pathname, search, target) {
+  const proxyRequest = target.protocol === 'https:' ? httpsRequest : httpRequest;
+  const upstream = proxyRequest(new URL(target.origin), {
     path: pathname + search,
     method: req.method,
-    headers: { ...req.headers, host: backend.host },
+    headers: { ...req.headers, host: target.host },
   }, (response) => {
     res.writeHead(response.statusCode, response.headers);
     response.pipe(res);
@@ -55,8 +57,13 @@ createServer(async (req, res) => {
     res.writeHead(400).end();
     return;
   }
+  if (/^\/internal(?:\/|$)/.test(pathname)) {
+    res.writeHead(404).end();
+    return;
+  }
   if (/^\/(api|static|avatars)(\/|$)/.test(pathname)) {
-    proxy(req, res, url.pathname, url.search);
+    const target = /^\/api\/onlineconf\/admin(?:\/|$)/.test(pathname) ? onlineconf : backend;
+    proxy(req, res, url.pathname, url.search, target);
     return;
   }
   if (req.method !== 'GET' && req.method !== 'HEAD') {
@@ -64,7 +71,13 @@ createServer(async (req, res) => {
     return;
   }
 
-  const file = path.extname(pathname) ? path.resolve(root, '.' + pathname) : index;
+  if (pathname === '/onlineconf') {
+    res.writeHead(308, { Location: '/onlineconf/' + url.search }).end();
+    return;
+  }
+  const file = path.extname(pathname) || pathname.startsWith('/assets/')
+    ? path.resolve(root, '.' + pathname)
+    : pathname.startsWith('/onlineconf/') ? adminIndex : index;
   if (!file.startsWith(root + path.sep)) {
     res.writeHead(403).end();
     return;

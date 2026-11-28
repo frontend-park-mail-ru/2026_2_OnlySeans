@@ -2,6 +2,7 @@ import { offlineAccount, type Account } from './offline-storage.js';
 import { ApiError, isUnavailable } from '../api/http.js';
 import { clearFilmEdit, pendingFilmEdit, queueFilmEdit } from './offline-film-edits.js';
 import { store } from '../core/store.js';
+import { handleReviewRejection } from './onlineconf.js';
 import {
   createReview,
   deleteMyScore,
@@ -118,6 +119,7 @@ export async function saveReview(filmId: number, values: ReviewValues) {
       clearFilmEdit(filmId, 'review', pending?.token);
       return false;
     } catch (error) {
+      handleReviewRejection(error, authorId);
       if (!isUnavailable(error)) throw error;
     }
   }

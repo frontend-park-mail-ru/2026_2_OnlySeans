@@ -154,6 +154,18 @@
   background: var(--bg-input);
 }
 
+.spotlight__about[data-theme='amber'] {
+  background: var(--euphoria-amber);
+  border-color: var(--euphoria-amber);
+  color: var(--on-accent);
+}
+
+.spotlight__about[data-theme='wine'] {
+  background: var(--euphoria-wine);
+  border-color: var(--danger-border);
+  color: var(--on-danger);
+}
+
 .spotlight__actions {
   position: absolute;
   top: 24px;

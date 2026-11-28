@@ -24,15 +24,22 @@ test('runtime polling applies only validated settings for the current account', 
     assert.equal(options.cache, 'no-store');
     return new Promise((resolve, reject) => requests.push({ resolve, reject, signal: options.signal }));
   };
-  function reply(index, flag, max = 500, revision = 1) {
+  function reply(index, flag, max = 500, revision = 1, theme = null) {
     requests[index].resolve(Response.json({
-      revision, configs: { 'reviews.max_length': max }, flags: { 'reviews.write_enabled': flag },
+      revision, configs: { 'reviews.max_length': max, 'frontend.watch_button_theme': theme },
+      flags: { 'reviews.write_enabled': flag, 'frontend.watch_button_theme_enabled': theme !== null },
     }));
     return flush();
   }
 
   const { store } = require(path.join(dir, 'core/store.js'));
-  const { startOnlineConf, refreshOnlineConf } = require(path.join(dir, 'services/onlineconf.js'));
+  const { startOnlineConf, refreshOnlineConf, handleReviewRejection } = require(path.join(dir, 'services/onlineconf.js'));
+  const { ApiError } = require(path.join(dir, 'api/http.js'));
+  const { isValidReviewTitle } = require(path.join(dir, 'api/reviews.js'));
+  assert.equal(isValidReviewTitle(' 🎬а '), false);
+  assert.equal(isValidReviewTitle(' 🎬аб '), true);
+  assert.equal(isValidReviewTitle('🎬'.repeat(255)), true);
+  assert.equal(isValidReviewTitle('🎬'.repeat(256)), false);
   const settings = () => store.get('onlineconf');
   store.set({ user: { id: 1 } });
   const stop = startOnlineConf();
@@ -96,8 +103,49 @@ test('runtime polling applies only validated settings for the current account', 
   await reply(10, true, 500, 1);
   assert.equal(settings().writeEnabled, true);
 
+  const poll = async (flag, max, revision, theme = null) => {
+    const count = requests.length;
+    t.mock.timers.tick(15_000);
+    assert.equal(requests.length, count + 1);
+    await reply(count, flag, max, revision, theme);
+  };
+  await poll(true, 500, 8, 'wine');
+  assert.equal(settings().watchButtonTheme, 'wine');
+  await poll(false, 20000, 0);
+  assert.equal(settings().writeEnabled, false);
+  assert.equal(settings().status, 'fallback');
+  assert.equal(settings().watchButtonTheme, null);
+  await poll(true, 500, 7);
+  assert.equal(settings().writeEnabled, false);
+  await poll(true, 500, 8, 'amber');
+  assert.equal(settings().writeEnabled, true);
+  assert.equal(settings().watchButtonTheme, 'amber');
+
+  const denied = new ApiError(403, 'disabled', 'feature_disabled');
+  handleReviewRejection(denied, 3);
+  assert.equal(settings().writeEnabled, false);
+  requests.at(-1).reject(new TypeError('offline'));
+  await flush();
+  await poll(true, 500, 8);
+  assert.equal(settings().writeEnabled, false);
+  await poll(true, 500, 9);
+  assert.equal(settings().writeEnabled, true);
+
+  const tooLong = new ApiError(400, 'too long', 'review_too_long', { max_length: 100, revision: 10 });
+  handleReviewRejection(tooLong, 3);
+  assert.equal(settings().maxLength, 100);
+  await reply(requests.length - 1, true, 500, 9);
+  assert.equal(settings().maxLength, 100);
+  await poll(true, 500, 11);
+  assert.equal(settings().maxLength, 500);
+  store.set({ user: { id: 4 } });
+  await reply(requests.length - 1, true, 500, 1);
+  const beforeStop = requests.length;
+  handleReviewRejection(denied, 3);
+  assert.equal(settings().writeEnabled, true);
+  assert.equal(requests.length, beforeStop);
   stop();
   t.mock.timers.tick(30_000);
   window.dispatchEvent(new Event('online'));
-  assert.equal(requests.length, 11);
+  assert.equal(requests.length, beforeStop);
 });
