@@ -1,0 +1,10 @@
+<header class="oc-header">
+  <a class="oc-brand" href="/onlineconf/" data-admin-link>OnlineConf</a>
+  <nav aria-label="OnlineConf">
+    <a href="/onlineconf/configs" data-admin-link {{#if configs}}aria-current="page"{{/if}}>Конфиги</a>
+    <a href="/onlineconf/flags" data-admin-link {{#if flags}}aria-current="page"{{/if}}>Флаги</a>
+    <a href="/onlineconf/audit" data-admin-link {{#if audit}}aria-current="page"{{/if}}>История</a>
+  </nav>
+  <div class="oc-account"><span>Администратор #{{user.id}}</span><a href="/">В кинотеатр ↗</a></div>
+</header>
+<main class="oc-main"></main>

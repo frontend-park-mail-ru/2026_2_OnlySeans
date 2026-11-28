@@ -1,8 +1,21 @@
 <div class="text-field {{#if password}}text-field--password{{/if}}">
   <label class="text-field__label" for="{{id}}">{{label}}</label>
   <div class="text-field__control">
-    <input class="text-field__input" id="{{id}}" name="{{name}}" type="{{type}}" autocomplete="{{autocomplete}}"
-      aria-describedby="{{id}}-hint" aria-invalid="false" {{#if disabled}}disabled{{/if}} />
+    {{#if multiline}}
+      <textarea class="text-field__input text-field__input--multiline {{#if code}}text-field__input--code{{/if}}" id="{{id}}" name="{{name}}" rows="{{rows}}" placeholder="{{placeholder}}" aria-describedby="{{id}}-hint{{#if describedBy}} {{describedBy}}{{/if}}" {{#if code}}spellcheck="false"{{/if}} {{#if required}}required{{/if}}>{{value}}</textarea>
+    {{else if select}}
+      <select class="text-field__input text-field__input--select" id="{{id}}" name="{{name}}" {{#if required}}required{{/if}}>
+        <option value="">{{placeholder}}</option>
+        {{#each options}}<option value="{{value}}">{{label}}</option>{{/each}}
+      </select>
+    {{else}}
+      <input class="text-field__input" id="{{id}}" name="{{name}}" type="{{type}}" autocomplete="{{autocomplete}}"
+        {{#if value includeZero=true}}value="{{value}}"{{/if}} {{#if placeholder}}placeholder="{{placeholder}}"{{/if}}
+        {{#if pattern}}pattern="{{pattern}}"{{/if}} {{#if maxChars}}maxlength="{{maxChars}}"{{/if}}
+        {{#if min includeZero=true}}min="{{min}}"{{/if}} {{#if max includeZero=true}}max="{{max}}"{{/if}}
+        {{#if step}}step="{{step}}"{{/if}} {{#if inputmode}}inputmode="{{inputmode}}"{{/if}}
+        aria-describedby="{{id}}-hint{{#if describedBy}} {{describedBy}}{{/if}}" aria-invalid="false" {{#if disabled}}disabled{{/if}} {{#if required}}required{{/if}} />
+    {{/if}}
     {{#if password}}
       <span class="text-field__caps" role="status" hidden title="Caps Lock включён">
         {{icon "caps-lock"}}<span class="visually-hidden">Caps Lock включён</span>

@@ -1,8 +1,24 @@
 import { eventBus } from './event-bus.js';
 import type { Review } from '../api/reviews.js';
 import type { Account } from '../services/offline-storage.js';
+import type { HomeBlock } from '../configured-ui/home-blocks.js';
+
+interface OnlineConfState {
+  userId: number | null;
+  revision: number | null;
+  maxLength: number;
+  writeEnabled: boolean;
+  homeBlocks: HomeBlock[];
+  status: 'loading' | 'ready' | 'stale' | 'fallback';
+  lastSuccessAt: number | null;
+}
+
+export function initialOnlineConf(userId: number | null): OnlineConfState {
+  return { userId, revision: null, maxLength: 20000, writeEnabled: false, homeBlocks: [], status: 'loading', lastSuccessAt: null };
+}
 
 interface StoreState {
+  onlineconf: OnlineConfState;
   user: Account | null;
   myReview: { filmId: number; review: Review | null; score: number } | null;
   avatarUrl: string;
@@ -10,7 +26,7 @@ interface StoreState {
 }
 
 class Store {
-  #state: StoreState = { user: null, myReview: null, avatarUrl: '' };
+  #state: StoreState = { user: null, myReview: null, avatarUrl: '', onlineconf: initialOnlineConf(null) };
 
   get<K extends keyof StoreState>(key: K) {
     return this.#state[key];

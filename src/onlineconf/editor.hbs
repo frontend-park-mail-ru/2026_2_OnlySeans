@@ -1,0 +1,56 @@
+<p><a href="{{section}}" data-admin-link>← К списку</a></p>
+<div class="oc-heading">
+  <h1>{{heading}}</h1>
+  {{#unless creating}}<span>Версия <strong data-version>{{version}}</strong></span>{{/unless}}
+</div>
+<form class="oc-panel" data-editor>
+  <fieldset>
+    {{#if creating}}
+      <div class="oc-fields">
+        {{> field id="oc-scope" name="scope" label="Область" select=true required=true placeholder="Выберите область"}}
+        {{> field id="oc-key" name="key" label="Ключ" type="text" pattern=namePattern maxChars=64 required=true placeholder="example_key"}}
+      </div>
+      {{> button id="oc-scope-new" variant="secondary" type="button" text="Создать область"}}
+      {{> status id="oc-scope-status"}}
+    {{/if}}
+    {{> field id="oc-title" name="title" label="Название" type="text" value=resource.title required=true}}
+    {{> field id="oc-description" name="description" label="Описание" multiline=true rows=2 value=resource.description}}
+    {{#if flags}}
+      <label class="oc-check"><input type="checkbox" name="enabled" {{#if resource.enabled}}checked{{/if}}> Флаг включён</label>
+      <small>Выключение блокирует фичу для всех, включая принудительно включённых пользователей.</small>
+      <div class="oc-short">
+        {{> field id="oc-rollout" name="rollout_percent" label="Раскатка, %" type="number" min=0 max=100 step=1 value=percent required=true}}
+      </div>
+      <div class="oc-fields">
+        {{> field id="oc-force-on" name="force_on_user_ids" label="Принудительно включить" multiline=true rows=3 placeholder="101, 102" value=forceOn}}
+        {{> field id="oc-force-off" name="force_off_user_ids" label="Принудительно выключить" multiline=true rows=3 placeholder="103, 104" value=forceOff}}
+      </div>
+      <small>Введите ID через запятую, пробел или перенос строки.</small>
+    {{else}}
+      {{> field id="oc-value" name="value" label="Значение JSON" multiline=true code=true rows=7 describedBy="oc-json-help" required=true value=json}}
+      <small id="oc-json-help">Строки пишутся в кавычках. Также доступны числа, true, false, массивы, объекты и null.</small>
+      {{> button id="oc-format" variant="secondary" type="button" text="Форматировать JSON"}}
+      {{> button id="oc-home-blocks-example" variant="secondary" type="button" text="Вставить пример блоков главной" hidden=true}}
+    {{/if}}
+  </fieldset>
+  {{> status id="oc-editor-status"}}
+  <div class="oc-actions">
+    {{> button variant="primary" type="submit" text="Сохранить"}}
+    {{> button id="oc-reload" variant="secondary" type="button" text="Загрузить актуальную версию" hidden=true}}
+    {{#unless creating}}{{> button id="oc-delete" variant="danger" type="button" text="Удалить"}}{{/unless}}
+  </div>
+</form>
+{{#unless creating}}
+  <p><a href="/onlineconf/audit?resource_type={{auditType}}&amp;resource_id={{resourceId}}" data-admin-link>История этой записи</a></p>
+  {{#if flags}}
+    <form class="oc-panel oc-evaluate" data-evaluate>
+      <h2>Проверка пользователя</h2>
+      <p>Проверяются сохранённые правила флага.</p>
+      <div class="oc-actions">
+        {{> field id="oc-user-id" name="user_id" label="ID пользователя" type="text" inputmode="numeric" required=true}}
+        {{> button variant="secondary" type="submit" text="Проверить"}}
+      </div>
+      {{> status}}
+    </form>
+  {{/if}}
+{{/unless}}

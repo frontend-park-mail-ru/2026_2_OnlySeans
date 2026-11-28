@@ -9,6 +9,7 @@ import { SectionHeading } from '../../components/section-heading/SectionHeading.
 import { StatusMessage } from '../../components/status-message/StatusMessage.js';
 import { loadInto } from '../../components/status-message/load-into.js';
 import { CollectionCard } from '../../components/collection-card/CollectionCard.js';
+import { ConfiguredBlocks } from '../../components/configured-blocks/ConfiguredBlocks.js';
 import { FilmFeed } from '../../components/film-feed/FilmFeed.js';
 import { Spotlight } from './spotlight/Spotlight.js';
 import { WatchLater } from './watch-later/WatchLater.js';
@@ -18,8 +19,14 @@ const template = await loadAssets({ template: templateSource });
 
 export class HomePage extends Component {
   static template = template;
+  #collections: Awaited<ReturnType<typeof getCollections>> = [];
+  #configuredBlocks?: ConfiguredBlocks;
+  #configuredSignature = '';
 
   onRender() {
+    this.#collections = [];
+    this.#configuredBlocks = undefined;
+    this.#configuredSignature = '';
     document.title = 'Frame';
     this.insert(
       'collections-heading',
@@ -30,6 +37,27 @@ export class HomePage extends Component {
     );
     this.#loadCatalog();
     this.#loadCollections();
+    this.#showConfiguredBlocks();
+    this.watch(store.watch('onlineconf', () => this.#showConfiguredBlocks()));
+  }
+
+  #showConfiguredBlocks() {
+    const blocks: ConfiguredBlocks['props']['blocks'] = [];
+    for (const block of store.get('onlineconf').homeBlocks) {
+      if (block.type === 'banner') {
+        blocks.push(block);
+      } else {
+        const collection = this.#collections.find((item) => item.id === block.id);
+        if (collection) blocks.push({ type: 'collection', collection });
+      }
+    }
+    const signature = JSON.stringify(blocks.map((block) => block.type === 'banner' ? block : block.collection.id));
+    if (this.#configuredSignature === signature) return;
+    this.#configuredSignature = signature;
+    if (this.#configuredBlocks) this.remove(this.#configuredBlocks);
+    this.#configuredBlocks = blocks.length
+      ? this.insert(this.find('[data-configured-blocks]'), new ConfiguredBlocks({ blocks }))
+      : undefined;
   }
 
   #loadCatalog() {
@@ -69,6 +97,8 @@ export class HomePage extends Component {
       loading: 'Загружаем подборки...',
       load: getCollections,
       render: (collections) => {
+        this.#collections = collections;
+        this.#showConfiguredBlocks();
         collections
           .slice(0, 3)
           .forEach((item) =>

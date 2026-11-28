@@ -1,0 +1,10 @@
+<h1>История изменений</h1>
+<section class="oc-panel">
+  <div class="oc-filters">
+    {{> field id="oc-audit-type" name="resource_type" label="Тип ресурса" select=true placeholder="Все типы" options=types}}
+    {{#if resource_id}}<span>Ресурс #{{resource_id}}</span>{{/if}}
+    {{#if filtered}}<a href="/onlineconf/audit" data-admin-link>Сбросить фильтры</a>{{/if}}
+  </div>
+  {{> status text="Загрузка истории…"}}
+  <div data-entries></div>
+</section>

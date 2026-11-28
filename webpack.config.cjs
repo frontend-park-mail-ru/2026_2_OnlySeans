@@ -9,7 +9,13 @@ module.exports = (_, argv) => {
   const production = argv.mode === 'production';
 
   return {
-    entry: './src/main.ts',
+    entry: {
+      main: './src/main.ts',
+      onlineconf: {
+        import: './src/onlineconf/main.ts',
+        filename: 'assets/onlineconf/[name].[contenthash].js',
+      },
+    },
     output: {
       path: path.resolve(__dirname, 'dist'),
       filename: 'assets/[name].[contenthash].js',
@@ -45,8 +51,18 @@ module.exports = (_, argv) => {
     plugins: [
       new webpack.DefinePlugin({ __SW_ENABLED__: JSON.stringify(production) }),
       ...(production ? [new ServiceWorkerPlugin()] : []),
-      new HtmlWebpackPlugin({ template: './index.html', scriptLoading: 'defer' }),
-      new MiniCssExtractPlugin({ filename: 'assets/[name].[contenthash].css' }),
+      new HtmlWebpackPlugin({ template: './index.html', chunks: ['main'], scriptLoading: 'defer' }),
+      new HtmlWebpackPlugin({
+        template: './src/onlineconf/index.html',
+        filename: 'onlineconf/index.html',
+        chunks: ['onlineconf'],
+        scriptLoading: 'defer',
+      }),
+      new MiniCssExtractPlugin({
+        filename: ({ chunk }) => chunk.name === 'onlineconf'
+          ? 'assets/onlineconf/[name].[contenthash].css'
+          : 'assets/[name].[contenthash].css',
+      }),
       new CopyWebpackPlugin({
         patterns: [
           { from: 'src/assets', to: 'src/assets' },
@@ -58,8 +74,18 @@ module.exports = (_, argv) => {
     devServer: {
       host: '127.0.0.1',
       port: 3000,
-      historyApiFallback: true,
+      historyApiFallback: {
+        rewrites: [
+          { from: /^\/onlineconf(?:\/[^.]*)?$/, to: '/onlineconf/index.html' },
+          { from: /^\/assets\//, to: ({ parsedUrl }) => parsedUrl.pathname },
+        ],
+      },
       proxy: [
+        {
+          context: ['/api/onlineconf/admin'],
+          target: process.env.ONLINECONF_PROXY_TARGET || 'http://127.0.0.1:8081',
+          changeOrigin: true
+        },
         {
           context: ['/api', '/static', '/avatars'],
           target: process.env.API_PROXY_TARGET || 'http://127.0.0.1:8080',
