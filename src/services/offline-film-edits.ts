@@ -6,6 +6,7 @@ import {
   type ReviewValues,
 } from '../api/reviews.js';
 import { store } from '../core/store.js';
+import { handleReviewRejection } from './onlineconf.js';
 import { notify } from './notice.js';
 import { offlineAccount, offlineKeys, privateKey, readOffline, removeOffline, writeOffline } from './offline-storage.js';
 
@@ -15,10 +16,14 @@ type FilmEdit =
   | { kind: 'review'; values: ReviewValues; previous?: PreviousReview }
   | { kind: 'delete'; previous: PreviousReview };
 
-type PendingEdit = FilmEdit & { filmId: number; token: string; conflict?: boolean };
+type PendingEdit = FilmEdit & { filmId: number; token: string; conflict?: boolean; rejectionReason?: string };
 
 function editKey(accountId: number, filmId: number, kind: 'score' | 'review') {
   return privateKey(accountId, 'edit:' + filmId + ':' + kind);
+}
+
+function isCurrentAccount(accountId: number) {
+  return offlineAccount()?.id === accountId && store.get('user')?.id === accountId;
 }
 
 export function pendingFilmEdit(filmId: number, kind: 'score' | 'review') {
@@ -54,6 +59,7 @@ async function applyEdit(edit: PendingEdit, accountId: number) {
   }
 
   const current = await findMyReview(edit.filmId, accountId, { fresh: true });
+  if (!isCurrentAccount(accountId)) return;
   if (edit.kind === 'delete' && !current) return;
   if (edit.kind === 'review' && current &&
       current.title === edit.values.title && current.text === edit.values.text &&
@@ -77,17 +83,20 @@ async function sendPendingEdits() {
 
   let changed = false;
   for (const key of keys) {
-    if (offlineAccount()?.id !== account.id || store.get('user')?.id !== account.id) break;
+    if (!isCurrentAccount(account.id)) break;
     const edit = readOffline<PendingEdit>(key);
     if (!edit || edit.conflict) continue;
     try {
       await applyEdit(edit, account.id);
+      if (!isCurrentAccount(account.id)) break;
       if (readOffline<PendingEdit>(key)?.token === edit.token) removeOffline(key);
       changed = true;
     } catch (error) {
       if (isUnavailable(error) || !(error instanceof ApiError) || error.status >= 500 || error.status === 401) break;
-      if (readOffline<PendingEdit>(key)?.token === edit.token) writeOffline(key, { ...edit, conflict: true });
-      notify('Не удалось отправить изменение из офлайна. ' + errorMessage(error), { type: 'error' });
+      if (readOffline<PendingEdit>(key)?.token !== edit.token) continue;
+      const rejectionReason = edit.kind === 'review' ? handleReviewRejection(error, account.id) : undefined;
+      writeOffline(key, { ...edit, conflict: true, rejectionReason });
+      notify(rejectionReason ?? ('Не удалось отправить изменение из офлайна. ' + errorMessage(error)), { type: 'error' });
     }
   }
   if (changed) notify('Изменения из офлайна отправлены.', { type: 'success' });

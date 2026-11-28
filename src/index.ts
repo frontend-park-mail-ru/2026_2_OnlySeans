@@ -7,7 +7,7 @@ import { routes, notFound } from './app/routes.js';
 import { AppLayout } from './components/app-layout/AppLayout.js';
 import { BareLayout } from './components/bare-layout/BareLayout.js';
 import { ToastStack } from './components/toast/ToastStack.js';
-import { refreshSession, restoreSession, watchSessionOnReturn } from './services/session.js';
+import { refreshSession, restoreSession, watchSessionInOtherTabs, watchSessionOnReturn } from './services/session.js';
 import { syncFilmEdits } from './services/offline-film-edits.js';
 import { startOnlineConf } from './services/onlineconf.js';
 import { notify } from './services/notice.js';
@@ -37,6 +37,7 @@ async function reconnect() {
 }
 
 watchSessionOnReturn(() => router.refresh());
+watchSessionInOtherTabs(() => router.refresh());
 window.addEventListener('online', () => void reconnect());
 document.addEventListener('visibilitychange', async () => {
   if (!document.hidden && await syncFilmEdits()) router.refresh();

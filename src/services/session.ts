@@ -1,6 +1,6 @@
 import * as authApi from '../api/auth.js';
 import { isUnavailable } from '../api/http.js';
-import { type Account, offlineAccount, saveOfflineAccount } from './offline-storage.js';
+import { ACCOUNT_KEY, type Account, offlineAccount, saveOfflineAccount } from './offline-storage.js';
 import { loadLibrary } from './library.js';
 import { loadPreferences } from './storage.js';
 import { store } from '../core/store.js';
@@ -9,22 +9,33 @@ const RETURN_CHECK_AGE = 60_000;
 
 let lastCheck = 0;
 let pending = null;
+let identityVersion = 0;
 
 const sameUser = (a, b) =>
   (a?.id ?? null) === (b?.id ?? null) && a?.username === b?.username && a?.email === b?.email;
 
-async function setUser(user: Account | null) {
-  saveOfflineAccount(user);
+async function applyUser(user: Account | null) {
   if (sameUser(store.get('user'), user)) return;
+  if (store.get('user')?.id !== user?.id) {
+    identityVersion++;
+    pending = null;
+  }
   store.set({ user, myReview: null });
   await Promise.allSettled([loadLibrary(), loadPreferences()]);
 }
 
+function setUser(user: Account | null) {
+  saveOfflineAccount(user);
+  return applyUser(user);
+}
+
 export async function restoreSession() {
+  const version = identityVersion;
   try {
-    await setUser(await authApi.fetchCurrentUser());
+    const user = await authApi.fetchCurrentUser();
+    if (version === identityVersion) await setUser(user);
   } catch (error) {
-    if (isUnavailable(error)) await setUser(offlineAccount());
+    if (version === identityVersion && isUnavailable(error)) await setUser(offlineAccount());
   }
   lastCheck = Date.now();
 }
@@ -32,17 +43,31 @@ export async function restoreSession() {
 export function refreshSession({ maxAge = 0 } = {}) {
   if (pending) return pending;
   if (Date.now() - lastCheck < maxAge) return Promise.resolve();
-  pending = authApi
+  const version = identityVersion;
+  const request = authApi
     .fetchCurrentUser()
     .then((user) => {
+      if (version !== identityVersion) return;
       lastCheck = Date.now();
       return setUser(user);
     })
     .catch(() => {})
     .finally(() => {
-      pending = null;
+      if (pending === request) pending = null;
     });
-  return pending;
+  pending = request;
+  return request;
+}
+
+export function watchSessionInOtherTabs(onChange: () => void) {
+  window.addEventListener('storage', event => {
+    if (event.storageArea !== localStorage || (event.key !== ACCOUNT_KEY && event.key !== null)) return;
+    const user = offlineAccount();
+    if (sameUser(store.get('user'), user)) return;
+    lastCheck = 0;
+    void applyUser(user);
+    onChange();
+  });
 }
 
 export function watchSessionOnReturn(onChange) {

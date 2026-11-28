@@ -1,4 +1,37 @@
-import { request, type RequestOptions } from './http.js';
+import { ApiError, request, type RequestOptions } from './http.js';
+import { HttpStatus } from './errors.js';
+import { isReviewLimit } from './onlineconf.js';
+import { countLabel } from '../core/format.js';
+
+export const MAX_REVIEW_TITLE_LENGTH = 255;
+
+export function isValidReviewTitle(title: string) {
+  const size = Array.from(title.trim()).length;
+  return size >= 3 && size <= MAX_REVIEW_TITLE_LENGTH;
+}
+
+export function reviewPolicyRevision(error: ApiError): number | undefined {
+  const revision = error.details?.revision;
+  return typeof revision === 'number' && Number.isSafeInteger(revision) && revision >= 0 ? revision : undefined;
+}
+
+export function reviewPolicyErrorMessage(error: unknown, appliedRevision: number | null): string | undefined {
+  if (!(error instanceof ApiError)) return;
+  if (error.status === HttpStatus.FORBIDDEN && error.code === 'feature_disabled') {
+    const revision = reviewPolicyRevision(error);
+    if (appliedRevision !== null && revision !== undefined && revision < appliedRevision) {
+      return 'Отзыв не отправлен. В момент отправки публикация была отключена.';
+    }
+    return 'Отзыв не отправлен. Публикация и редактирование отключены.';
+  }
+  if (error.status === HttpStatus.BAD_REQUEST && error.code === 'review_too_long') {
+    const max = error.details?.max_length;
+    if (isReviewLimit(max)) {
+      return `Отзыв не отправлен. На момент отправки лимит составлял ${countLabel(max, ['символ', 'символа', 'символов'])}.`;
+    }
+    return 'Отзыв не отправлен. Текст превышает допустимую длину.';
+  }
+}
 
 const PAGE = 20;
 const MAX_PAGES = 50;
@@ -93,7 +126,7 @@ export async function findMyReview(filmId: number, userId: number, options: Requ
 }
 
 export const createReview = (filmId: number, values: ReviewValues) =>
-  request(filmReviews(filmId), { method: 'POST', body: toBody(values) });
+  request<{ id: number }>(filmReviews(filmId), { method: 'POST', body: toBody(values) });
 
 export async function updateReview(id: number, values: ReviewValues, version: number) {
   const data = await request<{ review: ReviewResponse }>(review(id), {

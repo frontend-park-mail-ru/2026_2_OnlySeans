@@ -1,24 +1,28 @@
 <form class="review-form" novalidate>
   <span class="review-form__label">{{#if editing}}Ваш отзыв{{else}}Написать отзыв{{/if}}</span>
-  <input class="review-form__title" name="title" type="text" aria-label="Заголовок отзыва"
-    placeholder="Заголовок" value="{{title}}" {{#if busy}}disabled{{/if}} />
-  <textarea class="review-form__text" name="text" rows="5" aria-label="Текст отзыва"
-    placeholder="Что вы думаете об этом {{what}}е?" {{#if busy}}disabled{{/if}}>{{text}}</textarea>
+  <input class="review-form__title" name="title" type="text" aria-label="Заголовок отзыва" aria-describedby="review-title-hint"
+    placeholder="Заголовок" value="{{title}}" />
+  <p class="review-form__sync" id="review-title-hint" hidden>Введите заголовок длиной от 3 до 255 символов.</p>
+  <textarea class="review-form__text" name="text" rows="5" aria-label="Текст отзыва" aria-describedby="review-length-hint"
+    placeholder="Что вы думаете об этом {{what}}е?">{{text}}</textarea>
   <div class="review-form__bar">
     <label class="review-form__spoiler">
-      <input class="review-form__checkbox" type="checkbox" name="spoiler" {{#if spoiler}}checked{{/if}} {{#if busy}}disabled{{/if}} />
+      <input class="review-form__checkbox" type="checkbox" name="spoiler" {{#if spoiler}}checked{{/if}} />
       Есть спойлеры
     </label>
     <output class="review-form__counter" name="counter"></output>
   </div>
-  {{#if syncStatus}}<p class="review-form__sync" role="status">{{syncStatus}}</p>{{/if}}
+  <p class="review-form__sync" id="review-length-hint" data-length-hint hidden></p>
+  <p class="review-form__sync" data-sync-status role="status" hidden></p>
+  <p class="review-form__sync" data-write-hint id="review-write-hint" role="status" hidden></p>
+  <p class="review-form__sync" data-submit-error role="alert" hidden></p>
   <div class="review-form__actions">
-    <button class="review-form__save" type="submit" name="save" disabled>{{#if editing}}Сохранить{{else}}Опубликовать{{/if}}</button>
+    <button class="review-form__save" type="submit" name="save" aria-describedby="review-write-hint" disabled>{{#if editing}}Сохранить{{else}}Опубликовать{{/if}}</button>
     {{#if canCancel}}
-      <button class="review-form__cancel" type="button" name="cancel" {{#if busy}}disabled{{/if}}>Отмена</button>
+      <button class="review-form__cancel" type="button" name="cancel">Отмена</button>
     {{/if}}
     {{#if editing}}
-      <button class="review-form__remove" type="button" name="delete" {{#if busy}}disabled{{/if}}>Удалить отзыв</button>
+      <button class="review-form__remove" type="button" name="delete">Удалить отзыв</button>
     {{/if}}
   </div>
 </form>

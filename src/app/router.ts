@@ -1,5 +1,6 @@
 import { store } from '../core/store.js';
 import { authPath } from '../services/auth-return.js';
+import { eventBus } from '../core/event-bus.js';
 
 export class Router {
   readonly notFound;
@@ -11,6 +12,8 @@ export class Router {
   #layoutName = null;
   #visit = 0;
   #loadingTimer = null;
+  #displayedPath: string | undefined;
+  #displayedUserId: number | undefined;
 
   constructor({ routes, layouts, notFound, root, checkSession }) {
     this.#routes = routes.map((route) => ({ ...route, pattern: toPattern(route.path) }));
@@ -43,7 +46,7 @@ export class Router {
   }
 
   refresh() {
-    this.#render();
+    this.#render({ background: true });
   }
 
   #onLinkClick(event) {
@@ -70,7 +73,7 @@ export class Router {
     return { route: this.notFound, params: {} };
   }
 
-  async #render({ toTop = false } = {}) {
+  async #render({ toTop = false, background = false } = {}) {
     const visit = ++this.#visit;
     const { route, params } = this.#match(location.pathname);
     const here = `${location.pathname}${location.search}`;
@@ -116,6 +119,11 @@ export class Router {
     this.#loadingTimer = null;
     delete document.documentElement.dataset.loading;
 
+    if (background && this.#displayedPath === here && this.#displayedUserId === store.get('user')?.id) {
+      const event = new Event('route:before-refresh', { cancelable: true });
+      eventBus.emit(event.type, event);
+      if (event.defaultPrevented) return;
+    }
     const layoutName = route.layout || 'app';
     if (layoutName !== this.#layoutName) {
       this.#layout?.destroy();
@@ -124,6 +132,8 @@ export class Router {
       this.#root.replaceChildren(this.#layout.render());
     }
     this.#layout.show(page, { toTop });
+    this.#displayedPath = here;
+    this.#displayedUserId = store.get('user')?.id;
   }
 }
 
