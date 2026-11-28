@@ -9,6 +9,7 @@
     "dev": "webpack serve --mode development",
     "build": "npm run typecheck && webpack --mode production",
     "typecheck": "tsc --noEmit && tsc -p tsconfig.worker.json",
+    "test:onlineconf": "node --test test-onlineconf.cjs",
     "test:sw": "npm run build && node test-service-worker.cjs",
     "test:offline": "npm run test:sw && node test-offline-edits.cjs"
   },

@@ -22,6 +22,7 @@ async function testOfflineEdits(directory) {
   let score = 0;
   let mutations = 0;
   let online = true;
+  let maxLength = 500;
 
   function json(data, status = 200) {
     return Response.json(data, { status });
@@ -42,7 +43,11 @@ async function testOfflineEdits(directory) {
     if (pathname === '/api/films/12/reviews') {
       if (method === 'GET') return json({ reviews: review ? [review] : [], total: review ? 1 : 0 });
       mutations++;
-      review = { ...JSON.parse(options.body), id: 42, author_id: account.id, version: 1 };
+      const body = JSON.parse(options.body);
+      if (Array.from(body.content).length > maxLength) {
+        return json({ code: 'review_too_long', details: { max_length: maxLength } }, 400);
+      }
+      review = { ...body, id: 42, author_id: account.id, version: 1 };
       return json({ review }, 201);
     }
     throw new Error('Unexpected request ' + method + ' ' + pathname);
@@ -90,6 +95,50 @@ async function testOfflineEdits(directory) {
   assert.equal(pendingFilmEdit(12, 'review').conflict, true);
   assert.equal(reviewDraft(12).text, 'Edited offline.');
   assert.equal(mutations, 2);
+
+  // A review queued under an old limit is only sent again after its author corrects it.
+  review = null;
+  await loadMyReview(12);
+  navigator.onLine = online = false;
+  const draft = { ...values, text: 'К'.repeat(299) + '🎬', spoiler: true };
+  assert.equal(await saveReview(12, draft), true);
+  maxLength = 200;
+  navigator.onLine = online = true;
+  assert.equal(await syncFilmEdits(), false);
+  const rejected = pendingFilmEdit(12, 'review');
+  assert.equal(rejected.conflict, true);
+  assert.match(rejected.rejectionReason, /200/);
+  assert.deepEqual(reviewDraft(12), draft);
+  assert.equal(mutations, 3);
+  await syncFilmEdits();
+  await syncFilmEdits();
+  assert.equal(mutations, 3);
+  const corrected = { ...draft, text: 'К'.repeat(180) };
+  assert.equal(await saveReview(12, corrected), false);
+  assert.equal(review.content, corrected.text);
+  assert.equal(mutations, 4);
+  assert.equal(pendingFilmEdit(12, 'review'), undefined);
+
+  // Another tab switches accounts while the queue is looking up the review version.
+  review = null;
+  await loadMyReview(12);
+  navigator.onLine = online = false;
+  await saveReview(12, draft);
+  navigator.onLine = online = true;
+  const fetchBeforeSwitch = global.fetch;
+  global.fetch = async (url, options) => {
+    const result = await fetchBeforeSwitch(url, options);
+    if (new URL(url, window.location.origin).pathname === '/api/films/12/reviews' && options.method === 'GET') {
+      signedIn = other;
+      saveOfflineAccount(other);
+      store.set({ user: other, myReview: null });
+    }
+    return result;
+  };
+  assert.equal(await syncFilmEdits(), false);
+  assert.equal(signedIn, other);
+  assert.equal(mutations, 4);
+  assert.equal(reviewDraft(12), null);
 
   saveOfflineAccount(null);
   store.set({ user: null });

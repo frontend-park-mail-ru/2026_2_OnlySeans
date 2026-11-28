@@ -1,0 +1,89 @@
+const assert = require('node:assert/strict');
+const { execFileSync } = require('node:child_process');
+const { mkdtempSync, rmSync } = require('node:fs');
+const { tmpdir } = require('node:os');
+const path = require('node:path');
+const test = require('node:test');
+const { setImmediate: flush } = require('node:timers/promises');
+
+test('runtime polling applies only validated settings for the current account', async (t) => {
+  const dir = mkdtempSync(path.join(tmpdir(), 'frame-onlineconf-'));
+  t.after(() => rmSync(dir, { recursive: true, force: true }));
+  execFileSync(process.execPath, [require.resolve('typescript/bin/tsc'), '--target', 'ES2022',
+    '--module', 'commonjs', '--skipLibCheck', '--outDir', dir, 'src/services/onlineconf.ts']);
+
+  t.mock.timers.enable({ apis: ['setInterval'] });
+  global.document = Object.assign(new EventTarget(), { hidden: false });
+  global.window = Object.assign(new EventTarget(), {
+    location: { origin: 'https://onlyseans.test' }, setInterval, clearInterval, setTimeout, clearTimeout,
+  });
+  const requests = [];
+  global.fetch = (url, options) => {
+    assert.equal(url.pathname, '/api/onlineconf/runtime');
+    assert.equal(options.credentials, 'include');
+    assert.equal(options.cache, 'no-store');
+    return new Promise((resolve, reject) => requests.push({ resolve, reject, signal: options.signal }));
+  };
+  function reply(index, flag, max = 500, revision = 1) {
+    requests[index].resolve(Response.json({
+      revision, configs: { 'reviews.max_length': max }, flags: { 'reviews.write_enabled': flag },
+    }));
+    return flush();
+  }
+
+  const { store } = require(path.join(dir, 'core/store.js'));
+  const { startOnlineConf, refreshOnlineConf } = require(path.join(dir, 'services/onlineconf.js'));
+  const settings = () => store.get('onlineconf');
+  store.set({ user: { id: 1 } });
+  const stop = startOnlineConf();
+  t.after(stop);
+  assert.equal(startOnlineConf(), stop);
+  window.dispatchEvent(new Event('online'));
+  assert.equal(requests.length, 1);
+  await reply(0, true);
+  assert.equal(settings().writeEnabled, true);
+  assert.equal(settings().maxLength, 500);
+
+  t.mock.timers.tick(14_999);
+  assert.equal(requests.length, 1);
+  t.mock.timers.tick(1);
+  assert.equal(requests.length, 2);
+  store.set({ user: { id: 2 } });
+  assert.equal(requests[1].signal.aborted, true);
+  assert.equal(settings().writeEnabled, false);
+  await reply(2, false, 200);
+  await reply(1, true, 1000, 2);
+  assert.equal(settings().userId, 2);
+  assert.equal(settings().revision, 1);
+  assert.equal(settings().maxLength, 200);
+
+  window.dispatchEvent(new Event('online'));
+  requests[3].reject(new TypeError('Offline'));
+  await flush();
+  assert.equal(settings().status, 'stale');
+  assert.equal(settings().maxLength, 200);
+  document.hidden = true;
+  t.mock.timers.tick(15_000);
+  assert.equal(requests.length, 4);
+  document.hidden = false;
+  document.dispatchEvent(new Event('visibilitychange'));
+  await reply(4, 'false');
+  assert.equal(settings().status, 'fallback');
+  assert.equal(settings().writeEnabled, false);
+
+  // A rejected write needs a snapshot fetched after the rejection, even during a poll.
+  t.mock.timers.tick(15_000);
+  const refresh = refreshOnlineConf();
+  assert.equal(requests.length, 7);
+  assert.equal(requests[5].signal.aborted, true);
+  await reply(6, false, 200, 3);
+  await refresh;
+  await reply(5, true, 500, 2);
+  assert.equal(settings().revision, 3);
+  assert.equal(settings().writeEnabled, false);
+
+  stop();
+  t.mock.timers.tick(30_000);
+  window.dispatchEvent(new Event('online'));
+  assert.equal(requests.length, 7);
+});

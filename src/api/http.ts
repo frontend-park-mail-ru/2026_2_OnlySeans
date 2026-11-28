@@ -12,11 +12,15 @@ const PAGE_LIMIT = 100;
 
 export class ApiError extends Error {
   readonly status: number;
+  readonly code?: string;
+  readonly details?: Record<string, unknown>;
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, code?: string, details?: Record<string, unknown>) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.code = code;
+    this.details = details;
   }
 }
 
@@ -78,7 +82,13 @@ async function send<T>(url: URL, method: string, body: unknown, signal: AbortSig
   } catch {
     data = {};
   }
-  if (!response.ok) throw new ApiError(response.status, data.error || `HTTP ${response.status}`);
+  if (!response.ok) {
+    const message = typeof data?.error === 'string' && data.error ? data.error : `HTTP ${response.status}`;
+    const code = typeof data?.code === 'string' ? data.code : undefined;
+    const details = data?.details;
+    throw new ApiError(response.status, message, code,
+      details && typeof details === 'object' && !Array.isArray(details) ? details : undefined);
+  }
   if (response.status !== HttpStatus.NO_CONTENT && !response.headers.get('content-type')?.includes('application/json')) {
     throw new ApiError(502, 'Unexpected API response');
   }

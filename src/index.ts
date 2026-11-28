@@ -7,8 +7,9 @@ import { routes, notFound } from './app/routes.js';
 import { AppLayout } from './components/app-layout/AppLayout.js';
 import { BareLayout } from './components/bare-layout/BareLayout.js';
 import { ToastStack } from './components/toast/ToastStack.js';
-import { refreshSession, restoreSession, watchSessionOnReturn } from './services/session.js';
+import { refreshSession, restoreSession, watchSessionInOtherTabs, watchSessionOnReturn } from './services/session.js';
 import { syncFilmEdits } from './services/offline-film-edits.js';
+import { startOnlineConf } from './services/onlineconf.js';
 import { notify } from './services/notice.js';
 import { fontsReady, stylesReady } from './core/assets.js';
 
@@ -36,13 +37,14 @@ async function reconnect() {
 }
 
 watchSessionOnReturn(() => router.refresh());
+watchSessionInOtherTabs(() => router.refresh());
 window.addEventListener('online', () => void reconnect());
 document.addEventListener('visibilitychange', async () => {
   if (!document.hidden && await syncFilmEdits()) router.refresh();
 });
 window.addEventListener('offline', () => notify('Вы офлайн. Доступны ранее загруженные данные.'));
 
-Promise.all([restoreSession(), stylesReady(), fontsReady()]).then(async () => {
+Promise.all([restoreSession().then(() => startOnlineConf()), stylesReady(), fontsReady()]).then(async () => {
   router.start();
   if (!navigator.onLine) notify('Вы офлайн. Доступны ранее загруженные данные.');
   else if (await syncFilmEdits()) router.refresh();

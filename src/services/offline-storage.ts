@@ -5,7 +5,7 @@ export interface Account {
   created_at?: string;
 }
 
-const ACCOUNT_KEY = 'frame:offline:account';
+export const ACCOUNT_KEY = 'frame:offline:account';
 const PRIVATE_PREFIX = 'frame:offline:private:';
 
 export function readOffline<T>(key: string): T | undefined {

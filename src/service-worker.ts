@@ -78,6 +78,7 @@ worker.addEventListener('fetch', event => {
   const { request } = event;
   const url = new URL(request.url);
   if (request.method !== 'GET' || url.origin !== worker.location.origin || request.headers.has('Range')) return;
+  if (url.pathname === '/onlineconf' || url.pathname.startsWith('/onlineconf/')) return;
 
   const isPublicApi = PUBLIC_API.test(url.pathname);
   if (isPublicApi || PUBLIC_IMAGE.test(url.pathname) || url.pathname === '/review-authors.json') {
