@@ -12,7 +12,7 @@
     <output class="review-form__counter" name="counter"></output>
   </div>
   <p class="review-form__sync" id="review-length-hint" data-length-hint hidden></p>
-  {{#if syncStatus}}<p class="review-form__sync" role="status">{{syncStatus}}</p>{{/if}}
+  <p class="review-form__sync" data-sync-status role="status" hidden></p>
   <p class="review-form__sync" data-write-hint id="review-write-hint" role="status" hidden></p>
   <p class="review-form__sync" data-submit-error role="alert" hidden></p>
   <div class="review-form__actions">

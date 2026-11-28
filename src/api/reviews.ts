@@ -109,7 +109,7 @@ export async function findMyReview(filmId: number, userId: number, options: Requ
 }
 
 export const createReview = (filmId: number, values: ReviewValues) =>
-  request(filmReviews(filmId), { method: 'POST', body: toBody(values) });
+  request<{ id: number }>(filmReviews(filmId), { method: 'POST', body: toBody(values) });
 
 export async function updateReview(id: number, values: ReviewValues, version: number) {
   const data = await request<{ review: ReviewResponse }>(review(id), {

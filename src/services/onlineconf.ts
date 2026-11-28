@@ -38,10 +38,10 @@ export function startOnlineConf() {
     } catch (error) {
       if (!isCurrent()) return;
       const current = store.get('onlineconf');
-      if (current.revision !== null && (controller.signal.aborted || isUnavailable(error))) {
+      if (current.revision !== null && current.status !== 'fallback' && (controller.signal.aborted || isUnavailable(error))) {
         store.set({ onlineconf: { ...current, status: 'stale' } });
       } else {
-        store.set({ onlineconf: { ...initialOnlineConf(userId), status: 'fallback' } });
+        store.set({ onlineconf: { ...current, writeEnabled: false, status: 'fallback' } });
         if (error instanceof ApiError && error.status === 401 && userId !== null) void refreshSession();
       }
     } finally {

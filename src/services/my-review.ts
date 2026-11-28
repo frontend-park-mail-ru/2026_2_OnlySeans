@@ -1,5 +1,5 @@
-import type { Account } from './offline-storage.js';
-import { isUnavailable } from '../api/http.js';
+import { offlineAccount, type Account } from './offline-storage.js';
+import { ApiError, isUnavailable } from '../api/http.js';
 import { clearFilmEdit, pendingFilmEdit, queueFilmEdit } from './offline-film-edits.js';
 import { store } from '../core/store.js';
 import {
@@ -60,13 +60,23 @@ async function loaded(filmId: number) {
   await loading.promise;
 }
 
+function checkAuthor(id: number | undefined) {
+  const cached = offlineAccount();
+  if (id == null || store.get('user')?.id !== id || (cached && cached.id !== id)) {
+    throw new ApiError(401, 'Account changed while editing');
+  }
+}
+
 export async function setScore(filmId: number, score: number) {
+  const authorId = store.get('user')?.id;
   const pending = pendingFilmEdit(filmId, 'score');
   if (navigator.onLine) {
     try {
       await loaded(filmId);
+      checkAuthor(authorId);
       if (score) await setMyScore(filmId, score);
       else await deleteMyScore(filmId);
+      checkAuthor(authorId);
       clearFilmEdit(filmId, 'score', pending?.token);
       remember(filmId, { score });
       return false;
@@ -74,6 +84,7 @@ export async function setScore(filmId: number, score: number) {
       if (!isUnavailable(error)) throw error;
     }
   }
+  checkAuthor(authorId);
   queueFilmEdit(filmId, { kind: 'score', value: score });
   remember(filmId, { score });
   return true;
@@ -82,38 +93,51 @@ export async function setScore(filmId: number, score: number) {
 export const clearScore = (filmId: number) => setScore(filmId, 0);
 
 export async function saveReview(filmId: number, values: ReviewValues) {
+  const authorId = store.get('user')?.id;
   const pending = pendingFilmEdit(filmId, 'review');
   let current = myReview(filmId);
   if (navigator.onLine) {
     try {
       await loaded(filmId);
+      checkAuthor(authorId);
       current = myReview(filmId);
+      let review: Review | null;
       if (current) {
-        const review = await updateReview(current.id, values, current.version);
-        remember(filmId, { review });
+        review = await updateReview(current.id, values, current.version);
       } else {
-        await createReview(filmId, values);
-        remember(filmId, { review: await findMyReview(filmId, store.get('user').id) });
+        const { id } = await createReview(filmId, values);
+        checkAuthor(authorId);
+        // Create returns just the ID. The next load supplies the server timestamp.
+        review = {
+          ...values, id, author: { id: authorId, name: store.get('user').username },
+          version: 1, edited: false, score: myScore(filmId) || null, createdAt: new Date().toISOString(),
+        };
       }
+      checkAuthor(authorId);
+      remember(filmId, { review });
       clearFilmEdit(filmId, 'review', pending?.token);
       return false;
     } catch (error) {
       if (!isUnavailable(error)) throw error;
     }
   }
+  checkAuthor(authorId);
   queueFilmEdit(filmId, { kind: 'review', values, previous: current && { id: current.id, version: current.version } });
   return true;
 }
 
 export async function removeReview(filmId: number) {
+  const authorId = store.get('user')?.id;
   const pending = pendingFilmEdit(filmId, 'review');
   let current = myReview(filmId);
   if (navigator.onLine) {
     try {
       await loaded(filmId);
+      checkAuthor(authorId);
       current = myReview(filmId);
       if (!current) return false;
       await deleteReview(current.id);
+      checkAuthor(authorId);
       clearFilmEdit(filmId, 'review', pending?.token);
       remember(filmId, { review: null });
       return false;
@@ -121,6 +145,7 @@ export async function removeReview(filmId: number) {
       if (!isUnavailable(error)) throw error;
     }
   }
+  checkAuthor(authorId);
   if (!current) return false;
   queueFilmEdit(filmId, { kind: 'delete', previous: { id: current.id, version: current.version } });
   return true;

@@ -82,8 +82,22 @@ test('runtime polling applies only validated settings for the current account', 
   assert.equal(settings().revision, 3);
   assert.equal(settings().writeEnabled, false);
 
+  // An invalid response must not let a lagging replica restore an older permission.
+  window.dispatchEvent(new Event('online'));
+  await reply(7, 'false', 200, 4);
+  assert.equal(settings().status, 'fallback');
+  window.dispatchEvent(new Event('online'));
+  await reply(8, true, 500, 2);
+  assert.equal(settings().writeEnabled, false);
+  window.dispatchEvent(new Event('online'));
+  await reply(9, false, 200, 3);
+  assert.equal(settings().status, 'ready');
+  store.set({ user: { id: 3 } });
+  await reply(10, true, 500, 1);
+  assert.equal(settings().writeEnabled, true);
+
   stop();
   t.mock.timers.tick(30_000);
   window.dispatchEvent(new Event('online'));
-  assert.equal(requests.length, 7);
+  assert.equal(requests.length, 11);
 });

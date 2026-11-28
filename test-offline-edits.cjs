@@ -48,7 +48,7 @@ async function testOfflineEdits(directory) {
         return json({ code: 'review_too_long', details: { max_length: maxLength } }, 400);
       }
       review = { ...body, id: 42, author_id: account.id, version: 1 };
-      return json({ review }, 201);
+      return json({ id: review.id }, 201);
     }
     throw new Error('Unexpected request ' + method + ' ' + pathname);
   };
@@ -119,6 +119,22 @@ async function testOfflineEdits(directory) {
   assert.equal(mutations, 4);
   assert.equal(pendingFilmEdit(12, 'review'), undefined);
 
+  // A 201 confirms publication even if the network disappears immediately afterwards.
+  const fetchBeforeDisconnect = global.fetch;
+  review = null;
+  await loadMyReview(12);
+  global.fetch = async (url, options) => {
+    const response = await fetchBeforeDisconnect(url, options);
+    if (response.status === 201) online = false;
+    return response;
+  };
+  assert.equal(await saveReview(12, corrected), false);
+  assert.equal(pendingFilmEdit(12, 'review'), undefined);
+  assert.equal(store.get('myReview').review.id, review.id);
+  assert.equal(store.get('myReview').review.text, corrected.text);
+  global.fetch = fetchBeforeDisconnect;
+  online = true;
+
   // Another tab switches accounts while the queue is looking up the review version.
   review = null;
   await loadMyReview(12);
@@ -137,8 +153,27 @@ async function testOfflineEdits(directory) {
   };
   assert.equal(await syncFilmEdits(), false);
   assert.equal(signedIn, other);
-  assert.equal(mutations, 4);
+  assert.equal(mutations, 5);
   assert.equal(reviewDraft(12), null);
+
+  // A network failure from a previous session must not enqueue that user's input for the new user.
+  signedIn = account;
+  saveOfflineAccount(account);
+  store.set({ user: account, myReview: null });
+  global.fetch = fetchBeforeSwitch;
+  await loadMyReview(12);
+  global.fetch = async (url, options) => {
+    if (options.method === 'POST') {
+      signedIn = other;
+      saveOfflineAccount(other);
+      store.set({ user: other, myReview: null });
+      throw new TypeError('Offline');
+    }
+    return fetchBeforeSwitch(url, options);
+  };
+  await assert.rejects(saveReview(12, draft), error => error.status === 401);
+  assert.equal(reviewDraft(12), null);
+  assert.equal(store.get('myReview'), null);
 
   saveOfflineAccount(null);
   store.set({ user: null });

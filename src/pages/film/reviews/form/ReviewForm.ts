@@ -1,6 +1,7 @@
 import './review-form.css';
 import templateSource from './ReviewForm.hbs';
 import { Component } from '../../../../core/component.js';
+import { eventBus } from '../../../../core/event-bus.js';
 import { store } from '../../../../core/store.js';
 import { errorMessage } from '../../../../api/errors.js';
 import { reviewPolicyErrorMessage } from '../../../../api/reviews.js';
@@ -52,12 +53,8 @@ export class ReviewForm extends Component {
 
   context() {
     const values = reviewDraft(this.props.film.id) ?? this.#savedValues();
-    const pending = pendingFilmEdit(this.props.film.id, 'review');
     return {
       ...values,
-      syncStatus: pending?.conflict
-        ? pending.rejectionReason ?? 'Изменение осталось на этом устройстве. Проверьте актуальную версию отзыва перед отправкой.'
-        : pending ? 'Изменение ждёт подключения к сети.' : '',
       editing: Boolean(this.#saved),
       canCancel: Boolean(this.props.onCancel),
       what: this.props.film.isSeries ? 'сериал' : 'фильм',
@@ -84,7 +81,14 @@ export class ReviewForm extends Component {
     this.delegate('click', '[name="cancel"]', () => this.props.onCancel());
     this.watch(store.watch('myReview', () => !this.#busy && !this.#edited() && this.update()));
     this.watch(store.watch('onlineconf', () => this.#refresh()));
-    this.#shown = this.#values();
+    this.watch(eventBus.on('route:before-refresh', (event: Event) => {
+      if (this.#busy || this.#edited()) {
+        event.preventDefault();
+        this.#showSyncStatus();
+      }
+    }));
+    this.#shown = this.#inputValues();
+    this.#showSyncStatus();
     this.#refresh();
   }
 
@@ -94,9 +98,24 @@ export class ReviewForm extends Component {
     text.setSelectionRange(text.value.length, text.value.length);
   }
 
-  #values() {
+  #inputValues() {
     const { title, text, spoiler } = this.element.elements;
-    return { title: title.value.trim(), text: text.value.trim(), spoiler: spoiler.checked };
+    return { title: title.value, text: text.value, spoiler: spoiler.checked };
+  }
+
+  #values() {
+    const { title, text, spoiler } = this.#inputValues();
+    return { title: title.trim(), text: text.trim(), spoiler };
+  }
+
+  #showSyncStatus() {
+    const pending = pendingFilmEdit(this.props.film.id, 'review');
+    const message = pending?.conflict
+      ? pending.rejectionReason ?? 'Изменение осталось на этом устройстве. Проверьте актуальную версию отзыва перед отправкой.'
+      : pending ? 'Изменение ждёт подключения к сети.' : '';
+    const hint = this.find('[data-sync-status]');
+    hint.textContent = message;
+    hint.hidden = !message;
   }
 
   #differs(a, b) {
@@ -104,7 +123,7 @@ export class ReviewForm extends Component {
   }
 
   #edited() {
-    return this.#differs(this.#values(), this.#shown);
+    return this.#differs(this.#inputValues(), this.#shown);
   }
 
   #canSave(values, textLength = length(values.text)) {
