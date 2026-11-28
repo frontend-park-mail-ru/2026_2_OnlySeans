@@ -23,6 +23,9 @@ export async function fetchOnlineConf(signal: AbortSignal) {
       typeof writeEnabled !== 'boolean') {
     throw new Error('Invalid OnlineConf review settings');
   }
+  // Older runtime responses only signal readiness through a positive revision.
+  const snapshotReady = data.snapshot_ready === undefined ? revision > 0 : data.snapshot_ready;
+  if (typeof snapshotReady !== 'boolean') throw new Error('Invalid OnlineConf snapshot readiness');
   let homeBlocks: HomeBlock[] = [];
   const blocks = data.configs[homeBlocksKey];
   if (data.flags[homeBlocksFlag] === true && blocks !== undefined) {
@@ -32,5 +35,5 @@ export async function fetchOnlineConf(signal: AbortSignal) {
       // Malformed optional UI config must not prevent review settings from applying.
     }
   }
-  return { revision, maxLength, writeEnabled, homeBlocks };
+  return { revision, maxLength, writeEnabled, homeBlocks, snapshotReady };
 }
