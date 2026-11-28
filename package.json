@@ -39,6 +39,7 @@
     "webpack-dev-server": "^6.1.0"
   },
   "dependencies": {
+    "core-js-pure": "^3.51.0",
     "handlebars": "^4.7.9"
   }
 }

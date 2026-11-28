@@ -181,7 +181,7 @@ export class ReviewForm extends Component {
       if (!queued) this.props.onDone?.();
     } catch (error) {
       if (!this.element) return;
-      const reason = reviewPolicyErrorMessage(error);
+      const reason = reviewPolicyErrorMessage(error, store.get('onlineconf').revision);
       if (reason) {
         this.#submitError = reason;
         this.#refresh();

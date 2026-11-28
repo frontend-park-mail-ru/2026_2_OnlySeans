@@ -59,8 +59,18 @@ export function report(target: Element, error: unknown, signal: AbortSignal) {
 }
 
 export async function scopes(view: View) {
-  const result = await view.api<Scope[] | Page<Scope>>('/scopes', { signal: view.signal });
-  return Array.isArray(result) ? result : result.items;
+  const items: Scope[] = [];
+  const limit = 50;
+  for (;;) {
+    view.signal.throwIfAborted();
+    const result = await view.api<Scope[] | Page<Scope>>('/scopes', {
+      params: { limit, offset: items.length },
+      signal: view.signal,
+    });
+    if (Array.isArray(result)) return result;
+    items.push(...result.items);
+    if (items.length >= result.total || !result.items.length) return items;
+  }
 }
 
 export function scopeOptions(select: HTMLSelectElement, items: Scope[], placeholder: string, selected = '') {

@@ -24,10 +24,10 @@ test('runtime polling applies only validated settings for the current account', 
     assert.equal(options.cache, 'no-store');
     return new Promise((resolve, reject) => requests.push({ resolve, reject, signal: options.signal }));
   };
-  function reply(index, flag, max = 500, revision = 1, theme = null) {
+  function reply(index, flag, max = 500, revision = 1, blocks = [], blocksEnabled = true) {
     requests[index].resolve(Response.json({
-      revision, configs: { 'reviews.max_length': max, 'frontend.watch_button_theme': theme },
-      flags: { 'reviews.write_enabled': flag, 'frontend.watch_button_theme_enabled': theme !== null },
+      revision, configs: { 'reviews.max_length': max, 'frontend.home_blocks': blocks },
+      flags: { 'reviews.write_enabled': flag, 'frontend.home_blocks_enabled': blocksEnabled },
     }));
     return flush();
   }
@@ -103,23 +103,29 @@ test('runtime polling applies only validated settings for the current account', 
   await reply(10, true, 500, 1);
   assert.equal(settings().writeEnabled, true);
 
-  const poll = async (flag, max, revision, theme = null) => {
+  const poll = async (flag, max, revision, blocks = [], blocksEnabled = true) => {
     const count = requests.length;
     t.mock.timers.tick(15_000);
     assert.equal(requests.length, count + 1);
-    await reply(count, flag, max, revision, theme);
+    await reply(count, flag, max, revision, blocks, blocksEnabled);
   };
-  await poll(true, 500, 8, 'wine');
-  assert.equal(settings().watchButtonTheme, 'wine');
+  const blocks = [{ type: 'banner', title: 'Сегодня в кино', text: 'Выбор редакции' }, { type: 'collection', id: 3 }];
+  await poll(true, 500, 6, blocks, false);
+  assert.deepEqual(settings().homeBlocks, []);
+  await poll(true, 500, 7, [{ type: 'unknown' }]);
+  assert.deepEqual(settings().homeBlocks, []);
+  assert.equal(settings().writeEnabled, true);
+  await poll(true, 500, 8, blocks);
+  assert.deepEqual(settings().homeBlocks, blocks);
   await poll(false, 20000, 0);
   assert.equal(settings().writeEnabled, false);
   assert.equal(settings().status, 'fallback');
-  assert.equal(settings().watchButtonTheme, null);
+  assert.deepEqual(settings().homeBlocks, []);
   await poll(true, 500, 7);
   assert.equal(settings().writeEnabled, false);
-  await poll(true, 500, 8, 'amber');
+  await poll(true, 500, 8, blocks);
   assert.equal(settings().writeEnabled, true);
-  assert.equal(settings().watchButtonTheme, 'amber');
+  assert.deepEqual(settings().homeBlocks, blocks);
 
   const denied = new ApiError(403, 'disabled', 'feature_disabled');
   handleReviewRejection(denied, 3);
@@ -131,14 +137,39 @@ test('runtime polling applies only validated settings for the current account', 
   await poll(true, 500, 9);
   assert.equal(settings().writeEnabled, true);
 
+  // The write was rejected at revision 9, but this tab already has permission at 10.
+  await poll(true, 500, 10);
+  t.mock.timers.tick(15_000);
+  const inFlight = requests.at(-1);
+  const delayedDenial = new ApiError(403, 'disabled', 'feature_disabled', { revision: 9 });
+  assert.match(handleReviewRejection(delayedDenial, 3), /В момент отправки/);
+  assert.equal(settings().writeEnabled, true, 'an older rejection cannot revoke a newer permission');
+  assert.equal(settings().revision, 10);
+  assert.equal(inFlight.signal.aborted, false);
+  assert.equal(requests.at(-1), inFlight);
+  await reply(requests.length - 1, true, 500, 10);
+
+  const currentDenial = new ApiError(403, 'disabled', 'feature_disabled', { revision: 10 });
+  handleReviewRejection(currentDenial, 3);
+  assert.equal(settings().writeEnabled, false, 'a current rejection must close the form immediately');
+  await reply(requests.length - 1, true, 500, 10);
+  assert.equal(settings().writeEnabled, false);
+
   const tooLong = new ApiError(400, 'too long', 'review_too_long', { max_length: 100, revision: 10 });
   handleReviewRejection(tooLong, 3);
   assert.equal(settings().maxLength, 100);
   await reply(requests.length - 1, true, 500, 9);
   assert.equal(settings().maxLength, 100);
-  await poll(true, 500, 11);
+  await poll(true, 500, 11, blocks);
   assert.equal(settings().maxLength, 500);
+  assert.equal(settings().writeEnabled, true);
+  assert.deepEqual(settings().homeBlocks, blocks);
+  handleReviewRejection(new ApiError(403, 'disabled', 'feature_disabled', { revision: 12 }), 3);
+  assert.equal(settings().writeEnabled, false);
+  await reply(requests.length - 1, true, 500, 11, blocks);
+  assert.equal(settings().writeEnabled, false);
   store.set({ user: { id: 4 } });
+  assert.deepEqual(settings().homeBlocks, []);
   await reply(requests.length - 1, true, 500, 1);
   const beforeStop = requests.length;
   handleReviewRejection(denied, 3);

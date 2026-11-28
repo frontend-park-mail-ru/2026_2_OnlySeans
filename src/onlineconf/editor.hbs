@@ -30,6 +30,7 @@
       {{> field id="oc-value" name="value" label="Значение JSON" multiline=true code=true rows=7 describedBy="oc-json-help" required=true value=json}}
       <small id="oc-json-help">Строки пишутся в кавычках. Также доступны числа, true, false, массивы, объекты и null.</small>
       {{> button id="oc-format" variant="secondary" type="button" text="Форматировать JSON"}}
+      {{> button id="oc-home-blocks-example" variant="secondary" type="button" text="Вставить пример блоков главной" hidden=true}}
     {{/if}}
   </fieldset>
   {{> status id="oc-editor-status"}}

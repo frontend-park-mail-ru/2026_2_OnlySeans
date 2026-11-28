@@ -1,4 +1,5 @@
 import { message, render, report, type Page, type View } from './ui.js';
+import { stringifyJson } from './json.js';
 import template from './audit.hbs';
 
 type Entry = {
@@ -63,8 +64,8 @@ export async function audit(view: View) {
           name: [entry.scope, entry.key].filter(Boolean).join('.') || `#${entry.resource_id}`,
           type: types[entry.resource_type] || entry.resource_type,
           action: actions[entry.action] || entry.action,
-          beforeText: entry.before == null ? 'Запись ещё не существовала.' : JSON.stringify(entry.before, null, 2),
-          afterText: entry.after == null ? 'Запись удалена.' : JSON.stringify(entry.after, null, 2),
+          beforeText: entry.before == null ? 'Запись ещё не существовала.' : stringifyJson(entry.before, 2),
+          afterText: entry.after == null ? 'Запись удалена.' : stringifyJson(entry.after, 2),
         };
       }),
     });

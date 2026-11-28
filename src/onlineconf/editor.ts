@@ -1,4 +1,6 @@
 import { ApiError } from '../api/http.js';
+import { homeBlocksExample, homeBlocksKey, parseHomeBlocks } from '../configured-ui/home-blocks.js';
+import { parseJson, stringifyJson } from './json.js';
 import {
   base, formText, installScopeDialog, isConflict, message, namePattern, positiveId,
   render, report, scopeOptions, scopes, type Resource, type Resources, type View,
@@ -8,7 +10,7 @@ import template from './editor.hbs';
 function jsonValue(raw: string) {
   if (!raw.trim()) throw new Error('Введите JSON-значение. Для пустого значения используйте null.');
   try {
-    return JSON.parse(raw);
+    return parseJson(raw);
   } catch {
     throw new Error('Некорректный JSON. Проверьте кавычки, запятые и скобки.');
   }
@@ -27,12 +29,11 @@ function payload(data: FormData, flags: boolean, resource?: Resource) {
   const common = { scope, key, title, description: formText(data, 'description'), version: resource?.version };
   if (!flags) {
     const value = jsonValue(formText(data, 'value'));
-    if (scope === 'reviews' && key === 'max_length' && (!Number.isInteger(value) || value < 50 || value > 20000)) {
+    if (scope === 'reviews' && key === 'max_length' &&
+      (typeof value !== 'number' || !Number.isInteger(value) || value < 50 || value > 20000)) {
       throw new Error('Максимальная длина отзыва должна быть целым числом от 50 до 20000.');
     }
-    if (scope === 'frontend' && key === 'watch_button_theme' && value !== 'amber' && value !== 'wine') {
-      throw new Error('Для цвета кнопки укажите JSON-строку "amber" или "wine".');
-    }
+    if (`${scope}.${key}` === homeBlocksKey) parseHomeBlocks(value);
     return { ...common, value };
   }
   const percent = formText(data, 'rollout_percent');
@@ -69,7 +70,7 @@ export async function editor(view: View, kind: Resources, id: string) {
       creating, flags, section, namePattern, resource, resourceId: id,
       heading: creating ? `Новый ${kindLabel}` : `${resource.scope}.${resource.key}`,
       version: resource?.version,
-      json: creating ? '' : JSON.stringify(resource.value, null, 2),
+      json: creating ? '' : stringifyJson(resource.value, 2),
       percent: resource?.rollout_percent ?? 0,
       forceOn: resource?.force_on_user_ids?.join(', '),
       forceOff: resource?.force_off_user_ids?.join(', '),
@@ -87,6 +88,8 @@ export async function editor(view: View, kind: Resources, id: string) {
     let busy = false;
     let stale = false;
     const select = form.querySelector('select');
+    const keyInput = form.querySelector<HTMLInputElement>('[name="key"]');
+    const example = form.querySelector<HTMLButtonElement>('#oc-home-blocks-example');
     const scopeStatus = form.querySelector('#oc-scope-status');
     let loadedScopes: Awaited<ReturnType<typeof scopes>> = [];
     view.guard(() => busy || snapshot() !== baseline);
@@ -97,16 +100,34 @@ export async function editor(view: View, kind: Resources, id: string) {
       reload.hidden = !stale;
     }
 
+    function updateExample() {
+      if (example) {
+        const fullKey = resource ? `${resource.scope}.${resource.key}` : `${select.value}.${keyInput.value}`;
+        example.hidden = fullKey !== homeBlocksKey;
+      }
+    }
+    updateExample();
+    select?.addEventListener('change', updateExample);
+    keyInput?.addEventListener('input', updateExample);
+    example?.addEventListener('click', () => {
+      const input = form.querySelector<HTMLTextAreaElement>('[name="value"]');
+      if (input.value.trim() && !window.confirm('Заменить текущее значение примером блоков?')) return;
+      input.value = stringifyJson(homeBlocksExample, 2);
+      input.focus();
+    });
+
     if (creating) {
       installScopeDialog(view, (created) => {
         loadedScopes = [...loadedScopes.filter((item) => item.name !== created.name), created];
         scopeOptions(select, loadedScopes, 'Выберите область', created.name);
+        updateExample();
         message(scopeStatus, 'Область создана.');
       });
       void scopes(view).then((items) => {
         if (view.signal.aborted) return;
         loadedScopes = [...new Map([...items, ...loadedScopes].map((item) => [item.name, item])).values()];
         scopeOptions(select, loadedScopes, 'Выберите область', select.value);
+        updateExample();
       }).catch((error) => report(scopeStatus, error, view.signal));
     }
 
@@ -130,7 +151,7 @@ export async function editor(view: View, kind: Resources, id: string) {
     form.querySelector('#oc-format')?.addEventListener('click', () => {
       const input = form.querySelector('textarea[name="value"]') as HTMLTextAreaElement;
       try {
-        input.value = JSON.stringify(jsonValue(input.value), null, 2);
+        input.value = stringifyJson(jsonValue(input.value), 2);
         if (!stale) message(status, '');
       } catch (error) {
         report(status, error, view.signal);

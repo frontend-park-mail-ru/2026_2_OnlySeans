@@ -1,0 +1,33 @@
+.configured-blocks {
+  display: grid;
+  gap: 16px;
+  margin: 28px 0 36px;
+}
+
+.configured-blocks__banner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-hero);
+}
+
+.configured-blocks__title {
+  margin: 0;
+  font-size: var(--text-size-23);
+  overflow-wrap: anywhere;
+}
+
+.configured-blocks__text {
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  overflow-wrap: anywhere;
+}
+
+.configured-blocks [data-block]:not(.configured-blocks__banner) {
+  width: min(100%, 400px);
+}

@@ -25,27 +25,33 @@ export class ApiError extends Error {
 }
 
 type Query = Record<string, string | number | boolean | null | undefined>;
+interface JsonCodec {
+  parse: (text: string) => unknown;
+  stringify: (value: unknown) => string | undefined;
+}
+
 export interface RequestOptions {
   method?: string;
   params?: Query;
   body?: unknown;
   signal?: AbortSignal;
   fresh?: boolean;
+  json?: JsonCodec;
 }
 
-export async function request<T = unknown>(path: string, { method = 'GET', params, body, signal, fresh = false }: RequestOptions = {}): Promise<T> {
+export async function request<T = unknown>(path: string, { method = 'GET', params, body, signal, fresh = false, json }: RequestOptions = {}): Promise<T> {
   const url = new URL(`/api${path}`, API_URL);
   Object.entries(params || {}).forEach(([key, value]) => {
     if (value !== undefined && value !== null && value !== '') url.searchParams.set(key, String(value));
   });
 
   const accountId = offlineAccount()?.id;
-  const key = !fresh && method === 'GET' && accountId !== undefined && PRIVATE_GET.test(path)
+  const key = !json && !fresh && method === 'GET' && accountId !== undefined && PRIVATE_GET.test(path)
     ? privateKey(accountId, url.pathname + url.search)
     : null;
 
   try {
-    const data = await send<T>(url, method, body, signal, fresh);
+    const data = await send<T>(url, method, body, signal, fresh, json);
     if (key && offlineAccount()?.id === accountId) writeOffline(key, data);
     return data;
   } catch (error) {
@@ -61,7 +67,7 @@ export async function request<T = unknown>(path: string, { method = 'GET', param
   }
 }
 
-async function send<T>(url: URL, method: string, body: unknown, signal: AbortSignal | undefined, fresh: boolean): Promise<T> {
+async function send<T>(url: URL, method: string, body: unknown, signal: AbortSignal | undefined, fresh: boolean, json?: JsonCodec): Promise<T> {
   const multipart = body instanceof FormData;
   const response = await fetch(url, {
     method,
@@ -72,14 +78,17 @@ async function send<T>(url: URL, method: string, body: unknown, signal: AbortSig
       ...(body === undefined || multipart ? {} : { 'Content-Type': 'application/json' }),
       ...(fresh ? { 'X-Frame-Fresh': '1' } : {}),
     },
-    body: multipart ? body : JSON.stringify(body),
+    body: multipart ? body : (json ?? JSON).stringify(body),
   });
 
   const text = response.status === HttpStatus.NO_CONTENT ? '' : await response.text();
   let data;
   try {
-    data = text ? JSON.parse(text) : {};
+    data = response.ok && json && response.status !== HttpStatus.NO_CONTENT
+      ? json.parse(text)
+      : text ? JSON.parse(text) : {};
   } catch {
+    if (response.ok && json) throw new ApiError(502, 'Unexpected API response');
     data = {};
   }
   if (!response.ok) {

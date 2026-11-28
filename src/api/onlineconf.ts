@@ -1,5 +1,5 @@
 import { request } from './http.js';
-import type { OnlineConfState } from '../core/store.js';
+import { homeBlocksFlag, homeBlocksKey, parseHomeBlocks, type HomeBlock } from '../configured-ui/home-blocks.js';
 
 export function isReviewLimit(value: unknown): value is number {
   return typeof value === 'number' && Number.isInteger(value) && value >= 50 && value <= 20000;
@@ -23,8 +23,14 @@ export async function fetchOnlineConf(signal: AbortSignal) {
       typeof writeEnabled !== 'boolean') {
     throw new Error('Invalid OnlineConf review settings');
   }
-  const theme = data.configs['frontend.watch_button_theme'];
-  const watchButtonTheme: OnlineConfState['watchButtonTheme'] =
-    data.flags['frontend.watch_button_theme_enabled'] === true && (theme === 'amber' || theme === 'wine') ? theme : null;
-  return { revision, maxLength, writeEnabled, watchButtonTheme };
+  let homeBlocks: HomeBlock[] = [];
+  const blocks = data.configs[homeBlocksKey];
+  if (data.flags[homeBlocksFlag] === true && blocks !== undefined) {
+    try {
+      homeBlocks = parseHomeBlocks(blocks);
+    } catch {
+      // Malformed optional UI config must not prevent review settings from applying.
+    }
+  }
+  return { revision, maxLength, writeEnabled, homeBlocks };
 }

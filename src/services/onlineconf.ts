@@ -1,6 +1,6 @@
 import { ApiError, isUnavailable } from '../api/http.js';
 import { fetchOnlineConf, isReviewLimit } from '../api/onlineconf.js';
-import { reviewPolicyErrorMessage } from '../api/reviews.js';
+import { reviewPolicyErrorMessage, reviewPolicyRevision } from '../api/reviews.js';
 import { initialOnlineConf, store } from '../core/store.js';
 import { refreshSession } from './session.js';
 
@@ -15,7 +15,7 @@ export function refreshOnlineConf() {
 
 export function handleReviewRejection(error: unknown, authorId: number) {
   if (!(error instanceof ApiError) || authorId !== store.get('user')?.id) return;
-  const reason = reviewPolicyErrorMessage(error);
+  const reason = reviewPolicyErrorMessage(error, store.get('onlineconf').revision);
   if (reason) void refreshNow?.(error);
   return reason;
 }
@@ -42,7 +42,7 @@ export function startOnlineConf() {
       const current = store.get('onlineconf');
       // The product backend serves revision zero until it has loaded a snapshot.
       if (settings.revision === 0) {
-        store.set({ onlineconf: { ...current, writeEnabled: false, watchButtonTheme: null, status: 'fallback' } });
+        store.set({ onlineconf: { ...current, writeEnabled: false, homeBlocks: [], status: 'fallback' } });
         return;
       }
       if (current.revision !== null && settings.revision < current.revision) return;
@@ -58,7 +58,7 @@ export function startOnlineConf() {
       if (current.revision !== null && current.status !== 'fallback' && (controller.signal.aborted || isUnavailable(error))) {
         store.set({ onlineconf: { ...current, status: 'stale' } });
       } else {
-        store.set({ onlineconf: { ...current, writeEnabled: false, watchButtonTheme: null, status: 'fallback' } });
+        store.set({ onlineconf: { ...current, writeEnabled: false, homeBlocks: [], status: 'fallback' } });
         if (error instanceof ApiError && error.status === 401 && userId !== null) void refreshSession();
       }
     } finally {
@@ -110,13 +110,12 @@ export function startOnlineConf() {
   refreshNow = (rejection) => {
     if (rejection) {
       const current = store.get('onlineconf');
-      const reported = rejection.details?.revision;
-      const revision = typeof reported === 'number' && Number.isSafeInteger(reported) && reported >= 0
-        ? reported : current.revision ?? 0;
+      const revision = reviewPolicyRevision(rejection) ?? current.revision ?? 0;
+      if (revision < (current.revision ?? 0)) return refresh();
       if (rejection.code === 'feature_disabled') {
         deniedThrough = Math.max(deniedThrough, revision);
         store.set({ onlineconf: { ...current, writeEnabled: false } });
-      } else if (isReviewLimit(rejection.details?.max_length) && revision >= (current.revision ?? 0) && revision >= limitedThrough) {
+      } else if (isReviewLimit(rejection.details?.max_length) && revision >= limitedThrough) {
         const max = rejection.details.max_length;
         const maxLength = revision === limitedThrough ? Math.min(current.maxLength, max) : max;
         limitedThrough = revision;

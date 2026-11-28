@@ -1,19 +1,20 @@
 import { eventBus } from './event-bus.js';
 import type { Review } from '../api/reviews.js';
 import type { Account } from '../services/offline-storage.js';
+import type { HomeBlock } from '../configured-ui/home-blocks.js';
 
-export interface OnlineConfState {
+interface OnlineConfState {
   userId: number | null;
   revision: number | null;
   maxLength: number;
   writeEnabled: boolean;
-  watchButtonTheme: 'amber' | 'wine' | null;
+  homeBlocks: HomeBlock[];
   status: 'loading' | 'ready' | 'stale' | 'fallback';
   lastSuccessAt: number | null;
 }
 
 export function initialOnlineConf(userId: number | null): OnlineConfState {
-  return { userId, revision: null, maxLength: 20000, writeEnabled: false, watchButtonTheme: null, status: 'loading', lastSuccessAt: null };
+  return { userId, revision: null, maxLength: 20000, writeEnabled: false, homeBlocks: [], status: 'loading', lastSuccessAt: null };
 }
 
 interface StoreState {

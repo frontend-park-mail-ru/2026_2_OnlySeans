@@ -10,9 +10,18 @@ export function isValidReviewTitle(title: string) {
   return size >= 3 && size <= MAX_REVIEW_TITLE_LENGTH;
 }
 
-export function reviewPolicyErrorMessage(error: unknown): string | undefined {
+export function reviewPolicyRevision(error: ApiError): number | undefined {
+  const revision = error.details?.revision;
+  return typeof revision === 'number' && Number.isSafeInteger(revision) && revision >= 0 ? revision : undefined;
+}
+
+export function reviewPolicyErrorMessage(error: unknown, appliedRevision: number | null): string | undefined {
   if (!(error instanceof ApiError)) return;
   if (error.status === HttpStatus.FORBIDDEN && error.code === 'feature_disabled') {
+    const revision = reviewPolicyRevision(error);
+    if (appliedRevision !== null && revision !== undefined && revision < appliedRevision) {
+      return 'Отзыв не отправлен. В момент отправки публикация была отключена.';
+    }
     return 'Отзыв не отправлен. Публикация и редактирование отключены.';
   }
   if (error.status === HttpStatus.BAD_REQUEST && error.code === 'review_too_long') {
