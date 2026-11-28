@@ -40,6 +40,20 @@
   box-shadow: 0 0 20px var(--euphoria-amber-glow);
 }
 
+.text-field__input--multiline {
+  height: auto;
+  border-radius: var(--radius-md);
+}
+
+.text-field__input--code {
+  font-family: monospace;
+}
+
+.text-field__input--select option {
+  background: var(--surface-solid);
+  color: var(--text-main);
+}
+
 .text-field--invalid .text-field__input {
   border-color: var(--color-danger-strong);
 }

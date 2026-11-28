@@ -1,12 +1,14 @@
 import { eventBus } from './event-bus.js';
 import type { Review } from '../api/reviews.js';
 import type { Account } from '../services/offline-storage.js';
+import type { OnlineConfRuntime } from '../services/onlineconf-runtime.js';
 
 interface StoreState {
   user: Account | null;
   myReview: { filmId: number; review: Review | null; score: number } | null;
   avatarUrl: string;
   avatar?: { userId: number; url: string };
+  onlineConf?: OnlineConfRuntime | null;
 }
 
 class Store {

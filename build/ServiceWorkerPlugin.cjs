@@ -18,6 +18,7 @@ module.exports = class ServiceWorkerPlugin {
         () => {
           const assets = compilation.getAssets().filter(a =>
             /^(assets|src\/assets)\//.test(a.name) &&
+            !a.name.startsWith('assets/onlineconf/') &&
             !path.basename(a.name).startsWith('.') &&
             !MEDIA_EXTENSIONS.test(a.name) &&
             !a.name.endsWith('.map') &&

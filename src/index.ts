@@ -11,6 +11,7 @@ import { refreshSession, restoreSession, watchSessionOnReturn } from './services
 import { syncFilmEdits } from './services/offline-film-edits.js';
 import { notify } from './services/notice.js';
 import { fontsReady, stylesReady } from './core/assets.js';
+import { startOnlineConfRuntime } from './services/onlineconf-runtime.js';
 
 document.addEventListener(
   'error',
@@ -43,6 +44,7 @@ document.addEventListener('visibilitychange', async () => {
 window.addEventListener('offline', () => notify('Вы офлайн. Доступны ранее загруженные данные.'));
 
 Promise.all([restoreSession(), stylesReady(), fontsReady()]).then(async () => {
+  startOnlineConfRuntime();
   router.start();
   if (!navigator.onLine) notify('Вы офлайн. Доступны ранее загруженные данные.');
   else if (await syncFilmEdits()) router.refresh();

@@ -13,7 +13,7 @@ const PAGE_LIMIT = 100;
 export class ApiError extends Error {
   readonly status: number;
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, readonly code?: string, readonly details?: unknown) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
@@ -78,7 +78,7 @@ async function send<T>(url: URL, method: string, body: unknown, signal: AbortSig
   } catch {
     data = {};
   }
-  if (!response.ok) throw new ApiError(response.status, data.error || `HTTP ${response.status}`);
+  if (!response.ok) throw new ApiError(response.status, data?.error || `HTTP ${response.status}`, data?.code, data?.details);
   if (response.status !== HttpStatus.NO_CONTENT && !response.headers.get('content-type')?.includes('application/json')) {
     throw new ApiError(502, 'Unexpected API response');
   }

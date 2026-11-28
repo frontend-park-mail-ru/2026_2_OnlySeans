@@ -34,3 +34,9 @@ PostCSS работает до `css-loader`. В исходниках `@media (--r
 - [Антон Самойлов](https://github.com/samantonio28) - Backend
 - [Айбек Шомуродов]() - UX
 - [???]() - Database
+### OnlineConf
+
+- Админка доступна по `/onlineconf/`. Для входа используется учётная запись Frame с правами администратора.
+- `npm run dev` и `npm start` направляют `/api/onlineconf/admin/*` на `ONLINECONF_PROXY_TARGET` (по умолчанию `http://127.0.0.1:8081`). Остальные API, включая `/api/onlineconf/runtime`, обслуживает `API_PROXY_TARGET`.
+- На стенде вложенные маршруты `/onlineconf/…` должны возвращать `dist/onlineconf/index.html`. Статика админки находится под `/assets/onlineconf/`. У этих файлов и API нет HTML fallback.
+- Для эксперимента с цветом кнопки «О фильме» создайте scope `frontend`, JSON-конфиг `watch_button_theme` со значением `"amber"` или `"wine"` и флаг `watch_button_theme_enabled`. Продуктовый Backend должен явно публиковать оба ключа в `/api/onlineconf/runtime` и возвращать состояние флага для текущего аккаунта. Открытая главная опрашивает runtime каждые 15 секунд.
