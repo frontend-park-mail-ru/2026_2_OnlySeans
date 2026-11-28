@@ -37,11 +37,10 @@ export function startOnlineConf() {
     const timeout = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
     const isCurrent = () => pending === controller && currentUserId() === userId;
     try {
-      const settings = await fetchOnlineConf(controller.signal);
+      const { snapshotReady, ...settings } = await fetchOnlineConf(controller.signal);
       if (!isCurrent() || controller.signal.aborted) return;
       const current = store.get('onlineconf');
-      // The product backend serves revision zero until it has loaded a snapshot.
-      if (settings.revision === 0) {
+      if (!snapshotReady) {
         store.set({ onlineconf: { ...current, writeEnabled: false, homeBlocks: [], status: 'fallback' } });
         return;
       }

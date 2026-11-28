@@ -24,9 +24,9 @@ test('runtime polling applies only validated settings for the current account', 
     assert.equal(options.cache, 'no-store');
     return new Promise((resolve, reject) => requests.push({ resolve, reject, signal: options.signal }));
   };
-  function reply(index, flag, max = 500, revision = 1, blocks = [], blocksEnabled = true) {
+  function reply(index, flag, max = 500, revision = 1, blocks = [], blocksEnabled = true, snapshotReady) {
     requests[index].resolve(Response.json({
-      revision, configs: { 'reviews.max_length': max, 'frontend.home_blocks': blocks },
+      revision, snapshot_ready: snapshotReady, configs: { 'reviews.max_length': max, 'frontend.home_blocks': blocks },
       flags: { 'reviews.write_enabled': flag, 'frontend.home_blocks_enabled': blocksEnabled },
     }));
     return flush();
@@ -103,11 +103,11 @@ test('runtime polling applies only validated settings for the current account', 
   await reply(10, true, 500, 1);
   assert.equal(settings().writeEnabled, true);
 
-  const poll = async (flag, max, revision, blocks = [], blocksEnabled = true) => {
+  const poll = async (flag, max, revision, blocks = [], blocksEnabled = true, snapshotReady) => {
     const count = requests.length;
     t.mock.timers.tick(15_000);
     assert.equal(requests.length, count + 1);
-    await reply(count, flag, max, revision, blocks, blocksEnabled);
+    await reply(count, flag, max, revision, blocks, blocksEnabled, snapshotReady);
   };
   const blocks = [{ type: 'banner', title: 'Сегодня в кино', text: 'Выбор редакции' }, { type: 'collection', id: 3 }];
   await poll(true, 500, 6, blocks, false);
@@ -170,7 +170,19 @@ test('runtime polling applies only validated settings for the current account', 
   assert.equal(settings().writeEnabled, false);
   store.set({ user: { id: 4 } });
   assert.deepEqual(settings().homeBlocks, []);
-  await reply(requests.length - 1, true, 500, 1);
+  await reply(requests.length - 1, false, 20000, 0, [], false, false);
+  assert.equal(settings().status, 'fallback');
+  await poll(false, 20000, 0, [], false, true);
+  assert.equal(settings().status, 'ready');
+  assert.equal(settings().revision, 0);
+  assert.equal(settings().writeEnabled, false);
+  assert.equal(settings().maxLength, 20000);
+  assert.ok(settings().lastSuccessAt);
+  await poll(true, 500, 1, blocks, true, 'false');
+  assert.equal(settings().status, 'fallback');
+  assert.equal(settings().writeEnabled, false);
+  assert.deepEqual(settings().homeBlocks, []);
+  await poll(true, 500, 1, [], false, true);
   const beforeStop = requests.length;
   handleReviewRejection(denied, 3);
   assert.equal(settings().writeEnabled, true);
