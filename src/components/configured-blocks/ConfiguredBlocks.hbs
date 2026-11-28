@@ -1,0 +1,15 @@
+<div class="configured-blocks">
+  {{#each blocks}}
+    {{#if banner}}
+      <section class="configured-blocks__banner" data-block>
+        <div>
+          <h2 class="configured-blocks__title">{{title}}</h2>
+          {{#if text}}<p class="configured-blocks__text">{{text}}</p>{{/if}}
+        </div>
+        {{#if action}}<div data-action></div>{{/if}}
+      </section>
+    {{else}}
+      <div data-block></div>
+    {{/if}}
+  {{/each}}
+</div>

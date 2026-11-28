@@ -5,6 +5,7 @@ import { ApiError, request } from '../api/http.js';
 import { authPath } from '../services/auth-return.js';
 import { audit } from './audit.js';
 import { editor } from './editor.js';
+import { adminJson } from './json.js';
 import { resourceList } from './list.js';
 import { base, render, type View } from './ui.js';
 import shell from './shell.hbs';
@@ -40,7 +41,7 @@ function deny(status: number) {
 
 const api: typeof request = async (path, options) => {
   try {
-    return await request(`/onlineconf/admin${path}`, options);
+    return await request(`/onlineconf/admin${path}`, { ...options, json: adminJson });
   } catch (error) {
     if (!options?.signal?.aborted && error instanceof ApiError && [401, 403].includes(error.status)) {
       deny(error.status);

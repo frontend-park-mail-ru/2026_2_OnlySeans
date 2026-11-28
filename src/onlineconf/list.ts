@@ -1,4 +1,5 @@
 import { base, installScopeDialog, message, render, report, scopeOptions, scopes, type Page, type Resource, type Resources, type Scope, type View } from './ui.js';
+import { stringifyJson } from './json.js';
 import template from './list.hbs';
 
 const limit = 50;
@@ -64,7 +65,7 @@ export async function resourceList(view: View, kind: Resources) {
         items: page.items.map((item) => ({
           ...item,
           href: `${path}/${item.id}`,
-          summary: flags ? (item.enabled ? `Включён · ${item.rollout_percent}%` : 'Выключен') : JSON.stringify(item.value),
+          summary: flags ? (item.enabled ? `Включён · ${item.rollout_percent}%` : 'Выключен') : stringifyJson(item.value),
         })),
       });
       message(status, `${offset + 1}–${offset + page.items.length} из ${page.total}`);
